@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <!--    куда записываем логи и с какими аттрибутами-->
+    <Appenders>
+        <!--        вывод в файл-->
+        <File name="File" fileName="./logs/firstTest.log">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </File>
+        <!--        вывод в консоль-->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+    </Appenders>
+    <!--    логгеры приложения-->
+    <Loggers>
+        <!--    Подавляем вывод сообщений от WebDriverManager -->
+        <Logger name="io.github.bonigarcia.wdm" level="OFF"/>
+        <!--        логгирование с детализацией DEBUG-->
+        <Logger name="com.example.package" level="DEBUG"/>
+        <!--        Root - корневой логгер с уровнем детализации INFO и выше-->
+        <Root level="info">
+            <AppenderRef ref="File"/>
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
