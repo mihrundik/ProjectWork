@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>WebDriverFactory</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.version>3.14.1</maven.version>
+        <maven.compiler.source>22</maven.compiler.source>
+        <maven.compiler.target>22</maven.compiler.target>
+        <surefire-plagin.version>3.5.2</surefire-plagin.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <selenium-java.version>4.40.0</selenium-java.version>
+        <log4j-slf4j-impl.version>2.25.3</log4j-slf4j-impl.version>
+        <webdrivermanager.version>6.3.3</webdrivermanager.version>
+        <webdrivermanager.version>6.3.3</webdrivermanager.version>
+        <junit-jupiter-api.version>5.11.0</junit-jupiter-api.version>
+        <junit.version>RELEASE</junit.version>
+        <browser>chrome</browser>
+        <browserOptions/>
+        <chromeOptions/>
+        <firefoxOptions/>
+        <safariOptions/>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium-java.version}</version>
+        </dependency>
+
+        <!-- исключение предупреждения SLF4J с перенаправлением в определенную библиотеку логирования -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j-slf4j-impl.version}</version>
+        </dependency>
+
+        <!-- логирование с использованием Log4j2 -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j-slf4j-impl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j-slf4j-impl.version}</version>
+        </dependency>
+
+        <!-- WebDriver Manager -->
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>${webdrivermanager.version}</version>
+        </dependency>
+
+        <!-- JUnit Jupiter - модульное тестирование -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit-jupiter-api.version}</version>
+            <!-- когда используется - в тестах -->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!-- плагин для автоматической сборки (в данном случае для файлов любого уровня вложенности с названием *Test.java в алфавитном порядке(alphabetical)) -->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.version}</version>
+                <configuration>
+                    <target>${maven.compiler.target}</target>
+                    <source>${maven.compiler.source}</source>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire-plagin.version}</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    <argLine>
+                        -Dbrowser=${browser}
+                        -DbrowserOptions=${browserOptions}
+                        -DchromeOptions=${chromeOptions}
+                        -DfirefoxOptions=${firefoxOptions}
+                        -DsafariOptions=${safariOptions}
+                    </argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>
