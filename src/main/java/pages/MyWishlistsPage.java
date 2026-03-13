@@ -114,6 +114,11 @@ public class MyWishlistsPage {
         WebElement descElement = lastCard.findElement(
                 By.xpath(".//p[@class='card-text']")
         );
+
+        String description = descElement.getText();
+        log.info("Описание последнего списка: '{}'", description);
+
+        return description;
     }
 
     /**
