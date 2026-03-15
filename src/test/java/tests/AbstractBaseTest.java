@@ -43,7 +43,7 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
 
         headerElPage = new HeaderElPage(driver);
         loginPage = new LoginPage(driver);
-        page = new PageFactor(driver);
+        page = new PageFactory(driver);
 
         performLogin();
     }
@@ -138,7 +138,7 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         setDriver(newDriver);
 
         newDriver.get(URL);
-        page = new PageFactor(newDriver);
+        page = new PageFactory(newDriver);
     }
 
 

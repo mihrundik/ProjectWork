@@ -13,7 +13,7 @@ import org.openqa.selenium.safari.SafariOptions;
 public abstract class AbstractBaseMethod extends AbstractWebDriver {
 
     public Logger log = LogManager.getLogger(AbstractBaseMethod.class);
-    public PageFactor page;
+    public PageFactory page;
 
     public WebDriver getCurrentDriver() {
         return super.getDriver();

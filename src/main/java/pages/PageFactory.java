@@ -1,9 +1,8 @@
 package pages;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.PageFactory;
 
-public class PageFactor {
+public class PageFactory {
 
     protected WebDriver driver;
 
@@ -11,7 +10,7 @@ public class PageFactor {
     public HeaderElPage header;
     public MyWishlistsPage myWishlistsPage;
 
-    public PageFactor(WebDriver driver) {
+    public PageFactory(WebDriver driver) {
         this.driver = driver;
 
         // инициализация всех страниц
@@ -19,6 +18,6 @@ public class PageFactor {
         myWishlistsPage = new MyWishlistsPage(driver);
 
         // инициализация элементов HeaderElPage
-        PageFactory.initElements(driver, header);
+        org.openqa.selenium.support.PageFactory.initElements(driver, header);
     }
 }
