@@ -65,7 +65,7 @@ public class CreateWishlistWithVeryLongName extends AbstractBaseTest {
 
 
     @Test
-    @DisplayName("Тест: Попытка создания вишлиста с очень длинным описанием (512 символов) - форма не закрывается")
+    @DisplayName("Тест: Попытка создания вишлиста с очень длинным названием (512 символов) - форма не закрывается")
     void testCreateWishlistWithVeryLongDescription() {
         String testListName = "A".repeat(512);
         String testListDescription = "Описание тестового списка для создания";
