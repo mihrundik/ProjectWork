@@ -235,18 +235,11 @@ public class MyWishlistsPage {
         } catch (TimeoutException e) {
             log.error("Таймаут при поиске поля названия: {}", e.getMessage());
 
-            // Отладочная информация
-            try {
-                String pageSource = driver.getPageSource();
-                log.info("Первые 500 символов страницы: {}", pageSource.substring(0, Math.min(500, pageSource.length())));
-            } catch (Exception ex) {
-                log.error("Не удалось получить page source");
-            }
-            return null;
         } catch (Exception e) {
             log.error("Ошибка при поиске поля названия: {}", e.getMessage());
             return null;
         }
+        return null;
     }
 
     public WebElement getDescriptionNewWL() {
@@ -359,8 +352,36 @@ public class MyWishlistsPage {
             confirmButton.click();
             log.info("Подтверждение удаления");
         } catch (Exception e) {
-            log.info("Окно подтверждения не появилось или уже обработано");
+            log.info("Окно подтверждения не появилось");
         }
     }
 
+    // проверяем осталась ли форма открытой
+    public boolean isCreateFormVisible() {
+        try {
+            // используем более надежные локаторы
+            return driver.findElement(By.cssSelector("form.create-wishlist-form")).isDisplayed() ||
+                    driver.findElement(By.xpath("//form[.//input[@placeholder='Введите название']]")).isDisplayed();
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    // закрытие формы при зависании
+    public void closeCreateForm() {
+        try {
+            // пробуем найти кнопку "Отмена" или "Закрыть"
+            WebElement cancelButton = driver.findElement(
+                    By.xpath("//button[contains(text(), 'Отмена')] | //button[contains(text(), 'Закрыть')] | //button[contains(text(), 'Cancel')]"));
+            cancelButton.click();
+            log.info("Форма закрыта через кнопку отмены");
+        } catch (Exception e) {
+            // если нет кнопки, пробуем нажать Escape
+            driver.findElement(By.tagName("body")).sendKeys(org.openqa.selenium.Keys.ESCAPE);
+            log.info("Форма закрыта через клавишу Escape");
+        }
+
+        // ждем, пока форма действительно закроется
+        waitForCreateFormToDisappear();
+    }
 }

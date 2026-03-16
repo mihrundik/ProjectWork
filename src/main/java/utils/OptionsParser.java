@@ -1,34 +1,16 @@
-package pages;
+package utils;
 
-import driverAutomation.AbstractWebDriver;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.WebDriver;
+
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.safari.SafariOptions;
+import org.openqa.selenium.remote.AbstractDriverOptions;
 
-public abstract class AbstractBaseMethod extends AbstractWebDriver {
 
-    public Logger log = LogManager.getLogger(AbstractBaseMethod.class);
-    public PageFactory page;
+public class OptionsParser {
 
-    public WebDriver getCurrentDriver() {
-        return super.getDriver();
-    }
-
-    public void statusTest(boolean isCorrect, String message) {
-        if (!isCorrect) {
-            log.error("{}: Ошибка!", message);
-        } else {
-            log.info("{}: Успешно пройден.", message);
-        }
-    }
-
-    // обрабатываем опции
-    public Capabilities createOptionsFromString(String browserName, String optionsString) {
+    public static AbstractDriverOptions<?> parse(String browserName, String optionsString) {
         String[] optionsArray = optionsString.split(",");
 
         switch (browserName.toLowerCase()) {
@@ -43,8 +25,8 @@ public abstract class AbstractBaseMethod extends AbstractWebDriver {
                 return firefoxOptions;
 
             case "safari":
-                SafariOptions safariOptions = new SafariOptions();
-                return safariOptions;
+                // Safari может не поддерживать все аргументы командной строки
+                return new SafariOptions();
 
             case "edge":
                 EdgeOptions edgeOptions = new EdgeOptions();
@@ -55,5 +37,4 @@ public abstract class AbstractBaseMethod extends AbstractWebDriver {
                 throw new IllegalArgumentException("Неподдерживаемый браузер: " + browserName);
         }
     }
-
 }
