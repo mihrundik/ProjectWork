@@ -12,9 +12,9 @@ import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
 import utils.OptionsParser;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class CreateNewWishlistTest extends AbstractBaseTest {
+public class CreateWishlistWithVeryLongDescription extends AbstractBaseTest {
 
     private MyWishlistsPage myWishlistsPage;
 
@@ -63,11 +63,14 @@ public class CreateNewWishlistTest extends AbstractBaseTest {
         myWishlistsPage = page.myWishlistsPage;
     }
 
+
     @Test
-    @DisplayName("Тест: Успешное создание нового вишлиста")
-    void testCreateNewWishlist() {
-         String testListName = "Тестовый список " + System.currentTimeMillis();
-         String testListDescription = "Описание тестового списка для создания";
+    @DisplayName("Тест: Попытка создания вишлиста с очень длинным описанием (512 символов) - форма не закрывается")
+    void testCreateWishlistWithVeryLongDescription() {
+        String testListName = "Тестовый список " + System.currentTimeMillis();
+        String testListDescription = "B".repeat(512);
+
+        log.info("Длина описания: {} символов", testListDescription.length());
 
         int initialCount = myWishlistsPage.getWishlistCount();
         log.info("Начальное количество списков: {}", initialCount);
@@ -78,19 +81,22 @@ public class CreateNewWishlistTest extends AbstractBaseTest {
         myWishlistsPage.fillCreateForm(testListName, testListDescription);
         myWishlistsPage.clickSubmitButton();
 
-        myWishlistsPage.waitForCreateFormToDisappear();
+        // проверяем, что форма НЕ закрылась
+        boolean formStillVisible = myWishlistsPage.isCreateFormVisible();
+        log.info("Форма все еще видна: {}", formStillVisible);
 
-        // задержка для обновления списка
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        assertTrue(formStillVisible,
+                "При очень длинном описании форма должна оставаться открытой");
 
-        int newCount = myWishlistsPage.getWishlistCount();
-        log.info("Количество списков после создания: {}", newCount);
+        // проверяем, что количество списков не изменилось
+        int currentCount = myWishlistsPage.getWishlistCount();
+        log.info("Количество списков после попытки создания: {}", currentCount);
 
-        assertEquals(initialCount + 1, newCount,
-                "Количество списков должно увеличиться на 1");
+        assertEquals(initialCount, currentCount,
+                "Количество списков не должно измениться при очень длинном описании");
+
+        // закрываем форму, чтобы не влиять на другие тесты
+        myWishlistsPage.closeCreateForm();
+        log.info("Форма закрыта");
     }
 }
