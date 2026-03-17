@@ -16,13 +16,13 @@ import java.util.Map;
 
 public class MyWishlistsPage {
 
-    protected Logger log = LogManager.getLogger(MyWishlistsPage.class);
+    public Logger log = LogManager.getLogger(MyWishlistsPage.class);
 
-    private final WebDriver driver;
-    private final WebDriverWait wait;
+    public final WebDriver driver;
+    public final WebDriverWait wait;
 
-    private static final int DEFAULT_TIMEOUT_SECONDS = 10;
-    private static final String PAGE_URL = "https://wishlist.otus.kartushin.su";
+    public static final int DEFAULT_TIMEOUT_SECONDS = 10;
+    public static final String PAGE_URL = "https://wishlist.otus.kartushin.su";
 
     @FindBy(xpath = "//*[@id=\"root\"]/div/div[1]/h2")
     private WebElement pageTitle;
@@ -65,12 +65,12 @@ public class MyWishlistsPage {
 
     public void waitForPageToLoad() {
         wait.until(ExpectedConditions.visibilityOf(pageTitle));
-        log.info("Страница My Wishlists загружена");
+        log.info("Страница Мои списки загружена");
     }
 
     public void clickAddNewList() {
         wait.until(ExpectedConditions.elementToBeClickable(addNewListButton)).click();
-        log.info("Клик по кнопке 'Add New List'");
+        log.info("Клик по кнопке 'Добавить список");
     }
 
 
@@ -119,18 +119,22 @@ public class MyWishlistsPage {
         }
     }
 
+    // количество карточек
     public int getWishlistCount() {
         return getWishlistCards().size();
     }
 
+    // существуют ли хотя бы одна карточка?
     public boolean hasWishlists() {
         return getWishlistCount() > 0;
     }
 
+    // получает индекс последней карточки
     public int getLastIndex() {
         return getWishlistCount() - 1;
     }
 
+    // получает последнюю карточку
     public WebElement getLastWishlistCard() {
         List<WebElement> cards = getWishlistCards();
         if (cards.isEmpty()) {
@@ -149,6 +153,7 @@ public class MyWishlistsPage {
     }
 
 
+    // заголовок (title) последней карточки
     public String getLastWishlistTitle() {
         WebElement lastCard = getLastWishlistCard();
         WebElement titleElement = lastCard.findElement(
@@ -157,12 +162,14 @@ public class MyWishlistsPage {
         return titleElement.getText();
     }
 
+    // описание (description) последней карточки
     public String getLastWishlistDescription() {
         WebElement lastCard = getLastWishlistCard();
         WebElement descElement = lastCard.findElement(By.xpath(".//p[@class='card-text']"));
         return descElement.getText();
     }
 
+    // количество подарков в последнем вишлисте
     public String getLastWishlistGiftCountText() {
         WebElement lastCard = getLastWishlistCard();
         WebElement countElement = lastCard.findElement(By.xpath(".//small[@class='text-muted']"));
@@ -181,11 +188,13 @@ public class MyWishlistsPage {
         log.info("Форма создания вишлиста появилась");
     }
 
+    // закрытие формы создания нового вишлиста
     public void waitForCreateFormToDisappear() {
         wait.until(ExpectedConditions.invisibilityOf(nameNewWL));
         log.info("Форма создания вишлиста закрылась");
     }
 
+    // заполняет форму создания нового вишлиста
     public void fillCreateForm(String name, String description) {
         nameNewWL.clear();
         nameNewWL.sendKeys(name);
@@ -213,11 +222,12 @@ public class MyWishlistsPage {
         log.info("Клик по кнопке 'Создать'");
     }
 
+    // поиск поля ввода названия вишниста
     public WebElement getNameNewWL() {
         try {
             log.info("Поиск поля названия по XPath: /html/body/div[3]/div/div/div[2]/form/div[1]/input");
 
-            // Сначала проверим, есть ли вообще модальное окно
+            // сначала проверим, есть ли вообще модальное окно
             List<WebElement> modals = driver.findElements(By.xpath("/html/body/div[3]"));
             log.info("Найдено модальных окон: {}", modals.size());
 
@@ -226,7 +236,7 @@ public class MyWishlistsPage {
                 return null;
             }
 
-            // Теперь ищем поле ввода
+            // теперь ищем поле ввода
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("/html/body/div[3]/div/div/div[2]/form/div[1]/input")
             ));
@@ -242,6 +252,7 @@ public class MyWishlistsPage {
         return null;
     }
 
+    // поиск поля ввода описания вишниста
     public WebElement getDescriptionNewWL() {
         try {
             log.info("Поиск поля описания по XPath: /html/body/div[3]/div/div/div[2]/form/div[2]/textarea");
@@ -283,6 +294,7 @@ public class MyWishlistsPage {
         throw new IndexOutOfBoundsException("Нет вишлиста с индексом " + index);
     }
 
+    // количество подарков указанного вишлиста по индексу
     public String getWishlistGiftCountByIndex(int index) {
         List<WebElement> cards = getWishlistCards();
         if (index >= 0 && index < cards.size()) {
@@ -292,6 +304,7 @@ public class MyWishlistsPage {
         throw new IndexOutOfBoundsException("Нет вишлиста с индексом " + index);
     }
 
+    // поиск кнопки закрытия модального окна
     public WebElement getCloseButton() {
         try {
             log.info("Поиск кнопки закрытия");
@@ -343,6 +356,7 @@ public class MyWishlistsPage {
         log.info("Клик по кнопке 'Удалить' для последнего списка");
     }
 
+    // подтверждает удаление вишлиста
     public void confirmDelete() {
         try {
             // Возможно, появляется модальное окно с подтверждением
@@ -383,5 +397,9 @@ public class MyWishlistsPage {
 
         // ждем, пока форма действительно закроется
         waitForCreateFormToDisappear();
+    }
+
+    public int getLastWishlistGiftCount() {
+        return 0;
     }
 }
