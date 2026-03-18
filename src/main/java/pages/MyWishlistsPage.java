@@ -80,7 +80,7 @@ public class MyWishlistsPage {
 
             // находим все карточки с классом 'card'
             List<WebElement> allCards = wishlistContainer.findElements(By.xpath(".//div[contains(@class, 'card')]"));
-            log.info("Всего карточек с классом 'card' в контейнере: {}", allCards.size());
+            // log.info("Всего карточек с классом 'card' в контейнере: {}", allCards.size());
 
             // используем Map для хранения уникальных вишлистов по их заголовку
             Map<String, WebElement> uniqueWishlists = new HashMap<>();
@@ -103,18 +103,19 @@ public class MyWishlistsPage {
                     if (!uniqueWishlists.containsKey(title)) {
                         uniqueWishlists.put(title, card);
                         log.debug("Добавлен уникальный вишлист: {}", title);
-                    } else {
-                        log.debug("Пропущен дубликат вишлиста: {}", title);
                     }
+//                    else {
+//                        log.debug("Пропущен дубликат вишлиста: {}", title);
+//                    }
                 }
             }
 
             List<WebElement> result = new ArrayList<>(uniqueWishlists.values());
-            log.info("Найдено УНИКАЛЬНЫХ вишлистов (с кнопкой Просмотр): {}", result.size());
+            // log.info("Найдено УНИКАЛЬНЫХ вишлистов (с кнопкой Просмотр): {}", result.size());
             return result;
 
         } catch (Exception e) {
-            log.error("Ошибка при поиске карточек вишлистов: {}", e.getMessage());
+            // log.error("Ошибка при поиске карточек вишлистов: {}", e.getMessage());
             return List.of();
         }
     }
@@ -225,11 +226,11 @@ public class MyWishlistsPage {
     // поиск поля ввода названия вишниста
     public WebElement getNameNewWL() {
         try {
-            log.info("Поиск поля названия по XPath: /html/body/div[3]/div/div/div[2]/form/div[1]/input");
+            // log.info("Поиск поля названия по XPath: /html/body/div[3]/div/div/div[2]/form/div[1]/input");
 
             // сначала проверим, есть ли вообще модальное окно
             List<WebElement> modals = driver.findElements(By.xpath("/html/body/div[3]"));
-            log.info("Найдено модальных окон: {}", modals.size());
+            // log.info("Найдено модальных окон: {}", modals.size());
 
             if (modals.isEmpty()) {
                 log.error("Модальное окно не найдено!");
@@ -240,7 +241,7 @@ public class MyWishlistsPage {
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("/html/body/div[3]/div/div/div[2]/form/div[1]/input")
             ));
-            log.info("Поле названия найдено, видимо: {}", element.isDisplayed());
+            // log.info("Поле названия найдено, видимо: {}", element.isDisplayed());
             return element;
         } catch (TimeoutException e) {
             log.error("Таймаут при поиске поля названия: {}", e.getMessage());
@@ -255,12 +256,12 @@ public class MyWishlistsPage {
     // поиск поля ввода описания вишниста
     public WebElement getDescriptionNewWL() {
         try {
-            log.info("Поиск поля описания по XPath: /html/body/div[3]/div/div/div[2]/form/div[2]/textarea");
+            // log.info("Поиск поля описания по XPath: /html/body/div[3]/div/div/div[2]/form/div[2]/textarea");
 
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("/html/body/div[3]/div/div/div[2]/form/div[2]/textarea")
             ));
-            log.info("Поле описания найдено, видимо: {}", element.isDisplayed());
+            // log.info("Поле описания найдено, видимо: {}", element.isDisplayed());
             return element;
         } catch (Exception e) {
             log.error("Ошибка при поиске поля описания: {}", e.getMessage());
@@ -307,11 +308,11 @@ public class MyWishlistsPage {
     // поиск кнопки закрытия модального окна
     public WebElement getCloseButton() {
         try {
-            log.info("Поиск кнопки закрытия");
+            // log.info("Поиск кнопки закрытия");
             WebElement element = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("/html/body/div[3]/div/div/div[1]/button")
             ));
-            log.info("Кнопка закрытия найдена");
+            // log.info("Кнопка закрытия найдена");
             return element;
         } catch (Exception e) {
             log.error("Ошибка при поиске кнопки закрытия: {}", e.getMessage());
@@ -321,11 +322,11 @@ public class MyWishlistsPage {
 
     public WebElement getCancelButton() {
         try {
-            log.info("Поиск кнопки отмены");
+            // log.info("Поиск кнопки отмены");
             WebElement element = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("/html/body/div[3]/div/div/div[2]/form/div[3]/button[1]")
             ));
-            log.info("Кнопка отмены найдена");
+            // log.info("Кнопка отмены найдена");
             return element;
         } catch (Exception e) {
             log.error("Ошибка при поиске кнопки отмены: {}", e.getMessage());
@@ -335,11 +336,11 @@ public class MyWishlistsPage {
 
     public WebElement getSubmitButton() {
         try {
-            log.info("Поиск кнопки создания");
+            // log.info("Поиск кнопки создания");
             WebElement element = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("/html/body/div[3]/div/div/div[2]/form/div[3]/button[2]")
             ));
-            log.info("Кнопка создания найдена");
+            // log.info("Кнопка создания найдена");
             return element;
         } catch (Exception e) {
             log.error("Ошибка при поиске кнопки создания: {}", e.getMessage());
@@ -356,19 +357,6 @@ public class MyWishlistsPage {
         log.info("Клик по кнопке 'Удалить' для последнего списка");
     }
 
-    // подтверждает удаление вишлиста
-    public void confirmDelete() {
-        try {
-            // Возможно, появляется модальное окно с подтверждением
-            WebElement confirmButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//button[contains(text(), 'Подтвердить') or contains(text(), 'Удалить')]")
-            ));
-            confirmButton.click();
-            log.info("Подтверждение удаления");
-        } catch (Exception e) {
-            log.info("Окно подтверждения не появилось");
-        }
-    }
 
     // проверяем осталась ли форма открытой
     public boolean isCreateFormVisible() {

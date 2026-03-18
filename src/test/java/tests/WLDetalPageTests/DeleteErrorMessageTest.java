@@ -13,10 +13,10 @@ import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
 import utils.OptionsParser;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class WishlistNavigationTest extends AbstractBaseTest {
+public class DeleteErrorMessageTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;
     private MyWishListPage wishListPage;
@@ -68,9 +68,9 @@ public class WishlistNavigationTest extends AbstractBaseTest {
 
 
     @Test
-    @DisplayName("Проверка соответствия названия и описания списка подарков при переходе по кнопке Просмотр")
-    public void verifyWishlistTitleAfterNavigation() {
-        // создаем новый список, если списков нет
+    @DisplayName("Кнопка 'Удалить список' при ошибке показывает сообщение 'Ошибка: Ошибка при загрузке списка желаний'")
+    public void deleteWishlistShowsErrorMessage() {
+        // убедимся, что есть список, и откроем его
         if (!wishlistsPage.hasWishlists()) {
             wishlistsPage.clickAddNewList();
             wishlistsPage.waitForCreateFormToAppear();
@@ -82,44 +82,25 @@ public class WishlistNavigationTest extends AbstractBaseTest {
             wishlistsPage.clickSubmitButton();
             wishlistsPage.waitForCreateFormToDisappear();
 
-            log.info("Создан тестовый список: {}", testName);
+            log.info("Создан тестовый список для проверки удаления: {}", testName);
         }
 
-        // Шаг 1: получаем название последнего списка на странице списков по которому будем кликать
-        String expectedTitle = wishlistsPage.getLastWishlistTitle();
-        String expectedDescription = wishlistsPage.getLastWishlistDescription();
-
-        log.info("Название списка на странице 'Мои списки': {}", expectedTitle);
-        log.info("Описание списка на странице 'Мои списки': {}", expectedDescription);
-
-        // Шаг 2: нажимаем кнопку "Просмотр" для последнего списка
         wishlistsPage.clickViewButtonOnLastWishlist();
-
-        // Шаг 3: инициализируем страницу конкретного вишлиста
         wishListPage = new MyWishListPage(driver);
 
-        // Шаг 4: проверяем, что страница вишлиста загрузилась
-        assertTrue(wishListPage.isWishlistPageDisplayed(),
-                "Страница вишлиста не загрузилась");
+        // проверяем, что страница вишлиста загрузилась
+        assertTrue(wishListPage.isWishlistPageDisplayed(), "Страница вишлиста не загрузилась");
 
-        // Шаг 5: получаем фактическое название на странице вишлиста
-        String actualTitle = wishListPage.getWishlistTitle();
-        String actualDescription = wishListPage.getWishlistDescription();
+        // нажимаем "Удалить список"
+        wishListPage.clickDeleteWishlistButton();
 
-        log.info("Название списка на странице вишлиста: {}", actualTitle);
-        log.info("Описание списка на странице вишлиста: {}", actualDescription);
+        // нажимаем "Удалить список"
+        wishListPage.clickDeleteWishlistButton();
 
-        // Шаг 6: сравниваем названия
-        assertEquals(actualTitle, expectedTitle,
-                String.format("Название списка не совпадает. Ожидалось: '%s', Фактически: '%s'",
-                        expectedTitle, actualTitle));
-
-        // Шаг 7: сравниваем описания (опционально)
-        assertEquals(actualDescription, expectedDescription,
-                String.format("Описание списка не совпадает. Ожидалось: '%s', Фактически: '%s'",
-                        expectedDescription, actualDescription));
-
-
+        // ожидаем сообщения об ошибке в root/div
+        String expectedError = "Ошибка: Ошибка при загрузке списка желаний";
+        assertTrue(wishListPage.isErrorMessageDisplayed(expectedError),
+                String.format("Ожидалось сообщение об ошибке '%s', но оно не появилось", expectedError));
     }
 
 }

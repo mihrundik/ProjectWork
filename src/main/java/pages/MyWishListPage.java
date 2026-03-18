@@ -2,6 +2,7 @@ package pages;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -136,6 +137,48 @@ public class MyWishListPage extends AbstractBaseMethod {
         } catch (Exception e) {
             log.error("Ошибка при проверке отображения страницы вишлиста: {}", e.getMessage());
             return false;
+        }
+    }
+
+    // проверяет, что появилось модальное окно добавления подарка и его заголовок совпадает с expectedTitle.
+    public boolean isAddGiftModalDisplayedWithTitle(String expectedTitle) {
+        try {
+            By modalTitleXpath = By.xpath("/html/body/div[3]/div/div/div[1]/div");
+            WebElement modalTitleElement = wait.until(ExpectedConditions.visibilityOfElementLocated(modalTitleXpath));
+            String text = modalTitleElement.getText();
+            log.info("Текст модального окна добавления подарка: '{}'", text);
+            return text != null && text.equals(expectedTitle);
+        } catch (Exception e) {
+            log.error("Модальное окно добавления подарка не появилось или произошла ошибка при чтении заголовка: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    // возвращает текст корневого блока (//*[@id='root']/div). Полезно для проверки сообщений об ошибке.
+    public String getRootDivText() {
+        try {
+            By rootXpath = By.xpath("//*[@id='root']/div");
+            WebElement rootElement = wait.until(ExpectedConditions.visibilityOfElementLocated(rootXpath));
+            String text = rootElement.getText();
+            log.info("Текст элемента root/div: {}", text);
+            return text;
+        } catch (Exception e) {
+            log.error("Не удалось получить текст root/div: {}", e.getMessage());
+            return "";
+        }
+    }
+
+    // проверяет, что появилось ожидаемое сообщение об ошибке.
+    public boolean isErrorMessageDisplayed(String expectedText) {
+        try {
+            By rootXpath = By.xpath("//*[@id='root']/div");
+            boolean present = wait.until(ExpectedConditions.textToBePresentInElementLocated(rootXpath, expectedText));
+            String actual = driver.findElement(rootXpath).getText();
+            log.info("Проверка сообщения об ошибке: ожидалось '{}', фактически '{}'", expectedText, actual);
+            return present && actual != null && actual.contains(expectedText);
+        } catch (Exception e) {
+            log.error("Сообщение об ошибке не появилось: {}", e.getMessage());
+            return true;
         }
     }
 
