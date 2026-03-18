@@ -1,9 +1,11 @@
 package pages;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -12,22 +14,25 @@ import static pages.MyWishlistsPage.DEFAULT_TIMEOUT_SECONDS;
 
 public class AddGiftPage extends AbstractBaseMethod {
 
-    @FindBy(css = "input[name='name'], input.gift-name")
+    @FindBy(css = "input[name=\"gift_name\"]")
     private WebElement giftNameField;
 
-    @FindBy(css = "textarea[name='description'], textarea.gift-description")
+    @FindBy(css = "textarea.gift-description")
     private WebElement giftDescriptionField;
 
-    @FindBy(css = "input[name='price'], input.gift-price")
-    private WebElement giftPriceField;
+    @FindBy(css = "input[placeholder=\"https://example.com/product\"]")
+    private WebElement giftUrlProdact;
 
-    @FindBy(css = "input[name='url'], input.gift-url")
-    private WebElement giftUrlField;
+    @FindBy(css = "input[type=\"number\"]")
+    private WebElement giftPriceProdact;
 
-    @FindBy(css = "button[type='submit'], button.save-gift")
+    @FindBy(css = "input[placeholder=\"https://example.com/image.jpg\"]")
+    private WebElement giftUrlImage;
+
+    @FindBy(css = "button.btn-primary[type=\"submit\"]")
     private WebElement saveButton;
 
-    @FindBy(css = "button.cancel, a.cancel")
+    @FindBy(css = ".btn-close")
     private WebElement cancelButton;
 
     @FindBy(css = ".current-wishlist-name")
@@ -38,6 +43,86 @@ public class AddGiftPage extends AbstractBaseMethod {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
         PageFactory.initElements(driver, this);
+    }
+
+    public WebElement getGiftNameField() { return giftNameField; }
+
+    public WebElement getGiftDescriptionField() { return giftDescriptionField; }
+
+    public WebElement giftUrlProdact() { return giftUrlProdact; }
+
+    public WebElement giftPriceProdact() { return giftPriceProdact; }
+
+    public WebElement giftUrlImage() { return giftUrlImage; }
+
+    public WebElement getSaveButton() { return saveButton; }
+
+    public WebElement getCancelButton() { return cancelButton; }
+
+    public WebElement getCurrentWishlistName() { return currentWishlistName; }
+
+
+    // локаторы для ожиданий (видимость/невидимость)
+    private final By cancelButtonLocator = By.cssSelector("button.cancel, a.cancel");
+    // контейнер модалки (по примеру предыдущих xpath-локаторов модалки)
+    private final By modalRootLocator = By.xpath("/html/body/div[3]");
+
+
+    // ожидание появления модального окна
+    public boolean waitForModalToAppear() {
+        try {
+            wait.until(ExpectedConditions.or(
+                    ExpectedConditions.visibilityOfElementLocated(cancelButtonLocator),
+                    ExpectedConditions.visibilityOf(saveButton),
+                    ExpectedConditions.visibilityOfElementLocated(modalRootLocator)
+            ));
+            log.info("Модальное окно добавления подарка появилось");
+            return true;
+        } catch (Exception e) {
+            log.error("Модальное окно не появилось: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    // клик по крестику
+    public void clickCancelButton() {
+        try {
+            WebElement button = wait.until(ExpectedConditions.elementToBeClickable(cancelButton));
+            button.click();
+            log.info("Нажата кнопка отмены (крестик) в модальном окне добавления подарка");
+        } catch (Exception e) {
+            log.error("Не удалось нажать кнопку отмены в модальном окне: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    // ожидание закрытия модального окна
+    public boolean waitForModalToDisappear() {
+        try {
+            boolean invisible = wait.until(ExpectedConditions.invisibilityOfElementLocated(modalRootLocator));
+            if (invisible) {
+                log.info("Модальное окно закрылось (контейнер невидим)");
+                return true;
+            } else {
+                // доп проверка — убеждаемся, что кнопка отмены тоже невидима
+                boolean cancelInvisible = wait.until(ExpectedConditions.invisibilityOfElementLocated(cancelButtonLocator));
+                log.info("Модальное окно закрыто по проверке cancelButton: {}", cancelInvisible);
+                return cancelInvisible;
+            }
+        } catch (Exception e) {
+            log.error("Модальное окно не закрылось за отведённое время: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    // на всякий случай проверка, что модалка сейчас отображается
+    public boolean isModalDisplayed() {
+        try {
+            // используем тот же локатор контейнера, что и для ожидания закрытия - гарантирует, что мы проверяем именно тот элемент
+            return driver.findElement(modalRootLocator).isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 
