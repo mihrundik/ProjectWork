@@ -14,7 +14,7 @@ import utils.OptionsParser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AddGiftButtonTest extends AbstractBaseTest {
+public class CreateNewGiftTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;
     private MyWishListPage wishListPage;
@@ -64,9 +64,10 @@ public class AddGiftButtonTest extends AbstractBaseTest {
         wishlistsPage.open();
     }
 
+
     @Test
-    @DisplayName("Тест: Проверка полей в окне создания нового подарка")
-    void testToAddGiftPage() {
+    @DisplayName("Тест: Проверка кнопки Добавить в окне создания нового подарка")
+    void testCreateNewGift() {
         // проверяем, что на странице 'Мои списки' есть хотя бы один список
         if (!wishlistsPage.hasWishlists()) {
             wishlistsPage.clickAddNewList();
@@ -88,6 +89,10 @@ public class AddGiftButtonTest extends AbstractBaseTest {
 
         // проверяем, что страница вишлиста загрузилась
         assertTrue(wishListPage.isWishlistPageDisplayed(), "Страница вишлиста не загрузилась");
+
+        // ШАГ 1: Запоминаем изначальное количество подарков в списке
+        int initialGiftCount = wishListPage.getGiftItemsCount();
+        log.info("Изначальное количество подарков в списке: {}", initialGiftCount);
 
         // нажимаем кнопку "Добавить подарок"
         wishListPage.clickAddGiftButton();
@@ -124,24 +129,20 @@ public class AddGiftButtonTest extends AbstractBaseTest {
         addGiftPage.giftUrlImage().clear();
         addGiftPage.giftUrlImage().sendKeys(testImageUrl);
 
-        // проверяем, что поля содержат введённые значения (через attribute "value")
-        assertEquals(testName, addGiftPage.getGiftNameField().getAttribute("value"),
-                "Поле Название подарка не содержит ожидаемого значения");
-        assertEquals(testDescription, addGiftPage.getGiftDescriptionField().getAttribute("value"),
-                "Поле Описание подарка не содержит ожидаемого значения");
-        assertEquals(testProductUrl, addGiftPage.giftUrlProdact().getAttribute("value"),
-                "Поле URL продукта не содержит ожидаемого значения");
-        assertEquals(testPrice, addGiftPage.giftPriceProdact().getAttribute("value"),
-                "Поле Цена не содержит ожидаемого значения");
-        assertEquals(testImageUrl, addGiftPage.giftUrlImage().getAttribute("value"),
-                "Поле URL картинки не содержит ожидаемого значения");
+        // ШАГ 2: Кликаем кнопку "Добавить" (а не крестик)
+        addGiftPage.clickSaveButton();
 
-        // закрываем модалку крестиком
-        addGiftPage.clickCancelButton();
-        assertTrue(addGiftPage.waitForModalToDisappear(), "Модальное окно не закрылось после нажатия крестика");
+        // переинициализируем элементы страницы, так как старый объект может содержать устаревшие данные
+        wishlistsPage = new MyWishlistsPage(driver);
 
         // убедится, что страница вишлиста снова видима
         assertTrue(wishListPage.isWishlistPageDisplayed(), "После закрытия модалки страница вишлиста не отображается");
-    }
 
+        // ШАГ 3: Проверяем, что количество подарков увеличилось на 1
+        int newGiftCount = wishListPage.getGiftItemsCount();
+        log.info("Новое количество подарков в списке: {}", newGiftCount);
+
+        assertEquals(initialGiftCount + 1, newGiftCount,
+                "Количество подарков не увеличилось на 1 после добавления");
+    }
 }

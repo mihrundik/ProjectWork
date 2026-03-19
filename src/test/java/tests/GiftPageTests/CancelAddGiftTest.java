@@ -14,7 +14,7 @@ import utils.OptionsParser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AddGiftButtonTest extends AbstractBaseTest {
+public class CancelAddGiftTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;
     private MyWishListPage wishListPage;
@@ -64,9 +64,11 @@ public class AddGiftButtonTest extends AbstractBaseTest {
         wishlistsPage.open();
     }
 
+
     @Test
-    @DisplayName("Тест: Проверка полей в окне создания нового подарка")
-    void testToAddGiftPage() {
+    @DisplayName("Тест: Проверка отмены в окне создания нового подарка")
+    void testCancelAddGift() {
+
         // проверяем, что на странице 'Мои списки' есть хотя бы один список
         if (!wishlistsPage.hasWishlists()) {
             wishlistsPage.clickAddNewList();
@@ -101,47 +103,15 @@ public class AddGiftButtonTest extends AbstractBaseTest {
         // проверяем, что модальное окно отображается
         assertTrue(addGiftPage.isModalDisplayed(), "Модальное окно не отображено (isModalDisplayed == false)");
 
-        // подготавливаем тестовые данные
-        String testName = "Test Gift " + System.currentTimeMillis();
-        String testDescription = "Описание тестового подарка для автотеста";
-        String testProductUrl = "https://flowwow.com/bakery-products/tort-na-den-rozhdeniya-pr-2603/";
-        String testPrice = "4300";
-        String testImageUrl = "https://content2.flowwow-images.com/data/flowers/1000x1000/35/1730898908_64456035.jpg";
-
-        // заполняем поля (очищаем перед вводом на всякий случай)
-        addGiftPage.getGiftNameField().clear();
-        addGiftPage.getGiftNameField().sendKeys(testName);
-
-        addGiftPage.getGiftDescriptionField().clear();
-        addGiftPage.getGiftDescriptionField().sendKeys(testDescription);
-
-        addGiftPage.giftUrlProdact().clear();
-        addGiftPage.giftUrlProdact().sendKeys(testProductUrl);
-
-        addGiftPage.giftPriceProdact().clear();
-        addGiftPage.giftPriceProdact().sendKeys(testPrice);
-
-        addGiftPage.giftUrlImage().clear();
-        addGiftPage.giftUrlImage().sendKeys(testImageUrl);
-
-        // проверяем, что поля содержат введённые значения (через attribute "value")
-        assertEquals(testName, addGiftPage.getGiftNameField().getAttribute("value"),
-                "Поле Название подарка не содержит ожидаемого значения");
-        assertEquals(testDescription, addGiftPage.getGiftDescriptionField().getAttribute("value"),
-                "Поле Описание подарка не содержит ожидаемого значения");
-        assertEquals(testProductUrl, addGiftPage.giftUrlProdact().getAttribute("value"),
-                "Поле URL продукта не содержит ожидаемого значения");
-        assertEquals(testPrice, addGiftPage.giftPriceProdact().getAttribute("value"),
-                "Поле Цена не содержит ожидаемого значения");
-        assertEquals(testImageUrl, addGiftPage.giftUrlImage().getAttribute("value"),
-                "Поле URL картинки не содержит ожидаемого значения");
-
-        // закрываем модалку крестиком
+        // нажимаем крестик - отмену
         addGiftPage.clickCancelButton();
-        assertTrue(addGiftPage.waitForModalToDisappear(), "Модальное окно не закрылось после нажатия крестика");
 
-        // убедится, что страница вишлиста снова видима
-        assertTrue(wishListPage.isWishlistPageDisplayed(), "После закрытия модалки страница вишлиста не отображается");
+        // ждём закрытия модального окна
+        assertTrue(addGiftPage.waitForModalToDisappear(), "Модальное окно не закрылось после нажатия Cancel");
+
+        // проверяем, что мы снова видим страницу вишлиста - заголовок и описание
+        assertTrue(wishListPage.isWishlistPageDisplayed(), "После закрытия модального окна страница вишлиста не отображается");
+
     }
 
 }

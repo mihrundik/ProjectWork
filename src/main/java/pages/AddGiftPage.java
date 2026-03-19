@@ -14,10 +14,10 @@ import static pages.MyWishlistsPage.DEFAULT_TIMEOUT_SECONDS;
 
 public class AddGiftPage extends AbstractBaseMethod {
 
-    @FindBy(css = "input[name=\"gift_name\"]")
+    @FindBy(css = "input[type=\"text\"][required]")
     private WebElement giftNameField;
 
-    @FindBy(css = "textarea.gift-description")
+    @FindBy(css = "textarea[required]")
     private WebElement giftDescriptionField;
 
     @FindBy(css = "input[placeholder=\"https://example.com/product\"]")
@@ -35,8 +35,6 @@ public class AddGiftPage extends AbstractBaseMethod {
     @FindBy(css = ".btn-close")
     private WebElement cancelButton;
 
-    @FindBy(css = ".current-wishlist-name")
-    private WebElement currentWishlistName;
 
 
     public AddGiftPage(WebDriver driver) {
@@ -58,8 +56,6 @@ public class AddGiftPage extends AbstractBaseMethod {
     public WebElement getSaveButton() { return saveButton; }
 
     public WebElement getCancelButton() { return cancelButton; }
-
-    public WebElement getCurrentWishlistName() { return currentWishlistName; }
 
 
     // локаторы для ожиданий (видимость/невидимость)
@@ -123,6 +119,13 @@ public class AddGiftPage extends AbstractBaseMethod {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    // клик на кнопку Добавить
+    public void clickSaveButton() {
+        WebElement saveButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[type='submit']")));
+        saveButton.click();
+        log.info("Нажата кнопка 'Добавить' в модальном окне");
     }
 
 

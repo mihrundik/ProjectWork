@@ -43,11 +43,31 @@ public class MyWishListPage extends AbstractBaseMethod {
     // количество подарков в списке
     public int getGiftItemsCount() {
         try {
-            int count = giftItems.size();
-            log.info("Количество подарков в списке: {}", count);
-            return count;
+            // bщем кнопки "Зарезервировать" и "Снять резерв" — суммируем
+            List<WebElement> reserveButtons = driver.findElements(
+                    By.xpath("//button[normalize-space()='Зарезервировать' and contains(@class,'btn')]"));
+            List<WebElement> unreserveButtons = driver.findElements(
+                    By.xpath("//button[normalize-space()='Снять резерв' and contains(@class,'btn')]"));
+
+            int reserveCount = reserveButtons.size();
+            int unreserveCount = unreserveButtons.size();
+            int totalByButtons = reserveCount + unreserveCount;
+
+            log.info("Найдено кнопок 'Зарезервировать': {}, 'Снять резерв': {}. Сумма = {}",
+                    reserveCount, unreserveCount, totalByButtons);
+
+            if (totalByButtons > 0) {
+                log.info("Количество подарков (по кнопкам): {}", totalByButtons);
+                return totalByButtons;
+            }
+
+            // если не нашли ни одной кнопки — используем запасной вариант: старый селектор giftItems
+            int fallbackCount = giftItems != null ? giftItems.size() : 0;
+            log.info("Кнопки не найдены. Используем fallback подсчёт по giftItems: {}", fallbackCount);
+            return fallbackCount;
         } catch (Exception e) {
             log.error("Ошибка при получении количества подарков: {}", e.getMessage());
+            // на всякий случай вернуть 0
             return 0;
         }
     }
@@ -180,6 +200,12 @@ public class MyWishListPage extends AbstractBaseMethod {
             log.error("Сообщение об ошибке не появилось: {}", e.getMessage());
             return true;
         }
+    }
+
+    // подсчет подарков
+    public int getGiftCount() {
+        List<WebElement> gifts = driver.findElements(By.cssSelector(".gift-item"));
+        return gifts.size();
     }
 
 }

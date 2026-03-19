@@ -3,7 +3,7 @@
     <!--    куда записываем логи и с какими аттрибутами-->
     <Appenders>
         <!--        вывод в файл-->
-        <File name="File" fileName="./logs/firstTest.log">
+        <File name="File" fileName="./logs/logTests.log">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </File>
         <!--        вывод в консоль-->
