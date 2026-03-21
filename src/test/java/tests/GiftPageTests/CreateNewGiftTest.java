@@ -12,7 +12,7 @@ import pages.MyWishlistsPage;
 import pages.MyWishListPage;
 import pages.AddGiftPage;
 import tests.AbstractBaseTest;
-import utils.OptionsParser;
+import factory.sattings.OptionsParser;
 
 import java.time.Duration;
 

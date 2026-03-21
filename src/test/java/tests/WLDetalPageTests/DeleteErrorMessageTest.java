@@ -11,7 +11,7 @@ import org.openqa.selenium.safari.SafariOptions;
 import pages.MyWishListPage;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
-import utils.OptionsParser;
+import factory.sattings.OptionsParser;
 
 
 import static org.junit.jupiter.api.Assertions.assertTrue;

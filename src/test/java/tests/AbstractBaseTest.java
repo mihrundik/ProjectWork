@@ -1,5 +1,6 @@
 package tests;
 
+import config.EnvConfig;
 import org.junit.jupiter.api.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,7 +11,7 @@ import org.openqa.selenium.remote.AbstractDriverOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.*;
-import utils.WebDriverFactory;
+import factory.WebDriverFactory;
 
 import java.time.Duration;
 
@@ -19,11 +20,11 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
 
     protected WebDriver driver;
     protected static final Logger log = LogManager.getLogger(AbstractBaseTest.class);
-    private final String URL = "https://wishlist.otus.kartushin.su/wishlists";
+    private final String URL = EnvConfig.getUrl();
 
     // данные для авторизации (потом будет через system properties)
-    private static final String LOGIN = System.getProperty("wishlist.login", "ИмяЛюбимоеМое2");
-    private static final String PASSWORD = System.getProperty("wishlist.password", "qwerty123");
+    private static final String LOGIN = EnvConfig.getLogin();
+    private static final String PASSWORD = EnvConfig.getPassword();
 
     // страницы, которые могут понадобиться в тестах
     protected HeaderElPage headerElPage;
@@ -56,10 +57,10 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         loginPage = new LoginPage(driver);
 
         // явная авторизация
-        driver.get("https://wishlist.otus.kartushin.su/login");
+        driver.get(URL);
         loginPage.login(LOGIN, PASSWORD);
 
-        new WebDriverWait(driver, Duration.ofSeconds(10))
+        new WebDriverWait(driver, Duration.ofSeconds(5))
                 .until(ExpectedConditions.urlContains("/wishlists"));
 
         log.info("Авторизация выполнена успешно. Тест готов к запуску.");
@@ -86,7 +87,7 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
 
             String currentUrl = driver.getCurrentUrl();
 
-            // Если уже на странице списков - авторизация не нужна
+            // если уже на странице списков - авторизация не нужна
             if (currentUrl.contains("/wishlists")) {
                 log.info("Уже на странице списков желаний, авторизация не требуется");
                 return;

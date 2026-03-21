@@ -10,7 +10,7 @@ import pages.MyWishlistsPage;
 import pages.MyWishListPage;
 import pages.AddGiftPage;
 import tests.AbstractBaseTest;
-import utils.OptionsParser;
+import factory.sattings.OptionsParser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
