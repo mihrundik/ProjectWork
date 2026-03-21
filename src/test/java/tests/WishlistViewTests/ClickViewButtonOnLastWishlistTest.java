@@ -62,6 +62,7 @@ public class ClickViewButtonOnLastWishlistTest extends AbstractBaseTest {
     @Test
     @DisplayName("Тест: Клик по кнопке 'Просмотр' последнего списка")
     void testClickViewButtonOnLastWishlist() {
+        // убеждаемся, что есть хотя бы один список
         Assumptions.assumeTrue(myWishlistsPage.hasWishlists(),
                 "Тест пропущен: нет списков желаний");
 

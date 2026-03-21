@@ -68,7 +68,7 @@ public class AddGiftPage extends AbstractBaseMethod {
     public boolean waitForModalToAppear() {
         try {
             wait.until(ExpectedConditions.or(
-                    ExpectedConditions.visibilityOfElementLocated(cancelButtonLocator),
+                    ExpectedConditions.visibilityOf(cancelButton),
                     ExpectedConditions.visibilityOf(saveButton),
                     ExpectedConditions.visibilityOfElementLocated(modalRootLocator)
             ));
@@ -101,7 +101,7 @@ public class AddGiftPage extends AbstractBaseMethod {
                 return true;
             } else {
                 // доп проверка — убеждаемся, что кнопка отмены тоже невидима
-                boolean cancelInvisible = wait.until(ExpectedConditions.invisibilityOfElementLocated(cancelButtonLocator));
+                boolean cancelInvisible = wait.until(ExpectedConditions.invisibilityOfElementLocated((By) cancelButton));
                 log.info("Модальное окно закрыто по проверке cancelButton: {}", cancelInvisible);
                 return cancelInvisible;
             }
@@ -128,5 +128,8 @@ public class AddGiftPage extends AbstractBaseMethod {
         log.info("Нажата кнопка 'Добавить' в модальном окне");
     }
 
-
+    public void refreshPageElements() {
+        PageFactory.initElements(driver, this);
+        log.info("Элементы страницы переинициализированы!");
+    }
 }

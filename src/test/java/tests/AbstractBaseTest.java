@@ -4,10 +4,15 @@ import org.junit.jupiter.api.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.AbstractDriverOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.*;
 import utils.WebDriverFactory;
+
+import java.time.Duration;
 
 
 public abstract class AbstractBaseTest extends AbstractBaseMethod {
@@ -41,11 +46,23 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         driverStart(testInfo);
         this.driver = getCurrentDriver();
 
-        headerElPage = new HeaderElPage(driver);
-        loginPage = new LoginPage(driver);
-        page = new PageFactory(driver);
+        // очистка состояния для изоляции тестов
+        driver.manage().deleteAllCookies();
+        ((JavascriptExecutor) driver).executeScript("window.localStorage.clear(); window.sessionStorage.clear();");
 
-        performLogin();
+        // Инициализация page/страниц
+        page = new PageFactory(driver);
+        headerElPage = page.header;
+        loginPage = new LoginPage(driver);
+
+        // явная авторизация
+        driver.get("https://wishlist.otus.kartushin.su/login");
+        loginPage.login(LOGIN, PASSWORD);
+
+        new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.urlContains("/wishlists"));
+
+        log.info("Авторизация выполнена успешно. Тест готов к запуску.");
     }
 
     @AfterEach
@@ -75,18 +92,19 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
                 return;
             }
 
-            // Переходим на страницу логина через хедер
+            // переходим на страницу логина через хедер
             log.info("Переходим на страницу авторизации");
             headerElPage.goToMyLists();
 
-            // Проверяем, что мы на странице логина
+            // проверяем, что мы на странице логина
             if (loginPage.isLoginPageDisplayed()) {
                 // Выполняем вход
                 log.info("Выполняем вход в систему с логином: {}", LOGIN);
                 loginPage.login(LOGIN, PASSWORD);
 
-                // Небольшая задержка для завершения авторизации
-                Thread.sleep(1000);
+                // небольшая задержка для завершения авторизации
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+                boolean redirected = wait.until(ExpectedConditions.urlContains("/wishlists"));
 
                 log.info("Вход выполнен успешно");
             } else {
@@ -101,7 +119,7 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
     }
 
     public void driverStart(TestInfo testInfo) {
-        String browserName = System.getProperty("browser", "firefox");
+        String browserName = System.getProperty("browser", "chrome");
 
         // проверяем опции в командной строке
         String optionsFromCmd = null;
@@ -140,7 +158,6 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         newDriver.get(URL);
         page = new PageFactory(newDriver);
     }
-
 
     protected abstract Capabilities getOptions(String browserName);
 }

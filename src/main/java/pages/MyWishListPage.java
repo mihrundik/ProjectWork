@@ -31,7 +31,7 @@ public class MyWishListPage extends AbstractBaseMethod {
     @FindBy(xpath = "//*[@id='root']/div/button[2]")
     private WebElement deleteWishlistButton;
 
-    @FindBy(xpath = "//*[@id='root']/div/div")
+    @FindBy(css = "div.card-title.h5")
     private List<WebElement> giftItems;
 
     public MyWishListPage(WebDriver driver) {
@@ -40,10 +40,14 @@ public class MyWishListPage extends AbstractBaseMethod {
         PageFactory.initElements(driver, this);
     }
 
+    public WebElement getAddGiftButton() {
+        return addGiftButton;
+    }
+
     // количество подарков в списке
     public int getGiftItemsCount() {
         try {
-            // bщем кнопки "Зарезервировать" и "Снять резерв" — суммируем
+            // ищем кнопки "Зарезервировать" и "Снять резерв" — суммируем
             List<WebElement> reserveButtons = driver.findElements(
                     By.xpath("//button[normalize-space()='Зарезервировать' and contains(@class,'btn')]"));
             List<WebElement> unreserveButtons = driver.findElements(
@@ -206,6 +210,12 @@ public class MyWishListPage extends AbstractBaseMethod {
     public int getGiftCount() {
         List<WebElement> gifts = driver.findElements(By.cssSelector(".gift-item"));
         return gifts.size();
+    }
+
+    // метод переинициализации элементов
+    public void refreshPageElements() {
+        org.openqa.selenium.support.PageFactory.initElements(driver, this);
+        log.info("Элементы страницы переинициализированы!");
     }
 
 }

@@ -6,11 +6,15 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.safari.SafariOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.MyWishlistsPage;
 import pages.MyWishListPage;
 import pages.AddGiftPage;
 import tests.AbstractBaseTest;
 import utils.OptionsParser;
+
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -85,6 +89,8 @@ public class CreateNewGiftTest extends AbstractBaseTest {
 
         // открываем последний список
         wishlistsPage.clickViewButtonOnLastWishlist();
+
+        // создаем объект вишлиста
         wishListPage = new MyWishListPage(driver);
 
         // проверяем, что страница вишлиста загрузилась
@@ -97,7 +103,10 @@ public class CreateNewGiftTest extends AbstractBaseTest {
         // нажимаем кнопку "Добавить подарок"
         wishListPage.clickAddGiftButton();
 
-        // инициализируем объект страницы модалки
+        // переинициализируем объект страницы
+        wishListPage.refreshPageElements();
+
+        // инициализируем модалку
         AddGiftPage addGiftPage = new AddGiftPage(driver);
 
         // ждём появления модального окна
@@ -133,7 +142,11 @@ public class CreateNewGiftTest extends AbstractBaseTest {
         addGiftPage.clickSaveButton();
 
         // переинициализируем элементы страницы, так как старый объект может содержать устаревшие данные
-        wishlistsPage = new MyWishlistsPage(driver);
+        wishListPage.refreshPageElements();
+
+        // явное ожидание загрузки страницы чрез появление кнопки
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.elementToBeClickable(wishListPage.getAddGiftButton()));
 
         // убедится, что страница вишлиста снова видима
         assertTrue(wishListPage.isWishlistPageDisplayed(), "После закрытия модалки страница вишлиста не отображается");
