@@ -1,17 +1,21 @@
 package tests;
 
 import config.EnvConfig;
+import factory.sattings.OptionsParser;
 import org.junit.jupiter.api.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.AbstractDriverOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.safari.SafariOptions;
 import pages.*;
 import factory.WebDriverFactory;
+import utils.WaitUtils;
 
 import java.time.Duration;
 
@@ -29,6 +33,7 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
     // страницы, которые могут понадобиться в тестах
     protected HeaderElPage headerElPage;
     protected LoginPage loginPage;
+
 
     @BeforeAll
     public static void startTests() {
@@ -60,8 +65,10 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         driver.get(URL);
         loginPage.login(LOGIN, PASSWORD);
 
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.urlContains("/wishlists"));
+        boolean isRedirected = WaitUtils.waitForCondition(driver,
+                webDriver -> webDriver.getCurrentUrl().contains("/wishlists"),
+                Duration.ofSeconds(5)
+        );
 
         log.info("Авторизация выполнена успешно. Тест готов к запуску.");
     }
@@ -104,8 +111,10 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
                 loginPage.login(LOGIN, PASSWORD);
 
                 // небольшая задержка для завершения авторизации
-                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-                boolean redirected = wait.until(ExpectedConditions.urlContains("/wishlists"));
+                boolean isRedirected = WaitUtils.waitForCondition(driver,
+                        webDriver -> webDriver.getCurrentUrl().contains("/wishlists"),
+                        Duration.ofSeconds(5)
+                );
 
                 log.info("Вход выполнен успешно");
             } else {
@@ -119,9 +128,8 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         }
     }
 
-    public void driverStart(TestInfo testInfo) {
-        String browserName = System.getProperty("browser", "chrome");
 
+    protected Capabilities getBrowserOptions(String browserName) {
         // проверяем опции в командной строке
         String optionsFromCmd = null;
         switch (browserName.toLowerCase()) {
@@ -139,13 +147,34 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
                 break;
         }
 
-        // получаем опции из метода, который может быть переопределен в дочернем классе
-        Capabilities options = getOptions(browserName);
-
-        // если есть опции из командной строки - создаем новые опции
+        // если есть опции из командной строки - парсим их
         if (optionsFromCmd != null && !optionsFromCmd.isEmpty()) {
-            options = createOptionsFromString(browserName, optionsFromCmd);
+            return OptionsParser.parse(browserName, optionsFromCmd);
         }
+
+        // или используем стандартные опции
+        switch (browserName.toLowerCase()) {
+            case "chrome":
+                return new ChromeOptions();
+            case "firefox":
+                return new FirefoxOptions();
+            case "safari":
+                return new SafariOptions();
+            case "edge":
+                return new EdgeOptions();
+            default:
+                throw new IllegalArgumentException("Неподдерживаемый браузер: " + browserName);
+        }
+    }
+
+    // оставляем абстрактный метод для возможности переопределения
+    protected abstract Capabilities getOptions(String browserName);
+
+    public void driverStart(TestInfo testInfo) {
+        String browserName = System.getProperty("browser", "chrome");
+
+        // получаем опции из метода, который может быть переопределен в дочернем классе
+        Capabilities options = getBrowserOptions(browserName);
 
         log.info("Запуск теста: {} в браузере {}:\n{}",
                 testInfo.getDisplayName(), browserName, options);
@@ -160,5 +189,4 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         page = new PageFactory(newDriver);
     }
 
-    protected abstract Capabilities getOptions(String browserName);
 }

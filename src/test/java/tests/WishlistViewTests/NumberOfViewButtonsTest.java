@@ -6,15 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.safari.SafariOptions;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
-import factory.sattings.OptionsParser;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -24,41 +20,7 @@ public class NumberOfViewButtonsTest extends AbstractBaseTest {
 
     @Override
     protected Capabilities getOptions(String browserName) {
-        // проверяем опции в командной строке
-        String optionsFromCmd = null;
-        switch (browserName.toLowerCase()) {
-            case "chrome":
-                optionsFromCmd = System.getProperty("chromeOptions");
-                break;
-            case "firefox":
-                optionsFromCmd = System.getProperty("firefoxOptions");
-                break;
-            case "safari":
-                optionsFromCmd = System.getProperty("safariOptions");
-                break;
-            case "edge":
-                optionsFromCmd = System.getProperty("edgeOptions");
-                break;
-        }
-
-        // если есть - парсим их
-        if (optionsFromCmd != null && !optionsFromCmd.isEmpty()) {
-            return OptionsParser.parse(browserName, optionsFromCmd);
-        }
-
-        // или используем стандартные опции
-        switch (browserName.toLowerCase()) {
-            case "chrome":
-                return new ChromeOptions();
-            case "firefox":
-                return new FirefoxOptions();
-            case "safari":
-                return new SafariOptions();
-            case "edge":
-                return new EdgeOptions();
-            default:
-                throw new IllegalArgumentException("Неподдерживаемый браузер: " + browserName);
-        }
+        return getBrowserOptions(browserName);
     }
 
     @BeforeEach
@@ -73,7 +35,7 @@ public class NumberOfViewButtonsTest extends AbstractBaseTest {
     @Test
     @DisplayName("Тест: Проверка количества кнопок 'Просмотр'")
     void testNumberOfViewButtons() {
-        // Проверяем, что страница инициализирована
+        // проверяем, что страница инициализирована
         if (myWishlistsPage == null) {
             throw new IllegalStateException("myWishlistsPage не инициализирована. Проверьте @BeforeEach метод.");
         }
@@ -81,15 +43,28 @@ public class NumberOfViewButtonsTest extends AbstractBaseTest {
         int wishlistCount = myWishlistsPage.getWishlistCount();
         log.info("getWishlistCount() вернул: {}", wishlistCount);
 
-        // Считаем реальные кнопки "Просмотр"
-        List<WebElement> viewButtons = driver.findElements(
+        // находим все кнопки "Просмотр"
+        List<WebElement> allViewButtons = driver.findElements(
                 By.xpath("//button[contains(text(), 'Просмотр')]")
         );
-        int actualViewButtonsCount = viewButtons.size();
-        log.info("Реальных кнопок 'Просмотр' на странице: {}", actualViewButtonsCount);
 
-        // Теперь они должны совпадать
-        assertEquals(actualViewButtonsCount, wishlistCount,
-                "Количество вишлистов должно равняться количеству кнопок 'Просмотр'");
+        // фильтруем только видимые и enabled кнопки
+        List<WebElement> visibleButtons = allViewButtons.stream()
+                .filter(WebElement::isDisplayed)
+                .filter(WebElement::isEnabled)
+                .collect(Collectors.toList());
+
+        // ищем уникальные кнопки по их местоположению
+        List<WebElement> uniqueButtons = visibleButtons.stream()
+                .distinct()
+                .collect(Collectors.toList());
+
+        int actualViewButtonsCount = uniqueButtons.size();
+        log.info("Реальных уникальных видимых кнопок 'Просмотр' на странице: {}", actualViewButtonsCount);
+
+        assertEquals(wishlistCount, actualViewButtonsCount,
+                String.format("Количество вишлистов (%d) должно равняться количеству уникальных кнопок 'Просмотр' (%d)",
+                        wishlistCount, actualViewButtonsCount));
     }
+
 }

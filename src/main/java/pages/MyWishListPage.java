@@ -7,13 +7,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.WaitUtils;
 
-import java.time.Duration;
 import java.util.List;
 
-import static pages.MyWishlistsPage.DEFAULT_TIMEOUT_SECONDS;
 
 public class MyWishListPage extends AbstractBaseMethod {
 
@@ -36,7 +33,6 @@ public class MyWishListPage extends AbstractBaseMethod {
 
     public MyWishListPage(WebDriver driver) {
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
         PageFactory.initElements(driver, this);
     }
 
@@ -84,8 +80,7 @@ public class MyWishListPage extends AbstractBaseMethod {
     // добавить
     public MyWishListPage clickAddGiftButton() {
         try {
-            WebElement button = wait.until(ExpectedConditions.elementToBeClickable(addGiftButton));
-            button.click();
+            WaitUtils.waitForClickable(driver, addGiftButton).click();
             log.info("Клик по кнопке 'Добавить подарок' выполнен");
             return this;
         } catch (Exception e) {
@@ -97,8 +92,7 @@ public class MyWishListPage extends AbstractBaseMethod {
     // удаление
     public void clickDeleteWishlistButton() {
         try {
-            WebElement button = wait.until(ExpectedConditions.elementToBeClickable(deleteWishlistButton));
-            button.click();
+            WaitUtils.waitForClickable(driver, deleteWishlistButton).click();
             log.info("Клик по кнопке 'Удалить список' выполнен");
         } catch (Exception e) {
             log.error("Ошибка при клике по кнопке 'Удалить список': {}", e.getMessage());
@@ -109,7 +103,7 @@ public class MyWishListPage extends AbstractBaseMethod {
     // заголовок вишлиста
     public String getWishlistTitle() {
         try {
-            WebElement element = wait.until(ExpectedConditions.visibilityOf(wishlistTitle));
+            WebElement element = WaitUtils.waitForVisibility(driver, wishlistTitle);
             String title = element.getText();
             log.info("Получено название вишлиста: {}", title);
             return title;
@@ -131,7 +125,7 @@ public class MyWishListPage extends AbstractBaseMethod {
     // описание вишлиста
     public String getWishlistDescription() {
         try {
-            WebElement element = wait.until(ExpectedConditions.visibilityOf(wishlistDescription));
+            WebElement element = WaitUtils.waitForVisibility(driver, wishlistDescription);
             String description = element.getText();
             log.info("Получено описание вишлиста: {}", description);
             return description;
@@ -154,8 +148,8 @@ public class MyWishListPage extends AbstractBaseMethod {
     public boolean isWishlistPageDisplayed() {
         try {
             boolean isDisplayed =
-                    wait.until(ExpectedConditions.visibilityOf(wishlistTitle)) != null &&
-                            wait.until(ExpectedConditions.visibilityOf(wishlistDescription)) != null;
+                    WaitUtils.waitForVisibility(driver, wishlistTitle) != null &&
+                            WaitUtils.waitForVisibility(driver, wishlistDescription) != null;
             log.info("Проверка отображения страницы вишлиста: {}", isDisplayed);
             return isDisplayed;
         } catch (Exception e) {
@@ -168,7 +162,7 @@ public class MyWishListPage extends AbstractBaseMethod {
     public boolean isAddGiftModalDisplayedWithTitle(String expectedTitle) {
         try {
             By modalTitleXpath = By.xpath("/html/body/div[3]/div/div/div[1]/div");
-            WebElement modalTitleElement = wait.until(ExpectedConditions.visibilityOfElementLocated(modalTitleXpath));
+            WebElement modalTitleElement = WaitUtils.waitForVisibility(driver, modalTitleXpath);
             String text = modalTitleElement.getText();
             log.info("Текст модального окна добавления подарка: '{}'", text);
             return text != null && text.equals(expectedTitle);
@@ -182,7 +176,7 @@ public class MyWishListPage extends AbstractBaseMethod {
     public String getRootDivText() {
         try {
             By rootXpath = By.xpath("//*[@id='root']/div");
-            WebElement rootElement = wait.until(ExpectedConditions.visibilityOfElementLocated(rootXpath));
+            WebElement rootElement = WaitUtils.waitForVisibility(driver, rootXpath);
             String text = rootElement.getText();
             log.info("Текст элемента root/div: {}", text);
             return text;
@@ -196,7 +190,7 @@ public class MyWishListPage extends AbstractBaseMethod {
     public boolean isErrorMessageDisplayed(String expectedText) {
         try {
             By rootXpath = By.xpath("//*[@id='root']/div");
-            boolean present = wait.until(ExpectedConditions.textToBePresentInElementLocated(rootXpath, expectedText));
+            boolean present = WaitUtils.waitForTextPresent(driver, rootXpath, expectedText);
             String actual = driver.findElement(rootXpath).getText();
             log.info("Проверка сообщения об ошибке: ожидалось '{}', фактически '{}'", expectedText, actual);
             return present && actual != null && actual.contains(expectedText);

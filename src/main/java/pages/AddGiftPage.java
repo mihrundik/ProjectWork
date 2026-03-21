@@ -5,12 +5,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.WaitUtils;
 
 import java.time.Duration;
 
-import static pages.MyWishlistsPage.DEFAULT_TIMEOUT_SECONDS;
 
 public class AddGiftPage extends AbstractBaseMethod {
 
@@ -36,26 +34,38 @@ public class AddGiftPage extends AbstractBaseMethod {
     private WebElement cancelButton;
 
 
-
     public AddGiftPage(WebDriver driver) {
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
         PageFactory.initElements(driver, this);
     }
 
-    public WebElement getGiftNameField() { return giftNameField; }
+    public WebElement getGiftNameField() {
+        return giftNameField;
+    }
 
-    public WebElement getGiftDescriptionField() { return giftDescriptionField; }
+    public WebElement getGiftDescriptionField() {
+        return giftDescriptionField;
+    }
 
-    public WebElement giftUrlProdact() { return giftUrlProdact; }
+    public WebElement giftUrlProdact() {
+        return giftUrlProdact;
+    }
 
-    public WebElement giftPriceProdact() { return giftPriceProdact; }
+    public WebElement giftPriceProdact() {
+        return giftPriceProdact;
+    }
 
-    public WebElement giftUrlImage() { return giftUrlImage; }
+    public WebElement giftUrlImage() {
+        return giftUrlImage;
+    }
 
-    public WebElement getSaveButton() { return saveButton; }
+    public WebElement getSaveButton() {
+        return saveButton;
+    }
 
-    public WebElement getCancelButton() { return cancelButton; }
+    public WebElement getCancelButton() {
+        return cancelButton;
+    }
 
 
     // локаторы для ожиданий (видимость/невидимость)
@@ -67,11 +77,10 @@ public class AddGiftPage extends AbstractBaseMethod {
     // ожидание появления модального окна
     public boolean waitForModalToAppear() {
         try {
-            wait.until(ExpectedConditions.or(
-                    ExpectedConditions.visibilityOf(cancelButton),
-                    ExpectedConditions.visibilityOf(saveButton),
-                    ExpectedConditions.visibilityOfElementLocated(modalRootLocator)
-            ));
+            WaitUtils.waitForCondition(driver, (WebDriver d) -> {
+                return (cancelButton.isDisplayed() || saveButton.isDisplayed() ||
+                        d.findElement(modalRootLocator).isDisplayed());
+            }, Duration.ofSeconds(5));
             log.info("Модальное окно добавления подарка появилось");
             return true;
         } catch (Exception e) {
@@ -83,8 +92,7 @@ public class AddGiftPage extends AbstractBaseMethod {
     // клик по крестику
     public void clickCancelButton() {
         try {
-            WebElement button = wait.until(ExpectedConditions.elementToBeClickable(cancelButton));
-            button.click();
+            WaitUtils.waitForClickable(driver, cancelButton).click();
             log.info("Нажата кнопка отмены (крестик) в модальном окне добавления подарка");
         } catch (Exception e) {
             log.error("Не удалось нажать кнопку отмены в модальном окне: {}", e.getMessage());
@@ -95,13 +103,12 @@ public class AddGiftPage extends AbstractBaseMethod {
     // ожидание закрытия модального окна
     public boolean waitForModalToDisappear() {
         try {
-            boolean invisible = wait.until(ExpectedConditions.invisibilityOfElementLocated(modalRootLocator));
+            boolean invisible = WaitUtils.waitForInvisibility(driver, modalRootLocator);
             if (invisible) {
                 log.info("Модальное окно закрылось (контейнер невидим)");
                 return true;
             } else {
-                // доп проверка — убеждаемся, что кнопка отмены тоже невидима
-                boolean cancelInvisible = wait.until(ExpectedConditions.invisibilityOfElementLocated((By) cancelButton));
+                boolean cancelInvisible = WaitUtils.waitForInvisibility(driver, cancelButton);
                 log.info("Модальное окно закрыто по проверке cancelButton: {}", cancelInvisible);
                 return cancelInvisible;
             }
@@ -114,7 +121,6 @@ public class AddGiftPage extends AbstractBaseMethod {
     // на всякий случай проверка, что модалка сейчас отображается
     public boolean isModalDisplayed() {
         try {
-            // используем тот же локатор контейнера, что и для ожидания закрытия - гарантирует, что мы проверяем именно тот элемент
             return driver.findElement(modalRootLocator).isDisplayed();
         } catch (Exception e) {
             return false;
@@ -123,7 +129,7 @@ public class AddGiftPage extends AbstractBaseMethod {
 
     // клик на кнопку Добавить
     public void clickSaveButton() {
-        WebElement saveButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[type='submit']")));
+        WebElement saveButton = WaitUtils.waitForClickable(driver, By.cssSelector("button[type='submit']"));
         saveButton.click();
         log.info("Нажата кнопка 'Добавить' в модальном окне");
     }

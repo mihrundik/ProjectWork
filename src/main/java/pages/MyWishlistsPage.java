@@ -1,5 +1,6 @@
 package pages;
 
+import config.EnvConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
@@ -7,6 +8,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.WaitUtils;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -19,10 +21,8 @@ public class MyWishlistsPage {
     public Logger log = LogManager.getLogger(MyWishlistsPage.class);
 
     public final WebDriver driver;
-    public final WebDriverWait wait;
 
-    public static final int DEFAULT_TIMEOUT_SECONDS = 10;
-    public static final String PAGE_URL = "https://wishlist.otus.kartushin.su";
+    public static final String PAGE_URL = EnvConfig.getUrl();
 
     @FindBy(xpath = "//*[@id=\"root\"]/div/div[1]/h2")
     private WebElement pageTitle;
@@ -51,9 +51,7 @@ public class MyWishlistsPage {
 
     public MyWishlistsPage(WebDriver driver) {
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
         PageFactory.initElements(driver, this);
-
     }
 
     public void open() {
@@ -62,19 +60,19 @@ public class MyWishlistsPage {
     }
 
     public void waitForPageToLoad() {
-        wait.until(ExpectedConditions.visibilityOf(pageTitle));
+        WaitUtils.waitForVisibility(driver, pageTitle);
         log.info("Страница Мои списки загружена");
     }
 
     public void clickAddNewList() {
-        wait.until(ExpectedConditions.elementToBeClickable(addNewListButton)).click();
-        log.info("Клик по кнопке 'Добавить список");
+        WaitUtils.waitForClickable(driver, addNewListButton).click();
+        log.info("Клик по кнопке 'Добавить список'");
     }
 
 
     public List<WebElement> getWishlistCards() {
         try {
-            wait.until(ExpectedConditions.visibilityOf(wishlistContainer));
+            WaitUtils.waitForVisibility(driver, wishlistContainer);
 
             // находим все карточки с классом 'card'
             List<WebElement> allCards = wishlistContainer.findElements(By.xpath(".//div[contains(@class, 'card')]"));
@@ -189,13 +187,13 @@ public class MyWishlistsPage {
 
     // методы работы с формой создания вишлиста
     public void waitForCreateFormToAppear() {
-        wait.until(ExpectedConditions.visibilityOf(nameNewWL));
+        WaitUtils.waitForVisibility(driver, nameNewWL);
         log.info("Форма создания вишлиста появилась");
     }
 
     // закрытие формы создания нового вишлиста
     public void waitForCreateFormToDisappear() {
-        wait.until(ExpectedConditions.invisibilityOf(nameNewWL));
+        WaitUtils.waitForInvisibility(driver, nameNewWL);
         log.info("Форма создания вишлиста закрылась");
     }
 
@@ -213,17 +211,17 @@ public class MyWishlistsPage {
     }
 
     public void clickCancelButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(cancelButton)).click();
+        WaitUtils.waitForClickable(driver, cancelButton).click();
         log.info("Клик по кнопке 'Отмена'");
     }
 
     public void clickCloseButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(closeButton)).click();
+        WaitUtils.waitForClickable(driver, closeButton).click();
         log.info("Клик по кнопке закрытия (крестик)");
     }
 
     public void clickSubmitButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(submitButton)).click();
+        WaitUtils.waitForClickable(driver, submitButton).click();
         log.info("Клик по кнопке 'Создать'");
     }
 
@@ -242,9 +240,9 @@ public class MyWishlistsPage {
             }
 
             // теперь ищем поле ввода
-            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(
+            WebElement element = WaitUtils.waitForVisibility(driver,
                     By.xpath("/html/body/div[3]/div/div/div[2]/form/div[1]/input")
-            ));
+            );
             // log.info("Поле названия найдено, видимо: {}", element.isDisplayed());
             return element;
         } catch (TimeoutException e) {
@@ -262,9 +260,9 @@ public class MyWishlistsPage {
         try {
             // log.info("Поиск поля описания по XPath: /html/body/div[3]/div/div/div[2]/form/div[2]/textarea");
 
-            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(
+            WebElement element = WaitUtils.waitForVisibility(driver,
                     By.xpath("/html/body/div[3]/div/div/div[2]/form/div[2]/textarea")
-            ));
+            );
             // log.info("Поле описания найдено, видимо: {}", element.isDisplayed());
             return element;
         } catch (Exception e) {
@@ -313,9 +311,9 @@ public class MyWishlistsPage {
     public WebElement getCloseButton() {
         try {
             // log.info("Поиск кнопки закрытия");
-            WebElement element = wait.until(ExpectedConditions.elementToBeClickable(
+            WebElement element = WaitUtils.waitForClickable(driver,
                     By.xpath("/html/body/div[3]/div/div/div[1]/button")
-            ));
+            );
             // log.info("Кнопка закрытия найдена");
             return element;
         } catch (Exception e) {
@@ -327,9 +325,9 @@ public class MyWishlistsPage {
     public WebElement getCancelButton() {
         try {
             // log.info("Поиск кнопки отмены");
-            WebElement element = wait.until(ExpectedConditions.elementToBeClickable(
+            WebElement element = WaitUtils.waitForClickable(driver,
                     By.xpath("/html/body/div[3]/div/div/div[2]/form/div[3]/button[1]")
-            ));
+            );
             // log.info("Кнопка отмены найдена");
             return element;
         } catch (Exception e) {
@@ -341,9 +339,9 @@ public class MyWishlistsPage {
     public WebElement getSubmitButton() {
         try {
             // log.info("Поиск кнопки создания");
-            WebElement element = wait.until(ExpectedConditions.elementToBeClickable(
+            WebElement element = WaitUtils.waitForClickable(driver,
                     By.xpath("/html/body/div[3]/div/div/div[2]/form/div[3]/button[2]")
-            ));
+            );
             // log.info("Кнопка создания найдена");
             return element;
         } catch (Exception e) {
@@ -357,7 +355,7 @@ public class MyWishlistsPage {
         WebElement deleteButton = lastCard.findElement(
                 By.xpath(".//button[contains(text(), 'Удалить')]")
         );
-        wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
+        WaitUtils.waitForClickable(driver, deleteButton).click();
         log.info("Клик по кнопке 'Удалить' для последнего списка");
     }
 

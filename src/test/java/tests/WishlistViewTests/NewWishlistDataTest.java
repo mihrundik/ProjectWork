@@ -5,13 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.safari.SafariOptions;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
-import factory.sattings.OptionsParser;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,41 +17,7 @@ public class NewWishlistDataTest extends AbstractBaseTest {
 
     @Override
     protected Capabilities getOptions(String browserName) {
-        // проверяем опции в командной строке
-        String optionsFromCmd = null;
-        switch (browserName.toLowerCase()) {
-            case "chrome":
-                optionsFromCmd = System.getProperty("chromeOptions");
-                break;
-            case "firefox":
-                optionsFromCmd = System.getProperty("firefoxOptions");
-                break;
-            case "safari":
-                optionsFromCmd = System.getProperty("safariOptions");
-                break;
-            case "edge":
-                optionsFromCmd = System.getProperty("edgeOptions");
-                break;
-        }
-
-        // если есть - парсим их
-        if (optionsFromCmd != null && !optionsFromCmd.isEmpty()) {
-            return OptionsParser.parse(browserName, optionsFromCmd);
-        }
-
-        // или используем стандартные опции
-        switch (browserName.toLowerCase()) {
-            case "chrome":
-                return new ChromeOptions();
-            case "firefox":
-                return new FirefoxOptions();
-            case "safari":
-                return new SafariOptions();
-            case "edge":
-                return new EdgeOptions();
-            default:
-                throw new IllegalArgumentException("Неподдерживаемый браузер: " + browserName);
-        }
+        return getBrowserOptions(browserName);
     }
 
     @BeforeEach
@@ -69,9 +30,16 @@ public class NewWishlistDataTest extends AbstractBaseTest {
     @Test
     @DisplayName("Тест: Проверка данных нового вишлиста")
     void testNewWishlistData() {
-        // убеждаемся, что есть хотя бы один список
-        Assumptions.assumeTrue(myWishlistsPage.hasWishlists(),
-                "Тест пропущен: нет списков желаний");
+        // на всякий случай новый список специально для теста
+        myWishlistsPage.clickAddNewList();
+        myWishlistsPage.waitForCreateFormToAppear();
+
+        String testName = "Тестовый список " + System.currentTimeMillis();
+        String testDescription = "Описание тестового списка";
+
+        myWishlistsPage.fillCreateForm(testName, testDescription);
+        myWishlistsPage.clickSubmitButton();
+        myWishlistsPage.waitForCreateFormToDisappear();
 
         // получаем данные последнего (самого нового?) списка
         String lastTitle = myWishlistsPage.getLastWishlistTitle();

@@ -16,8 +16,5 @@ public class PageFactory {
         // инициализация всех страниц
         header = new HeaderElPage();
         myWishlistsPage = new MyWishlistsPage(driver);
-
-        // инициализация элементов HeaderElPage
-        org.openqa.selenium.support.PageFactory.initElements(driver, header);
     }
 }

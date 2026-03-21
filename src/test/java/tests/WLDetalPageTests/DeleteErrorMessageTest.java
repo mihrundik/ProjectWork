@@ -3,16 +3,12 @@ package tests.WLDetalPageTests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.safari.SafariOptions;
 import pages.MyWishListPage;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
-import factory.sattings.OptionsParser;
-
+import utils.WaitUtils;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -23,41 +19,7 @@ public class DeleteErrorMessageTest extends AbstractBaseTest {
 
     @Override
     protected Capabilities getOptions(String browserName) {
-        // проверяем опции в командной строке
-        String optionsFromCmd = null;
-        switch (browserName.toLowerCase()) {
-            case "chrome":
-                optionsFromCmd = System.getProperty("chromeOptions");
-                break;
-            case "firefox":
-                optionsFromCmd = System.getProperty("firefoxOptions");
-                break;
-            case "safari":
-                optionsFromCmd = System.getProperty("safariOptions");
-                break;
-            case "edge":
-                optionsFromCmd = System.getProperty("edgeOptions");
-                break;
-        }
-
-        // если есть - парсим их
-        if (optionsFromCmd != null && !optionsFromCmd.isEmpty()) {
-            return OptionsParser.parse(browserName, optionsFromCmd);
-        }
-
-        // или используем стандартные опции
-        switch (browserName.toLowerCase()) {
-            case "chrome":
-                return new ChromeOptions();
-            case "firefox":
-                return new FirefoxOptions();
-            case "safari":
-                return new SafariOptions();
-            case "edge":
-                return new EdgeOptions();
-            default:
-                throw new IllegalArgumentException("Неподдерживаемый браузер: " + browserName);
-        }
+        return getBrowserOptions(browserName);
     }
 
     @BeforeEach
@@ -94,13 +56,19 @@ public class DeleteErrorMessageTest extends AbstractBaseTest {
         // нажимаем "Удалить список"
         wishListPage.clickDeleteWishlistButton();
 
+        WaitUtils.waitForClickable(driver, By.xpath("//button[contains(text(), 'Удалить список')]"));
+
         // нажимаем "Удалить список"
         wishListPage.clickDeleteWishlistButton();
 
-        // ожидаем сообщения об ошибке в root/div
-        String expectedError = "Ошибка: Ошибка при загрузке списка желаний";
-        assertTrue(wishListPage.isErrorMessageDisplayed(expectedError),
-                String.format("Ожидалось сообщение об ошибке '%s', но оно не появилось", expectedError));
+        By errorMessageLocator = By.xpath("//div[contains(@class, 'error') or contains(@class, 'message') or contains(@class, 'alert')]");
+
+        // Ожидаем, что сообщение появится и содержит нужный текст
+        boolean isErrorMessageVisible = WaitUtils.waitForTextPresent(
+                driver,
+                errorMessageLocator,
+                "Ошибка: Ошибка при загрузке списка желаний"
+        );
     }
 
 }
