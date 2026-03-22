@@ -36,22 +36,6 @@ public class HeaderElPage {
         wait.until(ExpectedConditions.elementToBeClickable(navBarMyLists)).click();
     }
 
-    public WebElement getNavBarWL() {
-        return navBarWL;
-    }
-
-    public WebElement getNavBarMyLists() {
-        return navBarMyLists;
-    }
-
-    public WebElement getNavBarUsers() {
-        return navBarUsers;
-    }
-
-    public WebElement getNavBarLink() {
-        return navBarLink;
-    }
-
     public HeaderElPage() {
     }
 }

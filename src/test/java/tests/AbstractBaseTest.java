@@ -87,47 +87,9 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         log.info("Конец тестирования\n");
     }
 
-    // авторизация
-    private void performLogin() {
-        try {
-            log.info("Проверка необходимости авторизации");
-
-            String currentUrl = driver.getCurrentUrl();
-
-            // Если уже на странице списков - авторизация не нужна
-            if (currentUrl.contains("/wishlists")) {
-                log.info("Уже на странице списков желаний, авторизация не требуется");
-                return;
-            }
-
-            // переходим на страницу логина через хедер
-            log.info("Переходим на страницу авторизации");
-            headerElPage.goToMyLists();
-
-            // проверяем, что мы на странице логина
-            if (loginPage.isLoginPageDisplayed()) {
-                // Выполняем вход
-                log.info("Выполняем вход в систему с логином: {}", LOGIN);
-                loginPage.login(LOGIN, PASSWORD);
-
-                // небольшая задержка для завершения авторизации
-                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-                boolean redirected = wait.until(ExpectedConditions.urlContains("/wishlists"));
-
-                log.info("Вход выполнен успешно");
-            } else {
-                log.error("Не удалось перейти на страницу логина");
-                throw new RuntimeException("Страница логина не отображается");
-            }
-
-        } catch (Exception e) {
-            log.error("Ошибка при авторизации: {}", e.getMessage(), e);
-            throw new RuntimeException("Не удалось выполнить авторизацию", e);
-        }
-    }
 
     public void driverStart(TestInfo testInfo) {
-        String browserName = System.getProperty("browser", "firefox");
+        String browserName = System.getProperty("browser", "safari");
 
         // проверяем опции в командной строке
         String optionsFromCmd = null;

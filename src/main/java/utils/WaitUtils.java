@@ -95,11 +95,6 @@ public class WaitUtils {
         }
     }
 
-    // ожидание с кастомным условием
-    public static <V> V waitForCondition(WebDriver driver, Function<WebDriver, V> condition, Duration duration) {
-        return getWait(driver).until(condition);
-    }
-
     // ожидание с кастомным таймаутом
     public static <V> V waitForCondition(WebDriver driver, Function<WebDriver, V> condition, int timeoutSeconds) {
         return getWait(driver, timeoutSeconds).until(condition);
@@ -108,15 +103,6 @@ public class WaitUtils {
     // комбинированное ожидание
     public static void waitForElementAndClick(WebDriver driver, By locator) {
         waitForClickable(driver, locator).click();
-    }
-
-    public static void waitForElementAndSendKeys(WebDriver driver, By locator, String text) {
-        waitForVisibility(driver, locator).sendKeys(text);
-    }
-
-    // ожидание присутствия элемента внутри другого элемента
-    public static WebElement waitForPresence(WebDriver driver, WebElement parent, By childLocator) {
-        return getWait(driver).until(drv -> parent.findElement(childLocator));
     }
 
 }

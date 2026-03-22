@@ -19,14 +19,6 @@ public abstract class AbstractBaseMethod extends AbstractWebDriver {
         return super.getDriver();
     }
 
-    public void statusTest(boolean isCorrect, String message) {
-        if (!isCorrect) {
-            log.error("{}: Ошибка!", message);
-        } else {
-            log.info("{}: Успешно пройден.", message);
-        }
-    }
-
     // обрабатываем опции
     public Capabilities createOptionsFromString(String browserName, String optionsString) {
         String[] optionsArray = optionsString.split(",");

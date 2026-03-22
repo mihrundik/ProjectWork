@@ -48,8 +48,6 @@ public class MyWishlistsPage {
     @FindBy(xpath = "/html/body/div[3]/div/div/div[2]/form/div[3]/button[2]")
     private WebElement submitButton;
 
-    @FindBy(xpath = "//*[@id=\"root\"]/div/div[2]/div[3]/div/div/div[2]/button")
-    private WebElement delButton;
 
     public MyWishlistsPage(WebDriver driver) {
         this.driver = driver;
@@ -281,87 +279,6 @@ public class MyWishlistsPage {
         log.info("Элементы модального окна переинициализированы");
     }
 
-    public String getWishlistTitleByIndex(int index) {
-        List<WebElement> cards = getWishlistCards();
-        if (index >= 0 && index < cards.size()) {
-            WebElement card = cards.get(index);
-            return card.findElement(By.xpath(".//div[contains(@class, 'card-title')]")).getText();
-        }
-        throw new IndexOutOfBoundsException("Нет вишлиста с индексом " + index);
-    }
-
-    public String getWishlistDescriptionByIndex(int index) {
-        List<WebElement> cards = getWishlistCards();
-        if (index >= 0 && index < cards.size()) {
-            WebElement card = cards.get(index);
-            return card.findElement(By.xpath(".//p[@class='card-text']")).getText();
-        }
-        throw new IndexOutOfBoundsException("Нет вишлиста с индексом " + index);
-    }
-
-    // количество подарков указанного вишлиста по индексу
-    public String getWishlistGiftCountByIndex(int index) {
-        List<WebElement> cards = getWishlistCards();
-        if (index >= 0 && index < cards.size()) {
-            WebElement card = cards.get(index);
-            return card.findElement(By.xpath(".//small[@class='text-muted']")).getText();
-        }
-        throw new IndexOutOfBoundsException("Нет вишлиста с индексом " + index);
-    }
-
-    // поиск кнопки закрытия модального окна
-    public WebElement getCloseButton() {
-        try {
-            // log.info("Поиск кнопки закрытия");
-            WebElement element = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/div[3]/div/div/div[1]/button")
-            ));
-            // log.info("Кнопка закрытия найдена");
-            return element;
-        } catch (Exception e) {
-            log.error("Ошибка при поиске кнопки закрытия: {}", e.getMessage());
-            return null;
-        }
-    }
-
-    public WebElement getCancelButton() {
-        try {
-            // log.info("Поиск кнопки отмены");
-            WebElement element = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/div[3]/div/div/div[2]/form/div[3]/button[1]")
-            ));
-            // log.info("Кнопка отмены найдена");
-            return element;
-        } catch (Exception e) {
-            log.error("Ошибка при поиске кнопки отмены: {}", e.getMessage());
-            return null;
-        }
-    }
-
-    public WebElement getSubmitButton() {
-        try {
-            // log.info("Поиск кнопки создания");
-            WebElement element = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("/html/body/div[3]/div/div/div[2]/form/div[3]/button[2]")
-            ));
-            // log.info("Кнопка создания найдена");
-            return element;
-        } catch (Exception e) {
-            log.error("Ошибка при поиске кнопки создания: {}", e.getMessage());
-            return null;
-        }
-    }
-
-    public void clickDeleteButtonOnLastWishlist() {
-        WebElement lastCard = getLastWishlistCard();
-        WebElement deleteButton = lastCard.findElement(
-                By.xpath(".//button[contains(text(), 'Удалить')]")
-        );
-        wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
-        log.info("Клик по кнопке 'Удалить' для последнего списка");
-    }
-
-
     // проверяем осталась ли форма открытой
     public boolean isCreateFormVisible() {
         try {
@@ -389,9 +306,5 @@ public class MyWishlistsPage {
 
         // ждем, пока форма действительно закроется
         waitForCreateFormToDisappear();
-    }
-
-    public int getLastWishlistGiftCount() {
-        return 0;
     }
 }

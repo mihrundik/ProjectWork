@@ -35,8 +35,6 @@ public class MyWishListPage extends AbstractBaseMethod {
 
     private final By giftsContainerLocator = By.cssSelector("#root > div > div.g-4.row");
     private final By giftCardLocator = By.cssSelector("#root > div > div.g-4.row > div.col > div.card");
-    private final By giftTitleLocator = By.cssSelector(".card-title.h5");
-    private final By giftDescriptionLocator = By.cssSelector(".card-text");
 
 
     public MyWishListPage(WebDriver driver) {
@@ -90,24 +88,6 @@ public class MyWishListPage extends AbstractBaseMethod {
             log.error("Сообщение об ошибке не появилось: {}", e.getMessage());
             return true;
         }
-    }
-
-    // ожидание, что количество подарков станет expectedCount
-    public boolean waitForGiftCountToBe(int expectedCount, int timeoutSeconds) {
-        try {
-            new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
-                    .until(ExpectedConditions.numberOfElementsToBe(giftCardLocator, expectedCount));
-            log.info("Ожидание: количество подарков стало {}", expectedCount);
-            return true;
-        } catch (Exception e) {
-            log.warn("Ожидание количества подарков = {} не выполнено: {}", expectedCount, e.getMessage());
-            return false;
-        }
-    }
-
-    // проверить наличие подарков в списке
-    public boolean hasGifts() {
-        return getGiftCount() > 0;
     }
 
     // добавить
@@ -190,58 +170,6 @@ public class MyWishListPage extends AbstractBaseMethod {
         } catch (Exception e) {
             log.error("Ошибка при проверке отображения страницы вишлиста: {}", e.getMessage());
             return false;
-        }
-    }
-
-    // возвращает текст корневого блока (//*[@id='root']/div). Полезно для диагностики.
-    public String getRootDivText() {
-        try {
-            By rootXpath = By.xpath("//*[@id='root']/div");
-            WebElement rootElement = wait.until(ExpectedConditions.visibilityOfElementLocated(rootXpath));
-            String text = rootElement.getText();
-            log.info("Текст элемента root/div: {}", text);
-            return text;
-        } catch (Exception e) {
-            log.error("Не удалось получить текст root/div: {}", e.getMessage());
-            return "";
-        }
-    }
-
-    // найти карточку подарка по точному заголовку (div.card-title.h5)
-    public WebElement findGiftCardByTitle(String title) {
-        try {
-            List<WebElement> cards = driver.findElements(giftCardLocator);
-            for (WebElement card : cards) {
-                try {
-                    WebElement titleEl = card.findElement(giftTitleLocator);
-                    if (titleEl != null && titleEl.getText().trim().equals(title)) {
-                        return card;
-                    }
-                } catch (Exception ignored) {
-                }
-            }
-            return null;
-        } catch (Exception e) {
-            log.error("Ошибка при поиске карточки подарка по заголовку '{}': {}", title, e.getMessage());
-            return null;
-        }
-    }
-
-    // проверить, есть ли подарок с данным заголовком
-    public boolean isGiftPresentByTitle(String title) {
-        return findGiftCardByTitle(title) != null;
-    }
-
-    // обновление списка подарков — refresh и ожидание загрузки
-    public void refreshGiftList() {
-        driver.navigate().refresh();
-        waitForPageLoad();
-        // после refresh подождём видимость контейнера с карточками (если есть)
-        try {
-            new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS))
-                    .until(ExpectedConditions.visibilityOfElementLocated(giftsContainerLocator));
-        } catch (Exception e) {
-            log.warn("Контейнер с подарками не найден после refresh: {}", e.getMessage());
         }
     }
 

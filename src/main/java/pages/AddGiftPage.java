@@ -60,10 +60,6 @@ public class AddGiftPage extends AbstractBaseMethod {
 
     public WebElement getCancelButton() { return cancelButton; }
 
-    public WebElement getPageTitle() {
-        return pageTitle;
-    }
-
 
     // локаторы для ожиданий (видимость/невидимость)
     private final By cancelButtonLocator = By.cssSelector("button.cancel, a.cancel");
