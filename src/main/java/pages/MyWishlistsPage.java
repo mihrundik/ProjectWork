@@ -48,12 +48,18 @@ public class MyWishlistsPage {
     @FindBy(xpath = "/html/body/div[3]/div/div/div[2]/form/div[3]/button[2]")
     private WebElement submitButton;
 
+    @FindBy(xpath = "//*[@id=\"root\"]/div/div[2]/div[3]/div/div/div[2]/button")
+    private WebElement delButton;
 
     public MyWishlistsPage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
         PageFactory.initElements(driver, this);
 
+    }
+
+    public WebElement getPageTitle() {
+        return pageTitle;
     }
 
     public void open() {
@@ -143,18 +149,12 @@ public class MyWishlistsPage {
     }
 
     public void clickViewButtonOnLastWishlist() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         WebElement lastCard = getLastWishlistCard();
-
         WebElement viewButton = lastCard.findElement(
-                By.cssSelector("button.btn.btn-primary[type='button']")
+                By.xpath(".//button[contains(@class, 'btn-primary') and contains(text(), 'Просмотр')]")
         );
-
-        // ждем видимости на всякий случай
-        wait.until(ExpectedConditions.visibilityOf(viewButton));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", viewButton);
-
-        log.info("Клик по кнопке 'Просмотр' выполнен через JavaScript Executor");
+        wait.until(ExpectedConditions.elementToBeClickable(viewButton)).click();
+        log.info("Клик по кнопке 'Просмотр' для последнего списка");
     }
 
 
@@ -391,4 +391,7 @@ public class MyWishlistsPage {
         waitForCreateFormToDisappear();
     }
 
+    public int getLastWishlistGiftCount() {
+        return 0;
+    }
 }

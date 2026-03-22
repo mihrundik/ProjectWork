@@ -14,6 +14,7 @@ import java.time.Duration;
 import java.util.List;
 
 import static pages.MyWishlistsPage.DEFAULT_TIMEOUT_SECONDS;
+import static utils.WaitUtils.waitForPageLoad;
 
 public class MyWishListPage extends AbstractBaseMethod {
 
@@ -31,8 +32,12 @@ public class MyWishListPage extends AbstractBaseMethod {
     @FindBy(xpath = "//*[@id='root']/div/button[2]")
     private WebElement deleteWishlistButton;
 
-    @FindBy(css = "div.card-title.h5")
-    private List<WebElement> giftItems;
+
+    private final By giftsContainerLocator = By.cssSelector("#root > div > div.g-4.row");
+    private final By giftCardLocator = By.cssSelector("#root > div > div.g-4.row > div.col > div.card");
+    private final By giftTitleLocator = By.cssSelector(".card-title.h5");
+    private final By giftDescriptionLocator = By.cssSelector(".card-text");
+
 
     public MyWishListPage(WebDriver driver) {
         this.driver = driver;
@@ -40,45 +45,69 @@ public class MyWishListPage extends AbstractBaseMethod {
         PageFactory.initElements(driver, this);
     }
 
-    public WebElement getAddGiftButton() {
-        return addGiftButton;
-    }
-
     // количество подарков в списке
-    public int getGiftItemsCount() {
+    public int getGiftCount() {
         try {
-            // ищем кнопки "Зарезервировать" и "Снять резерв" — суммируем
-            List<WebElement> reserveButtons = driver.findElements(
-                    By.xpath("//button[normalize-space()='Зарезервировать' and contains(@class,'btn')]"));
-            List<WebElement> unreserveButtons = driver.findElements(
-                    By.xpath("//button[normalize-space()='Снять резерв' and contains(@class,'btn')]"));
-
-            int reserveCount = reserveButtons.size();
-            int unreserveCount = unreserveButtons.size();
-            int totalByButtons = reserveCount + unreserveCount;
-
-            log.info("Найдено кнопок 'Зарезервировать': {}, 'Снять резерв': {}. Сумма = {}",
-                    reserveCount, unreserveCount, totalByButtons);
-
-            if (totalByButtons > 0) {
-                log.info("Количество подарков (по кнопкам): {}", totalByButtons);
-                return totalByButtons;
-            }
-
-            // если не нашли ни одной кнопки — используем запасной вариант: старый селектор giftItems
-            int fallbackCount = giftItems != null ? giftItems.size() : 0;
-            log.info("Кнопки не найдены. Используем fallback подсчёт по giftItems: {}", fallbackCount);
-            return fallbackCount;
+            List<WebElement> cards = driver.findElements(giftCardLocator);
+            int size = cards.size();
+            log.info("Найдено карточек подарков (.card): {}", size);
+            return size;
         } catch (Exception e) {
-            log.error("Ошибка при получении количества подарков: {}", e.getMessage());
-            // на всякий случай вернуть 0
+            log.error("Ошибка при подсчёте карточек подарков: {}", e.getMessage(), e);
             return 0;
         }
     }
 
     // проверить наличие подарков в списке
+    public int getGiftItemsCount() {
+        return getGiftCount();
+    }
+
+
+    // проверяет, что появилось модальное окно добавления подарка и его заголовок совпадает с expectedTitle.
+    public boolean isAddGiftModalDisplayedWithTitle(String expectedTitle) {
+        try {
+            By modalTitleXpath = By.xpath("/html/body/div[3]/div/div/div[1]/div");
+            WebElement modalTitleElement = wait.until(ExpectedConditions.visibilityOfElementLocated(modalTitleXpath));
+            String text = modalTitleElement.getText();
+            log.info("Текст модального окна добавления подарка: '{}'", text);
+            return text != null && text.equals(expectedTitle);
+        } catch (Exception e) {
+            log.error("Модальное окно добавления подарка не появилось или произошла ошибка при чтении заголовка: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    // проверяет, что появилось ожидаемое сообщение об ошибке.
+    public boolean isErrorMessageDisplayed(String expectedText) {
+        try {
+            By rootXpath = By.xpath("//*[@id='root']/div");
+            boolean present = wait.until(ExpectedConditions.textToBePresentInElementLocated(rootXpath, expectedText));
+            String actual = driver.findElement(rootXpath).getText();
+            log.info("Проверка сообщения об ошибке: ожидалось '{}', фактически '{}'", expectedText, actual);
+            return present && actual != null && actual.contains(expectedText);
+        } catch (Exception e) {
+            log.error("Сообщение об ошибке не появилось: {}", e.getMessage());
+            return true;
+        }
+    }
+
+    // ожидание, что количество подарков станет expectedCount
+    public boolean waitForGiftCountToBe(int expectedCount, int timeoutSeconds) {
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
+                    .until(ExpectedConditions.numberOfElementsToBe(giftCardLocator, expectedCount));
+            log.info("Ожидание: количество подарков стало {}", expectedCount);
+            return true;
+        } catch (Exception e) {
+            log.warn("Ожидание количества подарков = {} не выполнено: {}", expectedCount, e.getMessage());
+            return false;
+        }
+    }
+
+    // проверить наличие подарков в списке
     public boolean hasGifts() {
-        return getGiftItemsCount() > 0;
+        return getGiftCount() > 0;
     }
 
     // добавить
@@ -164,21 +193,7 @@ public class MyWishListPage extends AbstractBaseMethod {
         }
     }
 
-    // проверяет, что появилось модальное окно добавления подарка и его заголовок совпадает с expectedTitle.
-    public boolean isAddGiftModalDisplayedWithTitle(String expectedTitle) {
-        try {
-            By modalTitleXpath = By.xpath("/html/body/div[3]/div/div/div[1]/div");
-            WebElement modalTitleElement = wait.until(ExpectedConditions.visibilityOfElementLocated(modalTitleXpath));
-            String text = modalTitleElement.getText();
-            log.info("Текст модального окна добавления подарка: '{}'", text);
-            return text != null && text.equals(expectedTitle);
-        } catch (Exception e) {
-            log.error("Модальное окно добавления подарка не появилось или произошла ошибка при чтении заголовка: {}", e.getMessage());
-            return false;
-        }
-    }
-
-    // возвращает текст корневого блока (//*[@id='root']/div). Полезно для проверки сообщений об ошибке.
+    // возвращает текст корневого блока (//*[@id='root']/div). Полезно для диагностики.
     public String getRootDivText() {
         try {
             By rootXpath = By.xpath("//*[@id='root']/div");
@@ -192,30 +207,45 @@ public class MyWishListPage extends AbstractBaseMethod {
         }
     }
 
-    // проверяет, что появилось ожидаемое сообщение об ошибке.
-    public boolean isErrorMessageDisplayed(String expectedText) {
+    // найти карточку подарка по точному заголовку (div.card-title.h5)
+    public WebElement findGiftCardByTitle(String title) {
         try {
-            By rootXpath = By.xpath("//*[@id='root']/div");
-            boolean present = wait.until(ExpectedConditions.textToBePresentInElementLocated(rootXpath, expectedText));
-            String actual = driver.findElement(rootXpath).getText();
-            log.info("Проверка сообщения об ошибке: ожидалось '{}', фактически '{}'", expectedText, actual);
-            return present && actual != null && actual.contains(expectedText);
+            List<WebElement> cards = driver.findElements(giftCardLocator);
+            for (WebElement card : cards) {
+                try {
+                    WebElement titleEl = card.findElement(giftTitleLocator);
+                    if (titleEl != null && titleEl.getText().trim().equals(title)) {
+                        return card;
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+            return null;
         } catch (Exception e) {
-            log.error("Сообщение об ошибке не появилось: {}", e.getMessage());
-            return true;
+            log.error("Ошибка при поиске карточки подарка по заголовку '{}': {}", title, e.getMessage());
+            return null;
         }
     }
 
-    // подсчет подарков
-    public int getGiftCount() {
-        List<WebElement> gifts = driver.findElements(By.cssSelector(".gift-item"));
-        return gifts.size();
+    // проверить, есть ли подарок с данным заголовком
+    public boolean isGiftPresentByTitle(String title) {
+        return findGiftCardByTitle(title) != null;
     }
 
-    // метод переинициализации элементов
-    public void refreshPageElements() {
-        org.openqa.selenium.support.PageFactory.initElements(driver, this);
-        log.info("Элементы страницы переинициализированы!");
+    // обновление списка подарков — refresh и ожидание загрузки
+    public void refreshGiftList() {
+        driver.navigate().refresh();
+        waitForPageLoad();
+        // после refresh подождём видимость контейнера с карточками (если есть)
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS))
+                    .until(ExpectedConditions.visibilityOfElementLocated(giftsContainerLocator));
+        } catch (Exception e) {
+            log.warn("Контейнер с подарками не найден после refresh: {}", e.getMessage());
+        }
+    }
+
+    private void waitForPageLoad() {
     }
 
 }

@@ -20,11 +20,7 @@
         <webdrivermanager.version>6.3.3</webdrivermanager.version>
         <junit-jupiter-api.version>5.11.0</junit-jupiter-api.version>
         <junit.version>RELEASE</junit.version>
-        <browser>chrome</browser>
-        <browserOptions/>
-        <chromeOptions/>
-        <firefoxOptions/>
-        <safariOptions/>
+
     </properties>
 
     <dependencies>

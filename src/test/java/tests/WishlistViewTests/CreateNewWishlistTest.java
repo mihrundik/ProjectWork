@@ -12,8 +12,7 @@ import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
 import factory.sattings.OptionsParser;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CreateNewWishlistTest extends AbstractBaseTest {
 
@@ -94,5 +93,4 @@ public class CreateNewWishlistTest extends AbstractBaseTest {
         assertEquals(initialCount + 1, newCount,
                 "Количество списков должно увеличиться на 1");
     }
-
 }

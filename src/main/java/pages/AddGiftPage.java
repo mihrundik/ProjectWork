@@ -14,6 +14,9 @@ import static pages.MyWishlistsPage.DEFAULT_TIMEOUT_SECONDS;
 
 public class AddGiftPage extends AbstractBaseMethod {
 
+    @FindBy(css = "h2")
+    private WebElement pageTitle;
+
     @FindBy(css = "input[type=\"text\"][required]")
     private WebElement giftNameField;
 
@@ -57,18 +60,22 @@ public class AddGiftPage extends AbstractBaseMethod {
 
     public WebElement getCancelButton() { return cancelButton; }
 
+    public WebElement getPageTitle() {
+        return pageTitle;
+    }
+
 
     // локаторы для ожиданий (видимость/невидимость)
     private final By cancelButtonLocator = By.cssSelector("button.cancel, a.cancel");
     // контейнер модалки (по примеру предыдущих xpath-локаторов модалки)
-    private final By modalRootLocator = By.xpath("/html/body/div[3]");
+    public final By modalRootLocator = By.xpath("/html/body/div[3]");
 
 
     // ожидание появления модального окна
     public boolean waitForModalToAppear() {
         try {
             wait.until(ExpectedConditions.or(
-                    ExpectedConditions.visibilityOf(cancelButton),
+                    ExpectedConditions.visibilityOfElementLocated(cancelButtonLocator),
                     ExpectedConditions.visibilityOf(saveButton),
                     ExpectedConditions.visibilityOfElementLocated(modalRootLocator)
             ));
@@ -101,7 +108,7 @@ public class AddGiftPage extends AbstractBaseMethod {
                 return true;
             } else {
                 // доп проверка — убеждаемся, что кнопка отмены тоже невидима
-                boolean cancelInvisible = wait.until(ExpectedConditions.invisibilityOfElementLocated((By) cancelButton));
+                boolean cancelInvisible = wait.until(ExpectedConditions.invisibilityOfElementLocated(cancelButtonLocator));
                 log.info("Модальное окно закрыто по проверке cancelButton: {}", cancelInvisible);
                 return cancelInvisible;
             }
@@ -128,8 +135,5 @@ public class AddGiftPage extends AbstractBaseMethod {
         log.info("Нажата кнопка 'Добавить' в модальном окне");
     }
 
-    public void refreshPageElements() {
-        PageFactory.initElements(driver, this);
-        log.info("Элементы страницы переинициализированы!");
-    }
+
 }

@@ -2,6 +2,7 @@ package tests.GiftPageTests;
 
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -118,8 +119,14 @@ public class AddGiftButtonTest extends AbstractBaseTest {
         addGiftPage.giftUrlProdact().clear();
         addGiftPage.giftUrlProdact().sendKeys(testProductUrl);
 
-        addGiftPage.giftPriceProdact().clear();
+        // ставим курсор в поле цены
+        addGiftPage.giftPriceProdact().click();
+        // нажимаем стрелку влево несколько раз, чтобы гарантированно дойти до начала
+        for (int i = 0; i < 10; i++) {
+            addGiftPage.giftPriceProdact().sendKeys(Keys.ARROW_LEFT);
+        }
         addGiftPage.giftPriceProdact().sendKeys(testPrice);
+        addGiftPage.giftPriceProdact().sendKeys(Keys.DELETE);
 
         addGiftPage.giftUrlImage().clear();
         addGiftPage.giftUrlImage().sendKeys(testImageUrl);

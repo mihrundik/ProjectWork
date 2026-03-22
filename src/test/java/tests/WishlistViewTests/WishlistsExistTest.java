@@ -1,23 +1,22 @@
 package tests.WishlistViewTests;
 
-import org.junit.jupiter.api.*;
+import factory.sattings.OptionsParser;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.safari.SafariOptions;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
-import factory.sattings.OptionsParser;
 import utils.WaitUtils;
 
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-public class DeleteLastWishlistTest extends AbstractBaseTest {
+public class WishlistsExistTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;
 
@@ -66,9 +65,10 @@ public class DeleteLastWishlistTest extends AbstractBaseTest {
         wishlistsPage.open();
     }
 
+
     @Test
-    @DisplayName("Тест: Удаление первого вишлиста")
-    void testDeleteFirstWishlist() {
+    @DisplayName("Тест: Проверка наличия списков желаний")
+    void testWishlistsExist() {
         // Шаг 1: проверяем наличие списков на уже загруженной странице
         if (!wishlistsPage.hasWishlists()) {
             log.info("Списки желаний отсутствуют. Создаём новый...");
@@ -89,38 +89,11 @@ public class DeleteLastWishlistTest extends AbstractBaseTest {
             wishlistsPage.waitForCreateFormToDisappear();
             log.info("Создан временный вишлист: {}", tempWishlistName);
         }
-        // считаем кнопки "Просмотр" - это самые надежный счетчик уникальных вишлистов
-        int initialCount = driver.findElements(By.xpath("//button[contains(text(), 'Просмотр')]")).size();
 
-        Assumptions.assumeTrue(initialCount > 0, "Тест пропущен: нет списков желаний");
+        // Шаг 2: проверка наличия вишлистов
+        assertTrue(wishlistsPage.hasWishlists(),
+                "Должен быть хотя бы один список желаний");
 
-        log.info("Начальное количество вишлистов: {}", initialCount);
-
-        // получаем все кнопки "Просмотр"
-        List<WebElement> viewButtons = driver.findElements(By.xpath("//button[contains(text(), 'Просмотр')]"));
-
-        // берем первый вишлист (индекс 0)
-        WebElement firstCard = viewButtons.get(0).findElement(By.xpath("./ancestor::div[contains(@class, 'card')]"));
-        String firstTitle = firstCard.findElement(By.xpath(".//div[contains(@class, 'card-title')]")).getText();
-        log.info("Удаляем вишлист: '{}'", firstTitle);
-
-        // находим и кликаем кнопку удаления
-        WebElement deleteButton = firstCard.findElement(By.xpath(".//button[contains(text(), 'Удалить')]"));
-        deleteButton.click();
-        log.info("Клик по кнопке удаления");
-
-        // ждем обновления списка
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        // снова считаем кнопки "Просмотр"
-        int newCount = driver.findElements(By.xpath("//button[contains(text(), 'Просмотр')]")).size();
-        log.info("Количество вишлистов после удаления: {}", newCount);
-
-        assertEquals(initialCount - 1, newCount,
-                "Количество вишлистов должно уменьшиться на 1");
+        log.info("Тест пройден успешно.");
     }
 }

@@ -1,20 +1,18 @@
 package tests.GiftPageTests;
 
+import factory.sattings.OptionsParser;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.safari.SafariOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.MyWishlistsPage;
 import pages.MyWishListPage;
 import pages.AddGiftPage;
 import tests.AbstractBaseTest;
-import factory.sattings.OptionsParser;
-
-import java.time.Duration;
+import utils.WaitUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +20,7 @@ public class CreateNewGiftTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;
     private MyWishListPage wishListPage;
+    private AddGiftPage addGiftPage;
 
     @Override
     protected Capabilities getOptions(String browserName) {
@@ -68,61 +67,62 @@ public class CreateNewGiftTest extends AbstractBaseTest {
         wishlistsPage.open();
     }
 
-
     @Test
-    @DisplayName("Тест: Проверка кнопки Добавить в окне создания нового подарка")
-    void testCreateNewGift() {
-        // проверяем, что на странице 'Мои списки' есть хотя бы один список
+    @DisplayName("Создание нового подарка в вишлисте")
+    void createNewGiftTest() {
+        // Шаг 1: проверяем наличие хотя бы одного вишлиста
         if (!wishlistsPage.hasWishlists()) {
+            // Шаг 1.1: создаём новый вишлист
             wishlistsPage.clickAddNewList();
-            wishlistsPage.waitForCreateFormToAppear();
 
-            String testName = "Тестовый список " + System.currentTimeMillis();
-            String testDescription = "Описание тестового списка";
+            // ждём появления поля имени вишлиста (означает открытие формы)
+            WaitUtils.waitForVisibility(driver, By.xpath("//input[@placeholder='Введите название']"));
 
-            wishlistsPage.fillCreateForm(testName, testDescription);
+            String tempWishlistName = "Автотест-вишлист " + System.currentTimeMillis();
+            String tempWishlistDesc = "Этот вишлист создан для автоматического теста";
+
+            wishlistsPage.fillCreateForm(tempWishlistName, tempWishlistDesc);
             wishlistsPage.clickSubmitButton();
-            wishlistsPage.waitForCreateFormToDisappear();
 
-            log.info("Создан тестовый список для проверки модалки: {}", testName);
+            // ждём исчезновения поля имени вишлиста (означает закрытие формы)
+            WaitUtils.waitForInvisibility(driver, By.xpath("//input[@placeholder='Введите название']"));
+            log.info("Создан временный вишлист для теста: {}", tempWishlistName);
         }
 
-        // открываем последний список
+        // Шаг 2: переходим к последнему вишлисту
         wishlistsPage.clickViewButtonOnLastWishlist();
-
-        // создаем объект вишлиста
         wishListPage = new MyWishListPage(driver);
+
+        // ждём загрузки страницы вишлиста (по заголовку)
+        WaitUtils.waitForVisibility(driver, By.xpath("//*[@id='root']/div/h2"));
 
         // проверяем, что страница вишлиста загрузилась
         assertTrue(wishListPage.isWishlistPageDisplayed(), "Страница вишлиста не загрузилась");
 
-        // ШАГ 1: Запоминаем изначальное количество подарков в списке
+        // Шаг 3: получаем начальное количество подарков
         int initialGiftCount = wishListPage.getGiftItemsCount();
-        log.info("Изначальное количество подарков в списке: {}", initialGiftCount);
+        log.info("Начальное количество подарков: {}", initialGiftCount);
 
-        // нажимаем кнопку "Добавить подарок"
+        // Шаг 4: нажимаем кнопку "Добавить подарок"
         wishListPage.clickAddGiftButton();
 
-        // переинициализируем объект страницы
-        wishListPage.refreshPageElements();
-
-        // инициализируем модалку
-        AddGiftPage addGiftPage = new AddGiftPage(driver);
+        // Шаг 5: переинициализируем страницу добавления подарка
+        addGiftPage = new AddGiftPage(driver);
 
         // ждём появления модального окна
-        assertTrue(addGiftPage.waitForModalToAppear(), "Модальное окно добавления подарка не появилось");
+        WaitUtils.waitForVisibility(driver, By.xpath("/html/body/div[3]")); // контейнер модального окна
 
         // проверяем, что модальное окно отображается
-        assertTrue(addGiftPage.isModalDisplayed(), "Модальное окно не отображено (isModalDisplayed == false)");
+        assertTrue(addGiftPage.isModalDisplayed(), "Модальное окно не отображено");
 
-        // подготавливаем тестовые данные
+        // Шаг 6: готовим тестовые данные
         String testName = "Test Gift " + System.currentTimeMillis();
         String testDescription = "Описание тестового подарка для автотеста";
         String testProductUrl = "https://flowwow.com/bakery-products/tort-na-den-rozhdeniya-pr-2603/";
         String testPrice = "4300";
         String testImageUrl = "https://content2.flowwow-images.com/data/flowers/1000x1000/35/1730898908_64456035.jpg";
 
-        // заполняем поля (очищаем перед вводом на всякий случай)
+        // Шаг 7: заполняем поля
         addGiftPage.getGiftNameField().clear();
         addGiftPage.getGiftNameField().sendKeys(testName);
 
@@ -138,24 +138,28 @@ public class CreateNewGiftTest extends AbstractBaseTest {
         addGiftPage.giftUrlImage().clear();
         addGiftPage.giftUrlImage().sendKeys(testImageUrl);
 
-        // ШАГ 2: Кликаем кнопку "Добавить" (а не крестик)
+        // Шаг 8: нажимаем кнопку "Добавить"
         addGiftPage.clickSaveButton();
 
-        // переинициализируем элементы страницы, так как старый объект может содержать устаревшие данные
-        wishListPage.refreshPageElements();
+        // Шаг 9: ждём исчезновения модального окна
+        WaitUtils.waitForInvisibility(driver, By.xpath("/html/body/div[3]")); // Контейнер модального окна
 
-        // явное ожидание загрузки страницы чрез появление кнопки
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.elementToBeClickable(wishListPage.getAddGiftButton()));
-
-        // убедится, что страница вишлиста снова видима
-        assertTrue(wishListPage.isWishlistPageDisplayed(), "После закрытия модалки страница вишлиста не отображается");
-
-        // ШАГ 3: Проверяем, что количество подарков увеличилось на 1
+        // переинициализируем страницу вишлиста после добавления подарка
+        wishListPage = new MyWishListPage(driver);
         int newGiftCount = wishListPage.getGiftItemsCount();
-        log.info("Новое количество подарков в списке: {}", newGiftCount);
 
+        // ждём загрузки обновлённой страницы вишлиста
+        WaitUtils.waitForVisibility(driver, By.xpath("//*[@id='root']/div/h2"));
+
+        // проверяем, что страница вишлиста снова видна
+        assertTrue(wishListPage.isWishlistPageDisplayed(), "Страница вишлиста не отображается после добавления подарка");
+
+        // Шаг 11: проверяем изменение количества подарков
+        newGiftCount = wishListPage.getGiftItemsCount();
+        log.info("Новое количество подарков: {}", newGiftCount);
+
+        // проверяем, что количество подарков увеличилось
         assertEquals(initialGiftCount + 1, newGiftCount,
-                "Количество подарков не увеличилось на 1 после добавления");
+                "Количество подарков не изменилось после добавления");
     }
 }

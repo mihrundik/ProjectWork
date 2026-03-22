@@ -12,7 +12,7 @@ import factory.sattings.OptionsParser;
 
 public class ClickViewButtonOnLastWishlistTest extends AbstractBaseTest {
 
-    private MyWishlistsPage myWishlistsPage;
+    private MyWishlistsPage wishlistsPage;
 
     @Override
     protected Capabilities getOptions(String browserName) {
@@ -54,26 +54,46 @@ public class ClickViewButtonOnLastWishlistTest extends AbstractBaseTest {
     }
 
     @BeforeEach
-    void initWishlistPage() {
-        // инициализация определенной страницы
-        myWishlistsPage = page.myWishlistsPage;
+    public void setUp() {
+        wishlistsPage = new MyWishlistsPage(driver);
+        wishlistsPage.open();
     }
 
     @Test
     @DisplayName("Тест: Клик по кнопке 'Просмотр' последнего списка")
     void testClickViewButtonOnLastWishlist() {
-        // убеждаемся, что есть хотя бы один список
-        Assumptions.assumeTrue(myWishlistsPage.hasWishlists(),
+        // Шаг 1: проверяем наличие списков на уже загруженной странице
+        if (!wishlistsPage.hasWishlists()) {
+            log.info("Списки желаний отсутствуют. Создаём новый...");
+
+            // Шаг 1.1: вызываем метод на существующем объекте страницы.
+            wishlistsPage.clickAddNewList();
+
+            // ждём появления формы (используем улучшенный метод)
+            wishlistsPage.waitForCreateFormToAppear(); // Теперь это работает корректно!
+
+            String tempWishlistName = "Автотест-вишлист " + System.currentTimeMillis();
+            String tempWishlistDesc = "Этот вишлист создан для автоматического теста";
+
+            wishlistsPage.fillCreateForm(tempWishlistName, tempWishlistDesc);
+            wishlistsPage.clickSubmitButton();
+
+            // ждём исчезновение формы
+            wishlistsPage.waitForCreateFormToDisappear();
+            log.info("Создан временный вишлист: {}", tempWishlistName);
+        }
+
+        Assumptions.assumeTrue(wishlistsPage.hasWishlists(),
                 "Тест пропущен: нет списков желаний");
 
-        String lastTitle = myWishlistsPage.getLastWishlistTitle();
-        String lastDescription = myWishlistsPage.getLastWishlistDescription();
-        String lastGiftCount = myWishlistsPage.getLastWishlistGiftCountText();
+        String lastTitle = wishlistsPage.getLastWishlistTitle();
+        String lastDescription = wishlistsPage.getLastWishlistDescription();
+        String lastGiftCount = wishlistsPage.getLastWishlistGiftCountText();
 
         log.info("До клика: Заголовок: {}, Описание: {}, Подарки: {}",
                 lastTitle, lastDescription, lastGiftCount);
 
-        myWishlistsPage.clickViewButtonOnLastWishlist();
+        wishlistsPage.clickViewButtonOnLastWishlist();
 
         // если мы дошли до сюда без исключений - значит клик прошел успешно
         log.info("Клик по кнопке 'Просмотр' успешно выполнен");
