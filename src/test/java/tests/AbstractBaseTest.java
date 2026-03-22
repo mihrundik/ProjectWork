@@ -1,13 +1,18 @@
 package tests;
 
 import factory.WebDriverFactory;
+import factory.sattings.OptionsParser;
 import org.junit.jupiter.api.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.AbstractDriverOptions;
+import org.openqa.selenium.safari.SafariOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.*;
@@ -18,16 +23,19 @@ import java.time.Duration;
 public abstract class AbstractBaseTest extends AbstractBaseMethod {
 
     protected WebDriver driver;
+    protected HeaderElPage headerElPage;
+    protected LoginPage loginPage;
     protected static final Logger log = LogManager.getLogger(AbstractBaseTest.class);
-    private final String URL = "https://wishlist.otus.kartushin.su/wishlists";
 
-    // данные для авторизации (потом будет через system properties)
+    // для отладки
+    private final String URL = "https://wishlist.otus.kartushin.su/wishlists";
     private static final String LOGIN = System.getProperty("wishlist.login", "ИмяЛюбимоеМое2");
     private static final String PASSWORD = System.getProperty("wishlist.password", "qwerty123");
 
-    // страницы, которые могут понадобиться в тестах
-    protected HeaderElPage headerElPage;
-    protected LoginPage loginPage;
+//    private final String URL = EnvConfig.getUrl();
+//    private static final String LOGIN = EnvConfig.getLogin();
+//    private static final String PASSWORD = EnvConfig.getPassword();
+
 
     @BeforeAll
     public static void startTests() {
@@ -119,7 +127,7 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
     }
 
     public void driverStart(TestInfo testInfo) {
-        String browserName = System.getProperty("browser", "safari");
+        String browserName = System.getProperty("browser", "edge");
 
         // проверяем опции в командной строке
         String optionsFromCmd = null;
@@ -159,5 +167,41 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         page = new PageFactory(newDriver);
     }
 
-    protected abstract Capabilities getOptions(String browserName);
+    protected Capabilities getOptions(String browserName) {
+        // проверяем опции в командной строке
+        String optionsFromCmd = null;
+        switch (browserName.toLowerCase()) {
+            case "chrome":
+                optionsFromCmd = System.getProperty("chromeOptions");
+                break;
+            case "firefox":
+                optionsFromCmd = System.getProperty("firefoxOptions");
+                break;
+            case "safari":
+                optionsFromCmd = System.getProperty("safariOptions");
+                break;
+            case "edge":
+                optionsFromCmd = System.getProperty("edgeOptions");
+                break;
+        }
+
+        // если есть - парсим их
+        if (optionsFromCmd != null && !optionsFromCmd.isEmpty()) {
+            return OptionsParser.parse(browserName, optionsFromCmd);
+        }
+
+        // или используем стандартные опции
+        switch (browserName.toLowerCase()) {
+            case "chrome":
+                return new ChromeOptions();
+            case "firefox":
+                return new FirefoxOptions();
+            case "safari":
+                return new SafariOptions();
+            case "edge":
+                return new EdgeOptions();
+            default:
+                throw new IllegalArgumentException("Неподдерживаемый браузер: " + browserName);
+        }
+    }
 }

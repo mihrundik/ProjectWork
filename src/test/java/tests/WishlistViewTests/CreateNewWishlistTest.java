@@ -3,14 +3,11 @@ package tests.WishlistViewTests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.safari.SafariOptions;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
-import factory.sattings.OptionsParser;
+import utils.WaitUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -20,41 +17,7 @@ public class CreateNewWishlistTest extends AbstractBaseTest {
 
     @Override
     protected Capabilities getOptions(String browserName) {
-        // проверяем опции в командной строке
-        String optionsFromCmd = null;
-        switch (browserName.toLowerCase()) {
-            case "chrome":
-                optionsFromCmd = System.getProperty("chromeOptions");
-                break;
-            case "firefox":
-                optionsFromCmd = System.getProperty("firefoxOptions");
-                break;
-            case "safari":
-                optionsFromCmd = System.getProperty("safariOptions");
-                break;
-            case "edge":
-                optionsFromCmd = System.getProperty("edgeOptions");
-                break;
-        }
-
-        // если есть - парсим их
-        if (optionsFromCmd != null && !optionsFromCmd.isEmpty()) {
-            return OptionsParser.parse(browserName, optionsFromCmd);
-        }
-
-        // или используем стандартные опции
-        switch (browserName.toLowerCase()) {
-            case "chrome":
-                return new ChromeOptions();
-            case "firefox":
-                return new FirefoxOptions();
-            case "safari":
-                return new SafariOptions();
-            case "edge":
-                return new EdgeOptions();
-            default:
-                throw new IllegalArgumentException("Неподдерживаемый браузер: " + browserName);
-        }
+        return super.getOptions(browserName);
     }
 
     @BeforeEach
@@ -81,11 +44,8 @@ public class CreateNewWishlistTest extends AbstractBaseTest {
         myWishlistsPage.waitForCreateFormToDisappear();
 
         // задержка для обновления списка
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        By newWishlistLocator = By.xpath(String.format("//div[contains(text(), '%s')]", testListName));
+        WaitUtils.waitForVisibility(driver, newWishlistLocator);
 
         int newCount = myWishlistsPage.getWishlistCount();
         log.info("Количество списков после создания: {}", newCount);
