@@ -29,6 +29,28 @@ public class ViewButtonsAreClickableTest  extends AbstractBaseTest {
     @Test
     @DisplayName("Тест: Проверка кликабельности кнопок 'Просмотр'")
     void testViewButtonsAreClickable() {
+
+// Шаг 1: проверяем наличие списков на уже загруженной странице
+        if (!myWishlistsPage.hasWishlists()) {
+            log.info("Списки желаний отсутствуют. Создаём новый...");
+
+            // Шаг 1.1: вызываем метод на существующем объекте страницы.
+            myWishlistsPage.clickAddNewList();
+
+            // ждём появления формы (используем улучшенный метод)
+            myWishlistsPage.waitForCreateFormToAppear(); // Теперь это работает корректно!
+
+            String tempWishlistName = "Автотест-вишлист " + System.currentTimeMillis();
+            String tempWishlistDesc = "Этот вишлист создан для автоматического теста";
+
+            myWishlistsPage.fillCreateForm(tempWishlistName, tempWishlistDesc);
+            myWishlistsPage.clickSubmitButton();
+
+            // ждём исчезновение формы
+            myWishlistsPage.waitForCreateFormToDisappear();
+            log.info("Создан временный вишлист: {}", tempWishlistName);
+        }
+
         int wishlistCount = myWishlistsPage.getWishlistCount();
         Assumptions.assumeTrue(wishlistCount > 0, "Тест пропущен: нет списков желаний");
 

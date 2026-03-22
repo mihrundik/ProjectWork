@@ -49,7 +49,7 @@ public class NumberOfViewButtonsTest extends AbstractBaseTest {
         int actualViewButtonsCount = viewButtons.size();
         log.info("Реальных кнопок 'Просмотр' на странице: {}", actualViewButtonsCount);
 
-        // теперь они должны совпадать
+        // они должны совпадать
         assertEquals(actualViewButtonsCount, wishlistCount,
                 "Количество вишлистов должно равняться количеству кнопок 'Просмотр'");
     }

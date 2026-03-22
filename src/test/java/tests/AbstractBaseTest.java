@@ -127,7 +127,7 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
     }
 
     public void driverStart(TestInfo testInfo) {
-        String browserName = System.getProperty("browser", "edge");
+        String browserName = System.getProperty("browser", "firefox");
 
         // проверяем опции в командной строке
         String optionsFromCmd = null;

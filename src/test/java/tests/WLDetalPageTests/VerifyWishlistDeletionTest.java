@@ -32,6 +32,22 @@ public class VerifyWishlistDeletionTest extends AbstractBaseTest {
     @Test
     @DisplayName("Проверка удаления вишлиста: количество списков уменьшается на 1")
     public void verifyWishlistDeletionReducesListCount() {
+
+        // убедимся, что есть список, и откроем его
+        if (!wishlistsPage.hasWishlists()) {
+            wishlistsPage.clickAddNewList();
+            wishlistsPage.waitForCreateFormToAppear();
+
+            String testName = "Тестовый список " + System.currentTimeMillis();
+            String testDescription = "Описание тестового списка";
+
+            wishlistsPage.fillCreateForm(testName, testDescription);
+            wishlistsPage.clickSubmitButton();
+            wishlistsPage.waitForCreateFormToDisappear();
+
+            log.info("Создан тестовый список для проверки удаления: {}", testName);
+        }
+
         // 1. проверяем, что есть хотя бы один список для удаления
         assertTrue(wishlistsPage.hasWishlists(), "Нет ни одного вишлиста для проведения теста");
 

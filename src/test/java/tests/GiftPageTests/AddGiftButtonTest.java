@@ -28,6 +28,7 @@ public class AddGiftButtonTest extends AbstractBaseTest {
     @Test
     @DisplayName("Тест: Проверка полей в окне создания нового подарка")
     void testToAddGiftPage() {
+
         // проверяем, что на странице 'Мои списки' есть хотя бы один список
         if (!wishlistsPage.hasWishlists()) {
             wishlistsPage.clickAddNewList();
