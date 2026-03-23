@@ -12,6 +12,7 @@ import java.time.Duration;
 
 import static pages.MyWishlistsPage.DEFAULT_TIMEOUT_SECONDS;
 
+
 public class AddGiftPage extends AbstractBaseMethod {
 
     @FindBy(css = "h2")
@@ -39,31 +40,44 @@ public class AddGiftPage extends AbstractBaseMethod {
     private WebElement cancelButton;
 
 
-
     public AddGiftPage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
         PageFactory.initElements(driver, this);
     }
 
-    public WebElement getGiftNameField() { return giftNameField; }
+    public WebElement getGiftNameField() {
+        return giftNameField;
+    }
 
-    public WebElement getGiftDescriptionField() { return giftDescriptionField; }
+    public WebElement getGiftDescriptionField() {
+        return giftDescriptionField;
+    }
 
-    public WebElement giftUrlProdact() { return giftUrlProdact; }
+    public WebElement giftUrlProdact() {
+        return giftUrlProdact;
+    }
 
-    public WebElement giftPriceProdact() { return giftPriceProdact; }
+    public WebElement giftPriceProdact() {
+        return giftPriceProdact;
+    }
 
-    public WebElement giftUrlImage() { return giftUrlImage; }
+    public WebElement giftUrlImage() {
+        return giftUrlImage;
+    }
 
-    public WebElement getSaveButton() { return saveButton; }
+    public WebElement getSaveButton() {
+        return saveButton;
+    }
 
-    public WebElement getCancelButton() { return cancelButton; }
+    public WebElement getCancelButton() {
+        return cancelButton;
+    }
 
 
-    // локаторы для ожиданий (видимость/невидимость)
+    // локатор для ожиданий (для видимость/невидимость)
     private final By cancelButtonLocator = By.cssSelector("button.cancel, a.cancel");
-    // контейнер модалки (по примеру предыдущих xpath-локаторов модалки)
+    // контейнер модалки
     public final By modalRootLocator = By.xpath("/html/body/div[3]");
 
 

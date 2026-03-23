@@ -4,15 +4,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.safari.SafariOptions;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
-import factory.sattings.OptionsParser;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class OpenCreateFormTest extends AbstractBaseTest {
 

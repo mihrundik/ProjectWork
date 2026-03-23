@@ -11,6 +11,7 @@ import utils.WaitUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
 public class CreateNewGiftTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;

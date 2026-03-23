@@ -14,7 +14,7 @@ import java.time.Duration;
 import java.util.List;
 
 import static pages.MyWishlistsPage.DEFAULT_TIMEOUT_SECONDS;
-import static utils.WaitUtils.waitForPageLoad;
+
 
 public class MyWishListPage extends AbstractBaseMethod {
 

@@ -2,6 +2,7 @@ package pages;
 
 import org.openqa.selenium.WebDriver;
 
+
 public class PageFactory {
 
     protected WebDriver driver;

@@ -11,6 +11,7 @@ import utils.WaitUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 public class CreateNewWishlistTest extends AbstractBaseTest {
 
     private MyWishlistsPage myWishlistsPage;
@@ -29,8 +30,8 @@ public class CreateNewWishlistTest extends AbstractBaseTest {
     @Test
     @DisplayName("Тест: Успешное создание нового вишлиста")
     void testCreateNewWishlist() {
-         String testListName = "Тестовый список " + System.currentTimeMillis();
-         String testListDescription = "Описание тестового списка для создания";
+        String testListName = "Тестовый список " + System.currentTimeMillis();
+        String testListDescription = "Описание тестового списка для создания";
 
         int initialCount = myWishlistsPage.getWishlistCount();
         log.info("Начальное количество списков: {}", initialCount);

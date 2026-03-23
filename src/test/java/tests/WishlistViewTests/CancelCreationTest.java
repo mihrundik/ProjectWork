@@ -9,6 +9,7 @@ import tests.AbstractBaseTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 public class CancelCreationTest extends AbstractBaseTest {
 
     private MyWishlistsPage myWishlistsPage;

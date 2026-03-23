@@ -11,6 +11,7 @@ import tests.AbstractBaseTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
 public class WishlistNavigationTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public class MyWishlistsPage {
 
     public Logger log = LogManager.getLogger(MyWishlistsPage.class);

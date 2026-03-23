@@ -9,6 +9,7 @@ import tests.AbstractBaseTest;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
 public class WishlistsExistTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;

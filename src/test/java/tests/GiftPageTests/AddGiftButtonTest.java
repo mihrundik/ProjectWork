@@ -10,6 +10,7 @@ import tests.AbstractBaseTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
 public class AddGiftButtonTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;

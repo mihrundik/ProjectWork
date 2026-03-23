@@ -5,6 +5,7 @@ import org.openqa.selenium.Capabilities;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
 
+
 public class ClickViewButtonOnLastWishlistTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;

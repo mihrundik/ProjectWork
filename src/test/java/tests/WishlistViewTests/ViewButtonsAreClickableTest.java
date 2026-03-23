@@ -11,7 +11,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ViewButtonsAreClickableTest  extends AbstractBaseTest {
+
+public class ViewButtonsAreClickableTest extends AbstractBaseTest {
 
     private MyWishlistsPage myWishlistsPage;
 

@@ -11,6 +11,7 @@ import org.openqa.selenium.TimeoutException;
 import java.time.Duration;
 import java.util.function.Function;
 
+
 public class WaitUtils {
     private static final int DEFAULT_TIMEOUT = 10;
 

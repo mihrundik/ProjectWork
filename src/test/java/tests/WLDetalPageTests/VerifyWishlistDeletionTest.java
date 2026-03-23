@@ -8,9 +8,9 @@ import pages.MyWishListPage;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class VerifyWishlistDeletionTest extends AbstractBaseTest {
 

@@ -10,6 +10,7 @@ import tests.AbstractBaseTest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
 public class NewWishlistDataTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;

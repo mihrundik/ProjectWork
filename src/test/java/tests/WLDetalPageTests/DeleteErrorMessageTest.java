@@ -8,8 +8,8 @@ import pages.MyWishListPage;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
 
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class DeleteErrorMessageTest extends AbstractBaseTest {
 

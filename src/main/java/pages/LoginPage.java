@@ -6,7 +6,9 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.time.Duration;
+
 
 public class LoginPage {
 
@@ -28,7 +30,7 @@ public class LoginPage {
         PageFactory.initElements(driver, this);
     }
 
-   // выполнение входа в сиситему
+    // выполнение входа в сиситему
     public void login(String login, String password) {
         wait.until(ExpectedConditions.visibilityOf(formControlName)).sendKeys(login);
         formControlPass.sendKeys(password);
