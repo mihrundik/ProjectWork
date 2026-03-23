@@ -1,5 +1,6 @@
 package tests;
 
+import config.EnvConfig;
 import factory.WebDriverFactory;
 import factory.sattings.OptionsParser;
 import org.junit.jupiter.api.*;
@@ -27,24 +28,29 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
     protected LoginPage loginPage;
     protected static final Logger log = LogManager.getLogger(AbstractBaseTest.class);
 
-    // для отладки
-    private final String URL = "https://wishlist.otus.kartushin.su/wishlists";
-    private static final String LOGIN = System.getProperty("wishlist.login", "ИмяЛюбимоеМое2");
-    private static final String PASSWORD = System.getProperty("wishlist.password", "qwerty123");
+//    // для отладки
+//    private final String URL = "https://wishlist.otus.kartushin.su/wishlists";
+//    private static final String LOGIN = System.getProperty("wishlist.login", "ИмяЛюбимоеМое2");
+//    private static final String PASSWORD = System.getProperty("wishlist.password", "qwerty123");
 
-//    private final String URL = EnvConfig.getUrl();
-//    private static final String LOGIN = EnvConfig.getLogin();
-//    private static final String PASSWORD = EnvConfig.getPassword();
+    private final String URL = EnvConfig.getUrl();
+    private static final String LOGIN = EnvConfig.getLogin();
+    private static final String PASSWORD = EnvConfig.getPassword();
 
 
     @BeforeAll
     public static void startTests() {
         log.info("Начало тестирования");
 
+        // ДОБАВЬТЕ ПРОВЕРКУ НА NULL
+        if (LOGIN == null || PASSWORD == null) {
+            log.error("CRITICAL: LOGIN or PASSWORD is NULL! LOGIN={}, PASSWORD={}", LOGIN, PASSWORD);
+            throw new IllegalStateException("Не удалось загрузить данные авторизации. Проверьте EnvConfig.");
+        }
+
         // проверяем, что данные для авторизации указаны
         if (LOGIN.equals("your_login") || PASSWORD.equals("your_password")) {
             log.warn("Используются данные авторизации по умолчанию. " +
-                    // на будущее для запуска через командную строку
                     "Рекомендуется указать свои через -Dwishlist.login и -Dwishlist.password");
         }
     }
@@ -89,7 +95,13 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
 
 
     public void driverStart(TestInfo testInfo) {
-        String browserName = System.getProperty("browser", "safari");
+        String browserName = System.getProperty("browser", "edge");
+
+        // когда значение равно "${browser}"
+        if (browserName == null || browserName.isEmpty() || browserName.equals("${browser}")) {
+            browserName = "edge";
+            log.info("Браузер не указан, используем значение по умолчанию: edge");
+        }
 
         // проверяем опции в командной строке
         String optionsFromCmd = null;

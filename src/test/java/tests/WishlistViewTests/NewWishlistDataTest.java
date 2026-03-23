@@ -30,43 +30,36 @@ public class NewWishlistDataTest extends AbstractBaseTest {
     @Test
     @DisplayName("Тест: Проверка данных нового вишлиста")
     void testNewWishlistData() {
-        // Шаг 1: проверяем наличие списков на уже загруженной странице
-        if (!wishlistsPage.hasWishlists()) {
-            log.info("Списки желаний отсутствуют. Создаём новый...");
+        // ВСЕГДА создаем новый список, игнорируя существующие
+        log.info("Создаём новый вишлист для теста...");
 
-            // Шаг 1.1: вызываем метод на существующем объекте страницы.
-            wishlistsPage.clickAddNewList();
+        wishlistsPage.clickAddNewList();
+        wishlistsPage.waitForCreateFormToAppear();
 
-            // ждём появления формы (используем улучшенный метод)
-            wishlistsPage.waitForCreateFormToAppear(); // Теперь это работает корректно!
+        String tempWishlistName = "Автотест-вишлист " + System.currentTimeMillis();
+        String tempWishlistDesc = "Этот вишлист создан для автоматического теста";
 
-            String tempWishlistName = "Автотест-вишлист " + System.currentTimeMillis();
-            String tempWishlistDesc = "Этот вишлист создан для автоматического теста";
+        wishlistsPage.fillCreateForm(tempWishlistName, tempWishlistDesc);
+        wishlistsPage.clickSubmitButton();
+        wishlistsPage.waitForCreateFormToDisappear();
 
-            wishlistsPage.fillCreateForm(tempWishlistName, tempWishlistDesc);
-            wishlistsPage.clickSubmitButton();
+        log.info("Создан временный вишлист: {}", tempWishlistName);
 
-            // ждём исчезновение формы
-            wishlistsPage.waitForCreateFormToDisappear();
-            log.info("Создан временный вишлист: {}", tempWishlistName);
-        }
-        // убеждаемся, что есть хотя бы один список
-        assertTrue(wishlistsPage.hasWishlists(),
-                "Должен быть хотя бы один список желаний");
-
-        // получаем данные последнего (самого нового?) списка
+        // Получаем данные последнего (только что созданного) списка
         String lastTitle = wishlistsPage.getLastWishlistTitle();
         String lastDescription = wishlistsPage.getLastWishlistDescription();
         String lastGiftCount = wishlistsPage.getLastWishlistGiftCountText();
 
-        log.info("Последний вишлист - Название: {}, Описание: {}, Подарки: {}",
+        log.info("Созданный вишлист - Название: {}, Описание: {}, Подарки: {}",
                 lastTitle, lastDescription, lastGiftCount);
 
-        // проверяем, что у последнего списка есть данные
+        // Проверяем данные нового списка
         assertNotNull(lastTitle, "Название не должно быть пустым");
         assertFalse(lastTitle.isEmpty(), "Название не должно быть пустой строкой");
+        assertEquals(tempWishlistName, lastTitle, "Название не соответствует созданному");
+        assertEquals(tempWishlistDesc, lastDescription, "Описание не соответствует созданному");
 
-        // проверяем количество подарков
+        // Проверяем количество подарков (должно быть 0)
         assertTrue(lastGiftCount.contains("0"),
                 "В новом списке должно быть 0 подарков, получено: " + lastGiftCount);
     }
