@@ -27,36 +27,41 @@ public class ViewButtonsClickableTest extends AbstractBaseTest {
         myWishlistsPage = page.myWishlistsPage;
     }
 
+    /**
+     * Тест выполняет следующие шаги:
+     * 1. Проверяет наличие вишлистов, при отсутствии создает новый
+     * 2. Получает все карточки вишлистов
+     * 3. Для каждого вишлиста проверяет, что кнопка "Просмотр" активна
+     */
     @Test
     @DisplayName("Тест: Проверка кликабельности кнопок 'Просмотр'")
     void testViewButtonsAreClickable() {
 
-// Шаг 1: проверяем наличие списков на уже загруженной странице
+        // Проверяем наличие вишлистов, при отсутствии создаем новый
         if (!myWishlistsPage.hasWishlists()) {
             log.info("Списки желаний отсутствуют. Создаём новый...");
 
-            // Шаг 1.1: вызываем метод на существующем объекте страницы.
             myWishlistsPage.clickAddNewList();
-
-            // ждём появления формы (используем улучшенный метод)
-            myWishlistsPage.waitForCreateFormToAppear(); // Теперь это работает корректно!
+            myWishlistsPage.waitForCreateFormToAppear();
 
             String tempWishlistName = "Автотест-вишлист " + System.currentTimeMillis();
             String tempWishlistDesc = "Этот вишлист создан для автоматического теста";
 
             myWishlistsPage.fillCreateForm(tempWishlistName, tempWishlistDesc);
             myWishlistsPage.clickSubmitButton();
-
-            // ждём исчезновение формы
             myWishlistsPage.waitForCreateFormToDisappear();
+
             log.info("Создан временный вишлист: {}", tempWishlistName);
         }
 
+        // Проверяем наличие списков, иначе пропускаем тест
         int wishlistCount = myWishlistsPage.getWishlistCount();
         Assumptions.assumeTrue(wishlistCount > 0, "Тест пропущен: нет списков желаний");
 
+        // Получаем все карточки вишлистов
         List<WebElement> wishlistCards = myWishlistsPage.getAllWishlistCards();
 
+        // Проверяем кликабельность кнопки "Просмотр" для каждого вишлиста
         for (int i = 0; i < wishlistCards.size(); i++) {
             WebElement card = wishlistCards.get(i);
             String title = card.findElement(By.xpath(".//div[contains(@class, 'card-title')]")).getText();
@@ -68,4 +73,5 @@ public class ViewButtonsClickableTest extends AbstractBaseTest {
             log.info("Кнопка для вишлиста '{}' активна", title);
         }
     }
+
 }

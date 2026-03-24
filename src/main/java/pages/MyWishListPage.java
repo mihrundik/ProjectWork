@@ -15,7 +15,6 @@ import java.util.List;
 
 import static pages.MyWishlistsPage.DEFAULT_TIMEOUT_SECONDS;
 
-
 public class MyWishListPage extends AbstractBaseMethod {
 
     public Logger log = LogManager.getLogger(MyWishListPage.class);
@@ -34,14 +33,18 @@ public class MyWishListPage extends AbstractBaseMethod {
 
     private final By giftCardLocator = By.cssSelector("#root > div > div.g-4.row > div.col > div.card");
 
-
+    /**
+     * Конструктор страницы вишлиста.
+     */
     public MyWishListPage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
         PageFactory.initElements(driver, this);
     }
 
-    // количество подарков в списке
+    /**
+     * Возвращает количество подарков в текущем вишлисте.
+     */
     public int getGiftCount() {
         try {
             List<WebElement> cards = driver.findElements(giftCardLocator);
@@ -54,13 +57,16 @@ public class MyWishListPage extends AbstractBaseMethod {
         }
     }
 
-    // проверить наличие подарков в списке
+    /**
+     * Возвращает количество подарков в списке.
+     */
     public int getGiftItemsCount() {
         return getGiftCount();
     }
 
-
-    // проверяет, что появилось модальное окно добавления подарка и его заголовок совпадает с expectedTitle.
+    /**
+     * Проверяет, что появилось модальное окно добавления подарка и его заголовок соответствует ожидаемому.
+     */
     public boolean isAddGiftModalDisplayedWithTitle(String expectedTitle) {
         try {
             By modalTitleXpath = By.xpath("/html/body/div[3]/div/div/div[1]/div");
@@ -74,7 +80,9 @@ public class MyWishListPage extends AbstractBaseMethod {
         }
     }
 
-    // проверяет, что появилось ожидаемое сообщение об ошибке.
+    /**
+     * Проверяет, что появилось ожидаемое сообщение об ошибке.
+     */
     public boolean isErrorMessageDisplayed(String expectedText) {
         try {
             By rootXpath = By.xpath("//*[@id='root']/div");
@@ -88,7 +96,9 @@ public class MyWishListPage extends AbstractBaseMethod {
         }
     }
 
-    // добавить
+    /**
+     * Нажимает кнопку "Добавить подарок".
+     */
     public void clickAddGiftButton() {
         try {
             WebElement button = wait.until(ExpectedConditions.elementToBeClickable(addGiftButton));
@@ -100,7 +110,9 @@ public class MyWishListPage extends AbstractBaseMethod {
         }
     }
 
-    // удаление
+    /**
+     * Нажимает кнопку "Удалить список".
+     */
     public void clickDeleteWishlistButton() {
         try {
             WebElement button = wait.until(ExpectedConditions.elementToBeClickable(deleteWishlistButton));
@@ -112,7 +124,9 @@ public class MyWishListPage extends AbstractBaseMethod {
         }
     }
 
-    // заголовок вишлиста
+    /**
+     * Возвращает заголовок текущего вишлиста.
+     */
     public String getWishlistTitle() {
         try {
             WebElement element = wait.until(ExpectedConditions.visibilityOf(wishlistTitle));
@@ -125,7 +139,9 @@ public class MyWishListPage extends AbstractBaseMethod {
         }
     }
 
-    // описание вишлиста
+    /**
+     * Возвращает описание текущего вишлиста.
+     */
     public String getWishlistDescription() {
         try {
             WebElement element = wait.until(ExpectedConditions.visibilityOf(wishlistDescription));
@@ -138,7 +154,9 @@ public class MyWishListPage extends AbstractBaseMethod {
         }
     }
 
-    // загрузилась ли страница?
+    /**
+     * Проверяет, загрузилась ли страница вишлиста.
+     */
     public boolean isWishlistPageDisplayed() {
         try {
             boolean isDisplayed =
@@ -151,5 +169,4 @@ public class MyWishListPage extends AbstractBaseMethod {
             return false;
         }
     }
-
 }

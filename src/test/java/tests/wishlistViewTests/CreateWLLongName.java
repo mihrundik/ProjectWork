@@ -26,13 +26,23 @@ public class CreateWLLongName extends AbstractBaseTest {
     }
 
 
+    /**
+     * Тест выполняет следующие шаги:
+     * 1. Сохраняет начальное количество вишлистов
+     * 2. Открывает форму создания вишлиста
+     * 3. Заполняет форму названием длиной 512 символов и обычным описанием
+     * 4. Нажимает кнопку "Создать"
+     * 5. Проверяет, что форма осталась открытой (валидация не пропустила создание)
+     * 6. Проверяет, что количество вишлистов не изменилось
+     * 7. Закрывает форму для очистки состояния
+     */
     @Test
     @DisplayName("Тест: Попытка создания вишлиста с очень длинным названием (512 символов) - форма не закрывается")
     void testCreateWishlistWithVeryLongDescription() {
         String testListName = "A".repeat(512);
         String testListDescription = "Описание тестового списка для создания";
 
-        log.info("Длина описания: {} символов", testListDescription.length());
+        log.info("Длина названия: {} символов", testListName.length());
 
         int initialCount = myWishlistsPage.getWishlistCount();
         log.info("Начальное количество списков: {}", initialCount);
@@ -43,22 +53,23 @@ public class CreateWLLongName extends AbstractBaseTest {
         myWishlistsPage.fillCreateForm(testListName, testListDescription);
         myWishlistsPage.clickSubmitButton();
 
-        // проверяем, что форма НЕ закрылась
+        // Проверяем, что форма НЕ закрылась
         boolean formStillVisible = myWishlistsPage.isCreateFormVisible();
         log.info("Форма все еще видна: {}", formStillVisible);
 
         assertTrue(formStillVisible,
-                "При очень длинном описании форма должна оставаться открытой");
+                "При очень длинном названии форма должна оставаться открытой");
 
-        // проверяем, что количество списков не изменилось
+        // Проверяем, что количество списков не изменилось
         int currentCount = myWishlistsPage.getWishlistCount();
         log.info("Количество списков после попытки создания: {}", currentCount);
 
         assertEquals(initialCount, currentCount,
-                "Количество списков не должно измениться при очень длинном описании");
+                "Количество списков не должно измениться при очень длинном названии");
 
-        // закрываем форму, чтобы не влиять на другие тесты
+        // Закрываем форму, чтобы не влиять на другие тесты
         myWishlistsPage.closeCreateForm();
         log.info("Форма закрыта");
     }
+
 }

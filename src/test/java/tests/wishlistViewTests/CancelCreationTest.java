@@ -26,6 +26,15 @@ public class CancelCreationTest extends AbstractBaseTest {
     }
 
 
+    /**
+     * Тест выполняет следующие шаги:
+     * 1. Сохраняет начальное количество вишлистов
+     * 2. Открывает форму создания вишлиста
+     * 3. Заполняет форму тестовыми данными
+     * 4. Нажимает кнопку "Отмена"
+     * 5. Проверяет, что форма закрылась
+     * 6. Проверяет, что количество вишлистов не изменилось
+     */
     @Test
     @DisplayName("Тест: Отмена создания через кнопку 'Отмена'")
     void testCancelCreation() {
@@ -49,4 +58,5 @@ public class CancelCreationTest extends AbstractBaseTest {
         assertEquals(initialCount, newCount,
                 "Количество списков не должно измениться после отмены");
     }
+
 }

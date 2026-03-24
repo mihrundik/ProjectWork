@@ -9,7 +9,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-
 public class LoginPage {
 
     private final WebDriverWait wait;
@@ -23,16 +22,20 @@ public class LoginPage {
     @FindBy(css = "button.btn.btn-primary[type=\"submit\"]")
     private WebElement buttonEnter;
 
+    /**
+     * Конструктор страницы авторизации.
+     */
     public LoginPage(WebDriver driver) {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         PageFactory.initElements(driver, this);
     }
 
-    // выполнение входа в сиситему
+    /**
+     * Выполняет вход в систему с указанными учетными данными.
+     */
     public void login(String login, String password) {
         wait.until(ExpectedConditions.visibilityOf(formControlName)).sendKeys(login);
         formControlPass.sendKeys(password);
         buttonEnter.click();
     }
-
 }

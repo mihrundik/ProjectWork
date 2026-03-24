@@ -32,42 +32,53 @@ public class DeleteLastWishlistTest extends AbstractBaseTest {
         wishlistsPage.get().open();
     }
 
+
+    /**
+     * Тест выполняет следующие шаги:
+     * 1. Обеспечивает наличие хотя бы одного вишлиста
+     * 2. Сохраняет начальное количество вишлистов
+     * 3. Находит первый вишлист в списке
+     * 4. Нажимает кнопку "Удалить" для этого вишлиста
+     * 5. Ожидает исчезновения удаленного вишлиста из списка
+     * 6. Проверяет, что количество вишлистов уменьшилось на 1
+     */
     @Test
     @DisplayName("Тест: Удаление первого вишлиста")
     void testDeleteFirstWishlist() {
 
-        // Шаг 1: проверяем наличие списков на уже загруженной странице
-        // хелпер для обеспечения наличия вишлиста
+        // Обеспечиваем наличие вишлиста
         wishlistHelper.ensureWishlistExists();
 
-        // считаем кнопки "Просмотр" - это самые надежный счетчик уникальных вишлистов
+        // Считаем кнопки "Просмотр" - это надежный счетчик уникальных вишлистов
         int initialCount = driver.findElements(By.xpath("//button[contains(text(), 'Просмотр')]")).size();
 
+        // Проверяем наличие списков, иначе пропускаем тест
         Assumptions.assumeTrue(initialCount > 0, "Тест пропущен: нет списков желаний");
 
         log.info("Начальное количество вишлистов: {}", initialCount);
 
-        // получаем все кнопки "Просмотр"
+        // Получаем все кнопки "Просмотр"
         List<WebElement> viewButtons = driver.findElements(By.xpath("//button[contains(text(), 'Просмотр')]"));
 
-        // берем первый вишлист (индекс 0)
+        // Находим первый вишлист (индекс 0)
         WebElement firstCard = viewButtons.get(0).findElement(By.xpath("./ancestor::div[contains(@class, 'card')]"));
         String firstTitle = firstCard.findElement(By.xpath(".//div[contains(@class, 'card-title')]")).getText();
         log.info("Удаляем вишлист: '{}'", firstTitle);
 
-        // находим и кликаем кнопку удаления
+        // Находим и кликаем кнопку удаления
         WebElement deleteButton = firstCard.findElement(By.xpath(".//button[contains(text(), 'Удалить')]"));
         deleteButton.click();
         log.info("Клик по кнопке удаления");
 
-        // ждем обновления списка
+        // Ожидаем исчезновения удаленного вишлиста из списка
         WaitUtils.waitForInvisibility(driver, By.xpath(".//div[contains(@class, 'card-title') and text()='" + firstTitle + "']"));
 
-        // снова считаем кнопки "Просмотр"
+        // Снова считаем кнопки "Просмотр" после удаления
         int newCount = driver.findElements(By.xpath("//button[contains(text(), 'Просмотр')]")).size();
         log.info("Количество вишлистов после удаления: {}", newCount);
 
         assertEquals(initialCount - 1, newCount,
                 "Количество вишлистов должно уменьшиться на 1");
     }
+
 }

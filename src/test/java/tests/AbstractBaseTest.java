@@ -20,7 +20,6 @@ import pages.*;
 
 import java.time.Duration;
 
-
 public abstract class AbstractBaseTest extends AbstractBaseMethod {
 
     protected WebDriver driver;
@@ -32,39 +31,45 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
     private static final String LOGIN = EnvConfig.getLogin();
     private static final String PASSWORD = EnvConfig.getPassword();
 
-
+    /**
+     * Проверяет наличие данных авторизации.
+     */
     @BeforeAll
     public static void startTests() {
         log.info("Начало тестирования");
 
-        // ДОБАВЬТЕ ПРОВЕРКУ НА NULL
+        // Проверка на null
         if (LOGIN == null || PASSWORD == null) {
             log.error("CRITICAL: LOGIN or PASSWORD is NULL! LOGIN={}, PASSWORD={}", LOGIN, PASSWORD);
             throw new IllegalStateException("Не удалось загрузить данные авторизации. Проверьте EnvConfig.");
         }
 
-        // проверяем, что данные для авторизации указаны
+        // Проверяем, что данные для авторизации указаны
         if (LOGIN.equals("your_login") || PASSWORD.equals("your_password")) {
             log.warn("Используются данные авторизации по умолчанию. " +
                     "Рекомендуется указать свои через -Dwishlist.login и -Dwishlist.password");
         }
     }
 
+    /**
+     * Инициализирует WebDriver, очищает состояние браузера,
+     * выполняет авторизацию и инициализирует страницы.
+     */
     @BeforeEach
     public void setUp(TestInfo testInfo) {
         driverStart(testInfo);
         this.driver = getCurrentDriver();
 
-        // очистка состояния для изоляции тестов
+        // Очистка состояния для изоляции тестов
         driver.manage().deleteAllCookies();
         ((JavascriptExecutor) driver).executeScript("window.localStorage.clear(); window.sessionStorage.clear();");
 
-        // Инициализация page/страниц
+        // Инициализация страниц
         page = new PageFactory(driver);
         headerElPage = page.header;
         loginPage = new LoginPage(driver);
 
-        // явная авторизация
+        // Явная авторизация
         driver.get(URL);
         loginPage.login(LOGIN, PASSWORD);
 
@@ -74,6 +79,9 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         log.info("Авторизация выполнена успешно. Тест готов к запуску.");
     }
 
+    /**
+     * Закрывает WebDriver и очищает ссылки на него.
+     */
     @AfterEach
     public void driverClose() {
         if (driver != null) {
@@ -88,13 +96,18 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         log.info("Конец тестирования\n");
     }
 
-
-    // наличие хотя бы одного вишлиста на странице.
+    /**
+     * Гарантирует наличие хотя бы одного вишлиста на странице.
+     * Если вишлисты отсутствуют, создает новый с автоматически сгенерированным названием.
+     */
     protected String ensureWishlistExists(MyWishlistsPage wishlistsPage) {
         return ensureWishlistExists(wishlistsPage, null, null);
     }
 
-    // наличие хотя бы одного вишлиста на странице с указанными параметрами.
+    /**
+     * Гарантирует наличие хотя бы одного вишлиста на странице с указанными параметрами.
+     * Если вишлисты отсутствуют, создает новый с переданными названием и описанием.
+     */
     protected String ensureWishlistExists(MyWishlistsPage wishlistsPage,
                                           String wishlistName,
                                           String wishlistDescription) {
@@ -107,7 +120,9 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         return createWishlist(wishlistsPage, wishlistName, wishlistDescription);
     }
 
-    // cоздает новый вишлист с указанными параметрами.
+    /**
+     * Создает новый вишлист с указанными параметрами.
+     */
     protected String createWishlist(MyWishlistsPage wishlistsPage,
                                     String wishlistName,
                                     String wishlistDescription) {
@@ -126,27 +141,35 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         return name;
     }
 
-    // уникальное название для вишлиста.
+    /**
+     * Генерирует уникальное название для вишлиста.
+     */
     private String generateWishlistName() {
         return "Автотест-вишлист " + System.currentTimeMillis();
     }
 
-    // описание для вишлиста по умолчанию.
+    /**
+     * Генерирует описание для вишлиста по умолчанию.
+     */
     private String generateWishlistDescription() {
         return "Этот вишлист создан для автоматического теста";
     }
 
-
+    /**
+     * Инициализирует WebDriver для теста.
+     * Определяет браузер из системных свойств, применяет опции,
+     * создает драйвер и открывает начальную страницу.
+     */
     public void driverStart(TestInfo testInfo) {
         String browserName = System.getProperty("browser", "edge");
 
-        // когда значение равно "${browser}"
+        // Когда значение равно "${browser}"
         if (browserName == null || browserName.isEmpty() || browserName.equals("${browser}")) {
             browserName = "edge";
             log.info("Браузер не указан, используем значение по умолчанию: edge");
         }
 
-        // проверяем опции в командной строке
+        // Проверяем опции в командной строке
         String optionsFromCmd = null;
         switch (browserName.toLowerCase()) {
             case "chrome":
@@ -163,10 +186,10 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
                 break;
         }
 
-        // получаем опции из метода, который может быть переопределен в дочернем классе
+        // Получаем опции из метода, который может быть переопределен в дочернем классе
         Capabilities options = getOptions(browserName);
 
-        // если есть опции из командной строки - создаем новые опции
+        // Если есть опции из командной строки - создаем новые опции
         if (optionsFromCmd != null && !optionsFromCmd.isEmpty()) {
             options = createOptionsFromString(browserName, optionsFromCmd);
         }
@@ -174,18 +197,22 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         log.info("Запуск теста: {} в браузере {}:\n{}",
                 testInfo.getDisplayName(), browserName, options);
 
-        // создаем параметризированный драйвер
+        // Создаем параметризированный драйвер
         WebDriver newDriver = WebDriverFactory.create(browserName, (AbstractDriverOptions<?>) options);
 
-        // устанавливаем параметризированный драйвер
+        // Устанавливаем параметризированный драйвер
         setDriver(newDriver);
 
         newDriver.get(URL);
         page = new PageFactory(newDriver);
     }
 
+    /**
+     * Возвращает опции браузера для указанного браузера.
+     * Может быть переопределен в дочерних классах для кастомизации.
+     */
     protected Capabilities getOptions(String browserName) {
-        // проверяем опции в командной строке
+        // Проверяем опции в командной строке
         String optionsFromCmd = null;
         switch (browserName.toLowerCase()) {
             case "chrome":
@@ -202,12 +229,12 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
                 break;
         }
 
-        // если есть - парсим их
+        // Если есть - парсим их
         if (optionsFromCmd != null && !optionsFromCmd.isEmpty()) {
             return OptionsParser.parse(browserName, optionsFromCmd);
         }
 
-        // или используем стандартные опции
+        // Или используем стандартные опции
         switch (browserName.toLowerCase()) {
             case "chrome":
                 return new ChromeOptions();

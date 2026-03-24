@@ -30,26 +30,31 @@ public class DeleteErrorMessageTest extends AbstractBaseTest {
     }
 
 
+    /**
+     * Тест выполняет следующие шаги:
+     * 1. Обеспечивает наличие хотя бы одного вишлиста
+     * 2. Переходит к последнему вишлисту
+     * 3. Дважды нажимает кнопку "Удалить список" (имитация ошибки)
+     * 4. Проверяет, что отображается ожидаемое сообщение об ошибке
+     */
     @Test
     @DisplayName("Кнопка 'Удалить список' при ошибке показывает сообщение 'Ошибка: Ошибка при загрузке списка желаний'")
     public void deleteWishlistShowsErrorMessage() {
-        // Шаг 1: проверяем наличие списков на уже загруженной странице
-        // хелпер для обеспечения наличия вишлиста
+        // Обеспечиваем наличие вишлиста
         wishlistHelper.ensureWishlistExists();
 
+        // Переходим к последнему вишлисту
         wishlistsPage.clickViewButtonOnLastWishlist();
         MyWishListPage wishListPage = new MyWishListPage(driver);
 
-        // проверяем, что страница вишлиста загрузилась
+        // Проверяем, что страница вишлиста загрузилась
         assertTrue(wishListPage.isWishlistPageDisplayed(), "Страница вишлиста не загрузилась");
 
-        // нажимаем "Удалить список"
+        // Нажимаем кнопку "Удалить список" дважды для имитации ошибки
+        wishListPage.clickDeleteWishlistButton();
         wishListPage.clickDeleteWishlistButton();
 
-        // нажимаем "Удалить список"
-        wishListPage.clickDeleteWishlistButton();
-
-        // ожидаем сообщения об ошибке в root/div
+        // Проверяем отображение сообщения об ошибке
         String expectedError = "Ошибка: Ошибка при загрузке списка желаний";
         assertTrue(wishListPage.isErrorMessageDisplayed(expectedError),
                 String.format("Ожидалось сообщение об ошибке '%s', но оно не появилось", expectedError));

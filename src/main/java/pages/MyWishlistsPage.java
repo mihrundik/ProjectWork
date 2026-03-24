@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class MyWishlistsPage {
 
     public Logger log = LogManager.getLogger(MyWishlistsPage.class);
@@ -34,7 +33,6 @@ public class MyWishlistsPage {
     @FindBy(css = "div.g-4.row")
     private WebElement wishlistContainer;
 
-
     @FindBy(css = "input.form-control[type='text'][required]")
     private WebElement nameNewWL;
 
@@ -50,56 +48,68 @@ public class MyWishlistsPage {
     @FindBy(xpath = "//button[@type='submit' and contains(text(), 'Создать')]")
     private WebElement submitButton;
 
-
+    /**
+     * Конструктор страницы со списком вишлистов.
+     */
     public MyWishlistsPage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
         PageFactory.initElements(driver, this);
-
     }
 
+    /**
+     * Открывает страницу со списком вишлистов.
+     */
     public void open() {
         driver.get(EnvConfig.getUrl() + "/wishlists");
         waitForPageToLoad();
     }
 
+    /**
+     * Ожидает загрузки страницы (появление заголовка).
+     */
     public void waitForPageToLoad() {
         wait.until(ExpectedConditions.visibilityOf(pageTitle));
         log.info("Страница Мои списки загружена");
     }
 
+    /**
+     * Нажимает кнопку "Добавить список".
+     */
     public void clickAddNewList() {
         wait.until(ExpectedConditions.elementToBeClickable(addNewListButton)).click();
         log.info("Клик по кнопке 'Добавить список");
     }
 
-
+    /**
+     * Возвращает список уникальных карточек вишлистов.
+     * Фильтрует дубликаты по заголовку.
+     */
     public List<WebElement> getWishlistCards() {
         try {
             wait.until(ExpectedConditions.visibilityOf(wishlistContainer));
 
-            // находим все карточки с классом 'card'
+            // Находим все карточки с классом 'card'
             List<WebElement> allCards = wishlistContainer.findElements(By.xpath(".//div[contains(@class, 'card')]"));
-            // log.info("Всего карточек с классом 'card' в контейнере: {}", allCards.size());
 
-            // используем Map для хранения уникальных вишлистов по их заголовку
+            // Используем Map для хранения уникальных вишлистов по их заголовку
             Map<String, WebElement> uniqueWishlists = new HashMap<>();
 
             for (WebElement card : allCards) {
-                // проверяем, есть ли кнопка "Просмотр"
+                // Проверяем, есть ли кнопка "Просмотр"
                 List<WebElement> viewButtons = card.findElements(By.xpath(".//button[contains(text(), 'Просмотр')]"));
 
                 if (!viewButtons.isEmpty()) {
-                    // получаем заголовок вишлиста
+                    // Получаем заголовок вишлиста
                     String title = "";
                     try {
                         title = card.findElement(By.xpath(".//div[contains(@class, 'card-title')]")).getText();
                     } catch (Exception e) {
-                        // если нет заголовка, используем текст карточки
+                        // Если нет заголовка, используем текст карточки
                         title = card.getText();
                     }
 
-                    // сохраняем только первый экземпляр каждого вишлиста
+                    // Сохраняем только первый экземпляр каждого вишлиста
                     if (!uniqueWishlists.containsKey(title)) {
                         uniqueWishlists.put(title, card);
                         log.debug("Добавлен уникальный вишлист: {}", title);
@@ -107,32 +117,37 @@ public class MyWishlistsPage {
                 }
             }
 
-            List<WebElement> result = new ArrayList<>(uniqueWishlists.values());
-            // log.info("Найдено УНИКАЛЬНЫХ вишлистов (с кнопкой Просмотр): {}", result.size());
-            return result;
+            return new ArrayList<>(uniqueWishlists.values());
 
         } catch (Exception e) {
-            // log.error("Ошибка при поиске карточек вишлистов: {}", e.getMessage());
             return List.of();
         }
     }
 
-    // количество карточек
+    /**
+     * Возвращает количество вишлистов на странице.
+     */
     public int getWishlistCount() {
         return getWishlistCards().size();
     }
 
-    // существуют ли хотя бы одна карточка?
+    /**
+     * Проверяет, существует ли хотя бы один вишлист.
+     */
     public boolean hasWishlists() {
         return getWishlistCount() > 0;
     }
 
-    // получает индекс последней карточки
+    /**
+     * Возвращает индекс последней карточки вишлиста.
+     */
     private int getLastIndex() {
         return getWishlistCount() - 1;
     }
 
-    // получает последнюю карточку
+    /**
+     * Возвращает последнюю карточку вишлиста.
+     */
     public WebElement getLastWishlistCard() {
         List<WebElement> cards = getWishlistCards();
         if (cards.isEmpty()) {
@@ -141,6 +156,9 @@ public class MyWishlistsPage {
         return cards.get(getLastIndex());
     }
 
+    /**
+     * Нажимает кнопку "Просмотр" на последнем вишлисте.
+     */
     public void clickViewButtonOnLastWishlist() {
         WebElement lastCard = getLastWishlistCard();
         WebElement viewButton = lastCard.findElement(
@@ -150,8 +168,9 @@ public class MyWishlistsPage {
         log.info("Клик по кнопке 'Просмотр' для последнего списка");
     }
 
-
-    // заголовок (title) последней карточки
+    /**
+     * Возвращает заголовок последнего вишлиста.
+     */
     public String getLastWishlistTitle() {
         WebElement lastCard = getLastWishlistCard();
         WebElement titleElement = lastCard.findElement(
@@ -160,39 +179,50 @@ public class MyWishlistsPage {
         return titleElement.getText();
     }
 
-    // описание (description) последней карточки
+    /**
+     * Возвращает описание последнего вишлиста.
+     */
     public String getLastWishlistDescription() {
         WebElement lastCard = getLastWishlistCard();
         WebElement descElement = lastCard.findElement(By.xpath(".//p[@class='card-text']"));
         return descElement.getText();
     }
 
-    // количество подарков в последнем вишлисте
+    /**
+     * Возвращает текст с количеством подарков в последнем вишлисте.
+     */
     public String getLastWishlistGiftCountText() {
         WebElement lastCard = getLastWishlistCard();
         WebElement countElement = lastCard.findElement(By.xpath(".//small[@class='text-muted']"));
         return countElement.getText();
     }
 
-    // возвращаем список всех уникальных карточек вишлистов
+    /**
+     * Возвращает список всех уникальных карточек вишлистов.
+     */
     public List<WebElement> getAllWishlistCards() {
         return getWishlistCards();
     }
 
-
-    // методы работы с формой создания вишлиста
+    /**
+     * Ожидает появления формы создания вишлиста.
+     */
     public void waitForCreateFormToAppear() {
         wait.until(ExpectedConditions.visibilityOf(nameNewWL));
         log.info("Форма создания вишлиста появилась");
     }
 
-    // закрытие формы создания нового вишлиста
+    /**
+     * Ожидает закрытия формы создания вишлиста.
+     */
     public void waitForCreateFormToDisappear() {
         wait.until(ExpectedConditions.invisibilityOf(nameNewWL));
         log.info("Форма создания вишлиста закрылась");
     }
 
-    // заполняет форму создания нового вишлиста
+    /**
+     * Заполняет форму создания нового вишлиста.
+     */
     public void fillCreateForm(String name, String description) {
         nameNewWL.clear();
         nameNewWL.sendKeys(name);
@@ -205,25 +235,36 @@ public class MyWishlistsPage {
         }
     }
 
+    /**
+     * Нажимает кнопку "Отмена" в форме создания вишлиста.
+     */
     public void clickCancelButton() {
         wait.until(ExpectedConditions.elementToBeClickable(cancelButton)).click();
         log.info("Клик по кнопке 'Отмена'");
     }
 
+    /**
+     * Нажимает кнопку закрытия (крестик) в форме создания вишлиста.
+     */
     public void clickCloseButton() {
         wait.until(ExpectedConditions.elementToBeClickable(closeButton)).click();
         log.info("Клик по кнопке закрытия (крестик)");
     }
 
+    /**
+     * Нажимает кнопку "Создать" в форме создания вишлиста.
+     */
     public void clickSubmitButton() {
         wait.until(ExpectedConditions.elementToBeClickable(submitButton)).click();
         log.info("Клик по кнопке 'Создать'");
     }
 
-    // поиск поля ввода названия вишниста
+    /**
+     * Возвращает поле ввода названия вишлиста.
+     */
     public WebElement getNameNewWL() {
         try {
-            // сначала проверим, есть ли вообще модальное окно
+            // Проверяем, есть ли модальное окно
             List<WebElement> modals = driver.findElements(By.xpath("/html/body/div[3]"));
 
             if (modals.isEmpty()) {
@@ -231,22 +272,22 @@ public class MyWishlistsPage {
                 return null;
             }
 
-            // теперь ищем поле ввода
+            // Ищем поле ввода
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.cssSelector("input.form-control[type='text']")
             ));
             return element;
         } catch (TimeoutException e) {
             log.error("Таймаут при поиске поля названия: {}", e.getMessage());
-
         } catch (Exception e) {
             log.error("Ошибка при поиске поля названия: {}", e.getMessage());
-            return null;
         }
         return null;
     }
 
-    // поиск поля ввода описания вишниста
+    /**
+     * Возвращает поле ввода описания вишлиста.
+     */
     public WebElement getDescriptionNewWL() {
         try {
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(
@@ -259,18 +300,22 @@ public class MyWishlistsPage {
         }
     }
 
-    // поля инициализируются один раз при создании объекта страницы,
-    // но если элемент появляется позже (в модальном окне), то поле остается null
-    // поэтому инициализируем повторно
+    /**
+     * Переинициализирует элементы модального окна.
+     * Поля инициализируются один раз при создании объекта страницы,
+     * но если элемент появляется позже (в модальном окне), то поле может быть null.
+     * Поэтому требуется повторная инициализация.
+     */
     public void initModalElements() {
         PageFactory.initElements(driver, this);
         log.info("Элементы модального окна переинициализированы");
     }
 
-    // проверяем осталась ли форма открытой
+    /**
+     * Проверяет, отображается ли форма создания вишлиста.
+     */
     public boolean isCreateFormVisible() {
         try {
-            // используем более надежные локаторы
             return driver.findElement(By.cssSelector("form.create-wishlist-form")).isDisplayed() ||
                     driver.findElement(By.xpath("//form[.//input[@placeholder='Введите название']]")).isDisplayed();
         } catch (Exception e) {
@@ -278,21 +323,23 @@ public class MyWishlistsPage {
         }
     }
 
-    // закрытие формы при зависании
+    /**
+     * Закрывает форму создания вишлиста при зависании.
+     */
     public void closeCreateForm() {
         try {
-            // пробуем найти кнопку "Отмена" или "Закрыть"
+            // Пробуем найти кнопку "Отмена" или "Закрыть"
             WebElement cancelButton = driver.findElement(
                     By.xpath("//button[contains(text(), 'Отмена')] | //button[contains(text(), 'Закрыть')] | //button[contains(text(), 'Cancel')]"));
             cancelButton.click();
             log.info("Форма закрыта через кнопку отмены");
         } catch (Exception e) {
-            // если нет кнопки, пробуем нажать Escape
+            // Если нет кнопки, пробуем нажать Escape
             driver.findElement(By.tagName("body")).sendKeys(org.openqa.selenium.Keys.ESCAPE);
             log.info("Форма закрыта через клавишу Escape");
         }
 
-        // ждем, пока форма действительно закроется
+        // Ждем, пока форма действительно закроется
         waitForCreateFormToDisappear();
     }
 }

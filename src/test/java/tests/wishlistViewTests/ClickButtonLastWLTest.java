@@ -24,27 +24,29 @@ public class ClickButtonLastWLTest extends AbstractBaseTest {
         wishlistsPage.open();
     }
 
+
+    /**
+     * Тест выполняет следующие шаги:
+     * 1. Обеспечивает наличие хотя бы одного вишлиста
+     * 3. Выполняет клик по кнопке "Просмотр"
+     * 4. Проверяет, что клик выполнен успешно
+     */
     @Test
     @DisplayName("Тест: Клик по кнопке 'Просмотр' последнего списка")
     void testClickViewButtonOnLastWishlist() {
 
-        // Шаг 1: проверяем наличие списков на уже загруженной странице
-        // хелпер для обеспечения наличия вишлиста
+        // Обеспечиваем наличие вишлиста
         wishlistHelper.ensureWishlistExists();
 
+        // Проверяем наличие списков, иначе пропускаем тест
         Assumptions.assumeTrue(wishlistsPage.hasWishlists(),
                 "Тест пропущен: нет списков желаний");
 
-        String lastTitle = wishlistsPage.getLastWishlistTitle();
-        String lastDescription = wishlistsPage.getLastWishlistDescription();
-        String lastGiftCount = wishlistsPage.getLastWishlistGiftCountText();
-
-        log.info("До клика: Заголовок: {}, Описание: {}, Подарки: {}",
-                lastTitle, lastDescription, lastGiftCount);
-
+        // Выполняем клик по кнопке "Просмотр"
         wishlistsPage.clickViewButtonOnLastWishlist();
 
-        // если мы дошли до сюда без исключений - значит клик прошел успешно
+        // Если дошли до этого места без исключений - клик выполнен успешно
         log.info("Клик по кнопке 'Просмотр' успешно выполнен");
     }
+
 }

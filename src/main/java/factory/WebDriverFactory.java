@@ -15,6 +15,9 @@ import org.openqa.selenium.safari.SafariOptions;
 
 public class WebDriverFactory {
 
+    /**
+     * Создает экземпляр WebDriver для указанного браузера с заданными опциями.
+     */
     public static WebDriver create(String browserName, Capabilities options) {
         switch (browserName.toLowerCase()) {
             case "chrome":
@@ -38,6 +41,9 @@ public class WebDriverFactory {
         }
     }
 
+    /**
+     * Инициализирует ChromeDriver с переданными опциями.
+     */
     private static WebDriver initChromeDriver(Capabilities options) {
         if (options instanceof ChromeOptions) {
             return new ChromeDriver((ChromeOptions) options);
@@ -48,6 +54,9 @@ public class WebDriverFactory {
         }
     }
 
+    /**
+     * Инициализирует FirefoxDriver с переданными опциями.
+     */
     private static WebDriver initFirefoxDriver(Capabilities options) {
         if (options instanceof FirefoxOptions) {
             return new FirefoxDriver((FirefoxOptions) options);
@@ -58,6 +67,9 @@ public class WebDriverFactory {
         }
     }
 
+    /**
+     * Инициализирует SafariDriver с переданными опциями.
+     */
     private static WebDriver initSafariDriver(Capabilities options) {
         if (options instanceof SafariOptions) {
             return new SafariDriver((SafariOptions) options);
@@ -68,6 +80,9 @@ public class WebDriverFactory {
         }
     }
 
+    /**
+     * Инициализирует EdgeDriver с переданными опциями.
+     */
     private static WebDriver initEdgeDriver(Capabilities options) {
         if (options instanceof EdgeOptions) {
             return new EdgeDriver((EdgeOptions) options);

@@ -29,63 +29,74 @@ public class AddGiftButtonTest extends AbstractBaseTest {
         wishlistsPage.open();
     }
 
+    /**
+     * Тест выполняет следующие шаги:
+     * 1. Обеспечивает наличие хотя бы одного вишлиста
+     * 2. Открывает последний вишлист
+     * 3. Открывает модальное окно добавления подарка
+     * 4. Заполняет все поля формы
+     * 5. Проверяет корректность заполнения полей
+     * 6. Закрывает модальное окно
+     */
     @Test
     @DisplayName("Тест: Проверка полей в окне создания нового подарка")
     void testToAddGiftPage() {
 
-        // Шаг 1: проверяем наличие списков на уже загруженной странице
-        // хелпер для обеспечения наличия вишлиста
+        // Обеспечиваем наличие вишлиста
         wishlistHelper.ensureWishlistExists();
 
-        // открываем последний список
+        // Открываем последний список
         wishlistsPage.clickViewButtonOnLastWishlist();
         MyWishListPage wishListPage = new MyWishListPage(driver);
 
-        // проверяем, что страница вишлиста загрузилась
+        // Проверяем, что страница вишлиста загрузилась
         assertTrue(wishListPage.isWishlistPageDisplayed(), "Страница вишлиста не загрузилась");
 
-        // нажимаем кнопку "Добавить подарок"
+        // Нажимаем кнопку "Добавить подарок"
         wishListPage.clickAddGiftButton();
 
-        // инициализируем объект страницы модалки
+        // Инициализируем объект страницы модального окна
         AddGiftPage addGiftPage = new AddGiftPage(driver);
 
-        // ждём появления модального окна
+        // Ожидаем появления модального окна
         assertTrue(addGiftPage.waitForModalToAppear(), "Модальное окно добавления подарка не появилось");
 
-        // проверяем, что модальное окно отображается
+        // Проверяем, что модальное окно отображается
         assertTrue(addGiftPage.isModalDisplayed(), "Модальное окно не отображено (isModalDisplayed == false)");
 
-        // подготавливаем тестовые данные
+        // Подготавливаем тестовые данные
         String testName = "Test Gift " + System.currentTimeMillis();
         String testDescription = "Описание тестового подарка для автотеста";
         String testProductUrl = "https://flowwow.com/bakery-products/tort-na-den-rozhdeniya-pr-2603/";
         String testPrice = "4300";
         String testImageUrl = "https://content2.flowwow-images.com/data/flowers/1000x1000/35/1730898908_64456035.jpg";
 
-        // заполняем поля (очищаем перед вводом на всякий случай)
+        // Заполняем поле названия подарка
         addGiftPage.getGiftNameField().clear();
         addGiftPage.getGiftNameField().sendKeys(testName);
 
+        // Заполняем поле описания подарка
         addGiftPage.getGiftDescriptionField().clear();
         addGiftPage.getGiftDescriptionField().sendKeys(testDescription);
 
+        // Заполняем поле URL продукта
         addGiftPage.giftUrlProdact().clear();
         addGiftPage.giftUrlProdact().sendKeys(testProductUrl);
 
-        // ставим курсор в поле цены
+        // Заполняем поле цены (с особым подходом для числового поля)
         addGiftPage.giftPriceProdact().click();
-        // нажимаем стрелку влево несколько раз, чтобы гарантированно дойти до начала
+        // Нажимаем стрелку влево несколько раз, чтобы гарантированно дойти до начала
         for (int i = 0; i < 10; i++) {
             addGiftPage.giftPriceProdact().sendKeys(Keys.ARROW_LEFT);
         }
         addGiftPage.giftPriceProdact().sendKeys(testPrice);
         addGiftPage.giftPriceProdact().sendKeys(Keys.DELETE);
 
+        // Заполняем поле URL изображения
         addGiftPage.giftUrlImage().clear();
         addGiftPage.giftUrlImage().sendKeys(testImageUrl);
 
-        // проверяем, что поля содержат введённые значения (через attribute "value")
+        // Проверяем, что поля содержат введённые значения
         assertEquals(testName, addGiftPage.getGiftNameField().getAttribute("value"),
                 "Поле Название подарка не содержит ожидаемого значения");
         assertEquals(testDescription, addGiftPage.getGiftDescriptionField().getAttribute("value"),
@@ -97,11 +108,11 @@ public class AddGiftButtonTest extends AbstractBaseTest {
         assertEquals(testImageUrl, addGiftPage.giftUrlImage().getAttribute("value"),
                 "Поле URL картинки не содержит ожидаемого значения");
 
-        // закрываем модалку крестиком
+        // Закрываем модальное окно крестиком
         addGiftPage.clickCancelButton();
         assertTrue(addGiftPage.waitForModalToDisappear(), "Модальное окно не закрылось после нажатия крестика");
 
-        // убедится, что страница вишлиста снова видима
+        // Убеждаемся, что страница вишлиста снова видима
         assertTrue(wishListPage.isWishlistPageDisplayed(), "После закрытия модалки страница вишлиста не отображается");
     }
 

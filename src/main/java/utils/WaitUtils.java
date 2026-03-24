@@ -9,21 +9,30 @@ import org.openqa.selenium.TimeoutException;
 
 import java.time.Duration;
 
-
 public class WaitUtils {
+
     private static final int DEFAULT_TIMEOUT = 10;
 
-    // базовые методы
+    private WaitUtils() {
+    }
+
+    /**
+     * Возвращает объект WebDriverWait с таймаутом по умолчанию.
+     */
     public static WebDriverWait getWait(WebDriver driver) {
         return new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT));
     }
 
-    // ожидание видимости элемента
+    /**
+     * Ожидает видимости элемента на странице.
+     */
     public static WebElement waitForVisibility(WebDriver driver, By locator) {
         return getWait(driver).until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
-    // ожидание исчезновения элемента
+    /**
+     * Ожидает исчезновения элемента на странице.
+     */
     public static boolean waitForInvisibility(WebDriver driver, By locator) {
         try {
             return getWait(driver).until(ExpectedConditions.invisibilityOfElementLocated(locator));
@@ -31,5 +40,4 @@ public class WaitUtils {
             return false;
         }
     }
-
 }

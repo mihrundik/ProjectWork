@@ -27,6 +27,15 @@ public class CreateNewWishlistTest extends AbstractBaseTest {
         myWishlistsPage = page.myWishlistsPage;
     }
 
+    /**
+     * Тест выполняет следующие шаги:
+     * 1. Сохраняет начальное количество вишлистов
+     * 2. Открывает форму создания вишлиста
+     * 3. Заполняет форму тестовыми данными (название, описание)
+     * 4. Нажимает кнопку "Создать"
+     * 5. Ожидает закрытия формы и появления нового вишлиста в списке
+     * 6. Проверяет, что количество вишлистов увеличилось на 1
+     */
     @Test
     @DisplayName("Тест: Успешное создание нового вишлиста")
     void testCreateNewWishlist() {
@@ -44,7 +53,7 @@ public class CreateNewWishlistTest extends AbstractBaseTest {
 
         myWishlistsPage.waitForCreateFormToDisappear();
 
-        // задержка для обновления списка
+        // Ожидаем появления нового вишлиста в списке
         By newWishlistLocator = By.xpath(String.format("//div[contains(text(), '%s')]", testListName));
         WaitUtils.waitForVisibility(driver, newWishlistLocator);
 
@@ -54,4 +63,5 @@ public class CreateNewWishlistTest extends AbstractBaseTest {
         assertEquals(initialCount + 1, newCount,
                 "Количество списков должно увеличиться на 1");
     }
+
 }

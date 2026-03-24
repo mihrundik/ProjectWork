@@ -16,11 +16,16 @@ public abstract class AbstractBaseMethod extends AbstractWebDriver {
     public Logger log = LogManager.getLogger(AbstractBaseMethod.class);
     public PageFactory page;
 
+    /**
+     * Возвращает текущий экземпляр WebDriver.
+     */
     public WebDriver getCurrentDriver() {
         return super.getDriver();
     }
 
-    // обрабатываем опции
+    /**
+     * Создает объект Capabilities для указанного браузера на основе строки параметров.
+     */
     public Capabilities createOptionsFromString(String browserName, String optionsString) {
         String[] optionsArray = optionsString.split(",");
 
@@ -48,5 +53,4 @@ public abstract class AbstractBaseMethod extends AbstractWebDriver {
                 throw new IllegalArgumentException("Неподдерживаемый браузер: " + browserName);
         }
     }
-
 }

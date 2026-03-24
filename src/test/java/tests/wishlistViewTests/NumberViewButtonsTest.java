@@ -32,10 +32,16 @@ public class NumberViewButtonsTest extends AbstractBaseTest {
         log.info("Страница MyWishlistsPage инициализирована");
     }
 
+    /**
+     * Тест выполняет следующие шаги:
+     * 1. Получает количество вишлистов
+     * 2. Подсчитывает реальное количество кнопок "Просмотр" на странице
+     * 3. Сравнивает полученные значения, они должны совпадать
+     */
     @Test
     @DisplayName("Тест: Проверка количества кнопок 'Просмотр'")
     void testNumberOfViewButtons() {
-        // проверяем, что страница инициализирована
+        // Проверяем, что страница инициализирована
         if (myWishlistsPage == null) {
             throw new IllegalStateException("myWishlistsPage не инициализирована. Проверьте @BeforeEach метод.");
         }
@@ -43,15 +49,16 @@ public class NumberViewButtonsTest extends AbstractBaseTest {
         int wishlistCount = myWishlistsPage.getWishlistCount();
         log.info("getWishlistCount() вернул: {}", wishlistCount);
 
-        // считаем реальные кнопки "Просмотр"
+        // Подсчитываем реальные кнопки "Просмотр" на странице
         List<WebElement> viewButtons = driver.findElements(
                 By.xpath("//button[contains(text(), 'Просмотр')]")
         );
         int actualViewButtonsCount = viewButtons.size();
         log.info("Реальных кнопок 'Просмотр' на странице: {}", actualViewButtonsCount);
 
-        // они должны совпадать
+        // Проверяем, что количество вишлистов равно количеству кнопок "Просмотр"
         assertEquals(actualViewButtonsCount, wishlistCount,
                 "Количество вишлистов должно равняться количеству кнопок 'Просмотр'");
     }
+
 }

@@ -12,7 +12,6 @@ import java.time.Duration;
 
 import static pages.MyWishlistsPage.DEFAULT_TIMEOUT_SECONDS;
 
-
 public class AddGiftPage extends AbstractBaseMethod {
 
     @FindBy(css = "h2")
@@ -39,41 +38,60 @@ public class AddGiftPage extends AbstractBaseMethod {
     @FindBy(css = ".btn-close")
     private WebElement cancelButton;
 
+    // Локатор для кнопки отмены (используется в ожиданиях)
+    private final By cancelButtonLocator = By.cssSelector("button.cancel, a.cancel");
 
+    // Локатор корневого контейнера модального окна
+    public final By modalRootLocator = By.xpath("/html/body/div[3]");
+
+    /**
+     * Конструктор страницы добавления подарка.
+     */
     public AddGiftPage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
         PageFactory.initElements(driver, this);
     }
 
+    /**
+     * Возвращает поле ввода названия подарка.
+     */
     public WebElement getGiftNameField() {
         return giftNameField;
     }
 
+    /**
+     * Возвращает поле ввода описания подарка.
+     */
     public WebElement getGiftDescriptionField() {
         return giftDescriptionField;
     }
 
+    /**
+     * Возвращает поле ввода URL товара.
+     */
     public WebElement giftUrlProdact() {
         return giftUrlProdact;
     }
 
+    /**
+     * Возвращает поле ввода цены товара.
+     */
     public WebElement giftPriceProdact() {
         return giftPriceProdact;
     }
 
+    /**
+     * Возвращает поле ввода URL изображения.
+     */
     public WebElement giftUrlImage() {
         return giftUrlImage;
     }
 
-
-    // локатор для ожиданий (для видимость/невидимость)
-    private final By cancelButtonLocator = By.cssSelector("button.cancel, a.cancel");
-    // контейнер модалки
-    public final By modalRootLocator = By.xpath("/html/body/div[3]");
-
-
-    // ожидание появления модального окна
+    /**
+     * Ожидает появления модального окна добавления подарка.
+     * Проверяет видимость кнопки отмены, кнопки сохранения или корневого контейнера.
+     */
     public boolean waitForModalToAppear() {
         try {
             wait.until(ExpectedConditions.or(
@@ -89,7 +107,9 @@ public class AddGiftPage extends AbstractBaseMethod {
         }
     }
 
-    // клик по крестику
+    /**
+     * Нажимает кнопку отмены (крестик) для закрытия модального окна.
+     */
     public void clickCancelButton() {
         try {
             WebElement button = wait.until(ExpectedConditions.elementToBeClickable(cancelButton));
@@ -101,7 +121,10 @@ public class AddGiftPage extends AbstractBaseMethod {
         }
     }
 
-    // ожидание закрытия модального окна
+    /**
+     * Ожидает закрытия модального окна добавления подарка.
+     * Проверяет невидимость контейнера и кнопки отмены.
+     */
     public boolean waitForModalToDisappear() {
         try {
             boolean invisible = wait.until(ExpectedConditions.invisibilityOfElementLocated(modalRootLocator));
@@ -109,7 +132,7 @@ public class AddGiftPage extends AbstractBaseMethod {
                 log.info("Модальное окно закрылось (контейнер невидим)");
                 return true;
             } else {
-                // доп проверка — убеждаемся, что кнопка отмены тоже невидима
+                // Дополнительная проверка — убеждаемся, что кнопка отмены тоже невидима
                 boolean cancelInvisible = wait.until(ExpectedConditions.invisibilityOfElementLocated(cancelButtonLocator));
                 log.info("Модальное окно закрыто по проверке cancelButton: {}", cancelInvisible);
                 return cancelInvisible;
@@ -120,21 +143,24 @@ public class AddGiftPage extends AbstractBaseMethod {
         }
     }
 
-    // на всякий случай проверка, что модалка сейчас отображается
+    /**
+     * Проверяет, отображается ли в данный момент модальное окно.
+     */
     public boolean isModalDisplayed() {
         try {
-            // используем тот же локатор контейнера, что и для ожидания закрытия - гарантирует, что мы проверяем именно тот элемент
+            // Используем тот же локатор контейнера, что и для ожидания закрытия - гарантирует, что мы проверяем именно тот элемент
             return driver.findElement(modalRootLocator).isDisplayed();
         } catch (Exception e) {
             return false;
         }
     }
 
-    // клик на кнопку Добавить
+    /**
+     * Нажимаем кнопку "Добавить" для сохранения подарка.
+     */
     public void clickSaveButton() {
         WebElement saveButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[type='submit']")));
         saveButton.click();
         log.info("Нажата кнопка 'Добавить' в модальном окне");
     }
-
 }
