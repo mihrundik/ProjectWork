@@ -70,7 +70,7 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         loginPage = new LoginPage(driver);
 
         // явная авторизация
-        driver.get("https://wishlist.otus.kartushin.su/login");
+        driver.get(URL);
         loginPage.login(LOGIN, PASSWORD);
 
         new WebDriverWait(driver, Duration.ofSeconds(10))
