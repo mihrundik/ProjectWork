@@ -7,6 +7,7 @@ import org.openqa.selenium.Capabilities;
 import pages.MyWishListPage;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
+import utils.WishlistHelper;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DeleteErrorMessageTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;
+    private WishlistHelper wishlistHelper;
 
     @Override
     protected Capabilities getOptions(String browserName) {
@@ -23,6 +25,7 @@ public class DeleteErrorMessageTest extends AbstractBaseTest {
     @BeforeEach
     public void setUp() {
         wishlistsPage = new MyWishlistsPage(driver);
+        wishlistHelper = new WishlistHelper(driver);
         wishlistsPage.open();
     }
 
@@ -30,20 +33,9 @@ public class DeleteErrorMessageTest extends AbstractBaseTest {
     @Test
     @DisplayName("Кнопка 'Удалить список' при ошибке показывает сообщение 'Ошибка: Ошибка при загрузке списка желаний'")
     public void deleteWishlistShowsErrorMessage() {
-        // убедимся, что есть список, и откроем его
-        if (!wishlistsPage.hasWishlists()) {
-            wishlistsPage.clickAddNewList();
-            wishlistsPage.waitForCreateFormToAppear();
-
-            String testName = "Тестовый список " + System.currentTimeMillis();
-            String testDescription = "Описание тестового списка";
-
-            wishlistsPage.fillCreateForm(testName, testDescription);
-            wishlistsPage.clickSubmitButton();
-            wishlistsPage.waitForCreateFormToDisappear();
-
-            log.info("Создан тестовый список для проверки удаления: {}", testName);
-        }
+        // Шаг 1: проверяем наличие списков на уже загруженной странице
+        // хелпер для обеспечения наличия вишлиста
+        wishlistHelper.ensureWishlistExists();
 
         wishlistsPage.clickViewButtonOnLastWishlist();
         MyWishListPage wishListPage = new MyWishListPage(driver);

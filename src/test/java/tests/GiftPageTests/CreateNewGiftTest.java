@@ -8,6 +8,7 @@ import pages.MyWishListPage;
 import pages.AddGiftPage;
 import tests.AbstractBaseTest;
 import utils.WaitUtils;
+import utils.WishlistHelper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CreateNewGiftTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;
+    private WishlistHelper wishlistHelper;
 
     @Override
     protected Capabilities getOptions(String browserName) {
@@ -24,30 +26,17 @@ public class CreateNewGiftTest extends AbstractBaseTest {
     @BeforeEach
     public void setUp() {
         wishlistsPage = new MyWishlistsPage(driver);
+        wishlistHelper = new WishlistHelper(driver);
         wishlistsPage.open();
     }
 
     @Test
     @DisplayName("Создание нового подарка в вишлисте")
     void createNewGiftTest() {
-        // Шаг 1: проверяем наличие хотя бы одного вишлиста
-        if (!wishlistsPage.hasWishlists()) {
-            // Шаг 1.1: создаём новый вишлист
-            wishlistsPage.clickAddNewList();
 
-            // ждём появления поля имени вишлиста (означает открытие формы)
-            WaitUtils.waitForVisibility(driver, By.xpath("//input[@placeholder='Введите название']"));
-
-            String tempWishlistName = "Автотест-вишлист " + System.currentTimeMillis();
-            String tempWishlistDesc = "Этот вишлист создан для автоматического теста";
-
-            wishlistsPage.fillCreateForm(tempWishlistName, tempWishlistDesc);
-            wishlistsPage.clickSubmitButton();
-
-            // ждём исчезновения поля имени вишлиста (означает закрытие формы)
-            WaitUtils.waitForInvisibility(driver, By.xpath("//input[@placeholder='Введите название']"));
-            log.info("Создан временный вишлист для теста: {}", tempWishlistName);
-        }
+        // Шаг 1: проверяем наличие списков на уже загруженной странице
+        // хелпер для обеспечения наличия вишлиста
+        wishlistHelper.ensureWishlistExists();
 
         // Шаг 2: переходим к последнему вишлисту
         wishlistsPage.clickViewButtonOnLastWishlist();

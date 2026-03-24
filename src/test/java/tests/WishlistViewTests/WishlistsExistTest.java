@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Capabilities;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
+import utils.WishlistHelper;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class WishlistsExistTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;
+    private WishlistHelper wishlistHelper;
 
     @Override
     protected Capabilities getOptions(String browserName) {
@@ -22,6 +24,7 @@ public class WishlistsExistTest extends AbstractBaseTest {
     @BeforeEach
     public void setUp() {
         wishlistsPage = new MyWishlistsPage(driver);
+        wishlistHelper = new WishlistHelper(driver);
         wishlistsPage.open();
     }
 
@@ -30,25 +33,8 @@ public class WishlistsExistTest extends AbstractBaseTest {
     @DisplayName("Тест: Проверка наличия списков желаний")
     void testWishlistsExist() {
         // Шаг 1: проверяем наличие списков на уже загруженной странице
-        if (!wishlistsPage.hasWishlists()) {
-            log.info("Списки желаний отсутствуют. Создаём новый...");
-
-            // Шаг 1.1: вызываем метод на существующем объекте страницы.
-            wishlistsPage.clickAddNewList();
-
-            // ждём появления формы (используем улучшенный метод)
-            wishlistsPage.waitForCreateFormToAppear(); // Теперь это работает корректно!
-
-            String tempWishlistName = "Автотест-вишлист " + System.currentTimeMillis();
-            String tempWishlistDesc = "Этот вишлист создан для автоматического теста";
-
-            wishlistsPage.fillCreateForm(tempWishlistName, tempWishlistDesc);
-            wishlistsPage.clickSubmitButton();
-
-            // ждём исчезновение формы
-            wishlistsPage.waitForCreateFormToDisappear();
-            log.info("Создан временный вишлист: {}", tempWishlistName);
-        }
+        // хелпер для обеспечения наличия вишлиста
+        wishlistHelper.ensureWishlistExists();
 
         // Шаг 2: проверка наличия вишлистов
         assertTrue(wishlistsPage.hasWishlists(),

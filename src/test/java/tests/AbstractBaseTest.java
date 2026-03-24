@@ -94,6 +94,54 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
     }
 
 
+    // наличие хотя бы одного вишлиста на странице.
+    protected String ensureWishlistExists(MyWishlistsPage wishlistsPage) {
+        return ensureWishlistExists(wishlistsPage, null, null);
+    }
+
+    // наличие хотя бы одного вишлиста на странице с указанными параметрами.
+    protected String ensureWishlistExists(MyWishlistsPage wishlistsPage,
+                                          String wishlistName,
+                                          String wishlistDescription) {
+        if (wishlistsPage.hasWishlists()) {
+            log.info("Вишлисты уже существуют. Использую существующие.");
+            return wishlistsPage.getLastWishlistTitle();
+        }
+
+        log.info("Вишлисты отсутствуют. Создаю новый...");
+        return createWishlist(wishlistsPage, wishlistName, wishlistDescription);
+    }
+
+    // cоздает новый вишлист с указанными параметрами.
+    protected String createWishlist(MyWishlistsPage wishlistsPage,
+                                    String wishlistName,
+                                    String wishlistDescription) {
+        String name = wishlistName != null ? wishlistName : generateWishlistName();
+        String description = wishlistDescription != null ? wishlistDescription : generateWishlistDescription();
+
+        wishlistsPage.clickAddNewList();
+        wishlistsPage.waitForCreateFormToAppear();
+
+        wishlistsPage.fillCreateForm(name, description);
+        wishlistsPage.clickSubmitButton();
+
+        wishlistsPage.waitForCreateFormToDisappear();
+
+        log.info("Создан новый вишлист: {} с описанием: {}", name, description);
+        return name;
+    }
+
+    // уникальное название для вишлиста.
+    private String generateWishlistName() {
+        return "Автотест-вишлист " + System.currentTimeMillis();
+    }
+
+    // описание для вишлиста по умолчанию.
+    private String generateWishlistDescription() {
+        return "Этот вишлист создан для автоматического теста";
+    }
+
+
     public void driverStart(TestInfo testInfo) {
         String browserName = System.getProperty("browser", "edge");
 

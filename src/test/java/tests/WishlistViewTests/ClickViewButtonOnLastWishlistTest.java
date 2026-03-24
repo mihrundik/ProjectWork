@@ -4,11 +4,13 @@ import org.junit.jupiter.api.*;
 import org.openqa.selenium.Capabilities;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
+import utils.WishlistHelper;
 
 
 public class ClickViewButtonOnLastWishlistTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;
+    private WishlistHelper wishlistHelper;
 
     @Override
     protected Capabilities getOptions(String browserName) {
@@ -18,32 +20,17 @@ public class ClickViewButtonOnLastWishlistTest extends AbstractBaseTest {
     @BeforeEach
     public void setUp() {
         wishlistsPage = new MyWishlistsPage(driver);
+        wishlistHelper = new WishlistHelper(driver);
         wishlistsPage.open();
     }
 
     @Test
     @DisplayName("Тест: Клик по кнопке 'Просмотр' последнего списка")
     void testClickViewButtonOnLastWishlist() {
+
         // Шаг 1: проверяем наличие списков на уже загруженной странице
-        if (!wishlistsPage.hasWishlists()) {
-            log.info("Списки желаний отсутствуют. Создаём новый...");
-
-            // Шаг 1.1: вызываем метод на существующем объекте страницы.
-            wishlistsPage.clickAddNewList();
-
-            // ждём появления формы (используем улучшенный метод)
-            wishlistsPage.waitForCreateFormToAppear(); // Теперь это работает корректно!
-
-            String tempWishlistName = "Автотест-вишлист " + System.currentTimeMillis();
-            String tempWishlistDesc = "Этот вишлист создан для автоматического теста";
-
-            wishlistsPage.fillCreateForm(tempWishlistName, tempWishlistDesc);
-            wishlistsPage.clickSubmitButton();
-
-            // ждём исчезновение формы
-            wishlistsPage.waitForCreateFormToDisappear();
-            log.info("Создан временный вишлист: {}", tempWishlistName);
-        }
+        // хелпер для обеспечения наличия вишлиста
+        wishlistHelper.ensureWishlistExists();
 
         Assumptions.assumeTrue(wishlistsPage.hasWishlists(),
                 "Тест пропущен: нет списков желаний");

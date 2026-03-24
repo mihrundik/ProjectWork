@@ -7,6 +7,7 @@ import pages.MyWishlistsPage;
 import pages.MyWishListPage;
 import pages.AddGiftPage;
 import tests.AbstractBaseTest;
+import utils.WishlistHelper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AddGiftButtonTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;
+    private WishlistHelper wishlistHelper;
 
     @Override
     protected Capabilities getOptions(String browserName) {
@@ -23,6 +25,7 @@ public class AddGiftButtonTest extends AbstractBaseTest {
     @BeforeEach
     public void setUp() {
         wishlistsPage = new MyWishlistsPage(driver);
+        wishlistHelper = new WishlistHelper(driver);
         wishlistsPage.open();
     }
 
@@ -30,20 +33,9 @@ public class AddGiftButtonTest extends AbstractBaseTest {
     @DisplayName("Тест: Проверка полей в окне создания нового подарка")
     void testToAddGiftPage() {
 
-        // проверяем, что на странице 'Мои списки' есть хотя бы один список
-        if (!wishlistsPage.hasWishlists()) {
-            wishlistsPage.clickAddNewList();
-            wishlistsPage.waitForCreateFormToAppear();
-
-            String testName = "Тестовый список " + System.currentTimeMillis();
-            String testDescription = "Описание тестового списка";
-
-            wishlistsPage.fillCreateForm(testName, testDescription);
-            wishlistsPage.clickSubmitButton();
-            wishlistsPage.waitForCreateFormToDisappear();
-
-            log.info("Создан тестовый список для проверки модалки: {}", testName);
-        }
+        // Шаг 1: проверяем наличие списков на уже загруженной странице
+        // хелпер для обеспечения наличия вишлиста
+        wishlistHelper.ensureWishlistExists();
 
         // открываем последний список
         wishlistsPage.clickViewButtonOnLastWishlist();

@@ -7,6 +7,7 @@ import org.openqa.selenium.Capabilities;
 import pages.MyWishListPage;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
+import utils.WishlistHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,6 +17,7 @@ public class WishlistNavigationTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;
     private MyWishListPage wishListPage;
+    private WishlistHelper wishlistHelper;
 
     @Override
     protected Capabilities getOptions(String browserName) {
@@ -25,6 +27,7 @@ public class WishlistNavigationTest extends AbstractBaseTest {
     @BeforeEach
     public void setUp() {
         wishlistsPage = new MyWishlistsPage(driver);
+        wishlistHelper = new WishlistHelper(driver);
         wishlistsPage.open();
     }
 
@@ -32,20 +35,10 @@ public class WishlistNavigationTest extends AbstractBaseTest {
     @Test
     @DisplayName("Проверка соответствия названия и описания списка подарков при переходе по кнопке Просмотр")
     public void verifyWishlistTitleAfterNavigation() {
-        // создаем новый список, если списков нет
-        if (!wishlistsPage.hasWishlists()) {
-            wishlistsPage.clickAddNewList();
-            wishlistsPage.waitForCreateFormToAppear();
 
-            String testName = "Тестовый список " + System.currentTimeMillis();
-            String testDescription = "Описание тестового списка";
-
-            wishlistsPage.fillCreateForm(testName, testDescription);
-            wishlistsPage.clickSubmitButton();
-            wishlistsPage.waitForCreateFormToDisappear();
-
-            log.info("Создан тестовый список: {}", testName);
-        }
+        // Шаг 1: проверяем наличие списков на уже загруженной странице
+        // хелпер для обеспечения наличия вишлиста
+        wishlistHelper.ensureWishlistExists();
 
         // Шаг 1: получаем название последнего списка на странице списков по которому будем кликать
         String expectedTitle = wishlistsPage.getLastWishlistTitle();

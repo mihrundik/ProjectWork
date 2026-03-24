@@ -7,6 +7,7 @@ import org.openqa.selenium.Capabilities;
 import pages.MyWishListPage;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
+import utils.WishlistHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,6 +17,7 @@ public class VerifyWishlistDeletionTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;
     private MyWishListPage wishListPage;
+    private WishlistHelper wishlistHelper;
 
     @Override
     protected Capabilities getOptions(String browserName) {
@@ -25,6 +27,7 @@ public class VerifyWishlistDeletionTest extends AbstractBaseTest {
     @BeforeEach
     public void setUp() {
         wishlistsPage = new MyWishlistsPage(driver);
+        wishlistHelper = new WishlistHelper(driver);
         wishlistsPage.open();
     }
 
@@ -33,20 +36,9 @@ public class VerifyWishlistDeletionTest extends AbstractBaseTest {
     @DisplayName("Проверка удаления вишлиста: количество списков уменьшается на 1")
     public void verifyWishlistDeletionReducesListCount() {
 
-        // убедимся, что есть список, и откроем его
-        if (!wishlistsPage.hasWishlists()) {
-            wishlistsPage.clickAddNewList();
-            wishlistsPage.waitForCreateFormToAppear();
-
-            String testName = "Тестовый список " + System.currentTimeMillis();
-            String testDescription = "Описание тестового списка";
-
-            wishlistsPage.fillCreateForm(testName, testDescription);
-            wishlistsPage.clickSubmitButton();
-            wishlistsPage.waitForCreateFormToDisappear();
-
-            log.info("Создан тестовый список для проверки удаления: {}", testName);
-        }
+        // Шаг 1: проверяем наличие списков на уже загруженной странице
+        // хелпер для обеспечения наличия вишлиста
+        wishlistHelper.ensureWishlistExists();
 
         // 1. проверяем, что есть хотя бы один список для удаления
         assertTrue(wishlistsPage.hasWishlists(), "Нет ни одного вишлиста для проведения теста");
