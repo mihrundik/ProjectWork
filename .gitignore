@@ -3,7 +3,7 @@ out/
 .idea/
 target/
 logs/
-*.sh
+#*.sh
 *.iml
 
 
