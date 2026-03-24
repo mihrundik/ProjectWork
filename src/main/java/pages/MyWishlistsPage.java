@@ -1,5 +1,6 @@
 package pages;
 
+import config.EnvConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
@@ -23,7 +24,6 @@ public class MyWishlistsPage {
     public final WebDriverWait wait;
 
     public static final int DEFAULT_TIMEOUT_SECONDS = 10;
-    public static final String PAGE_URL = "https://wishlist.otus.kartushin.su";
 
     @FindBy(xpath = "//*[@id=\"root\"]/div/div[1]/h2")
     private WebElement pageTitle;
@@ -57,12 +57,8 @@ public class MyWishlistsPage {
 
     }
 
-    public WebElement getPageTitle() {
-        return pageTitle;
-    }
-
     public void open() {
-        driver.get(PAGE_URL);
+        driver.get(EnvConfig.getUrl() + "/wishlists");
         waitForPageToLoad();
     }
 
@@ -107,9 +103,6 @@ public class MyWishlistsPage {
                         uniqueWishlists.put(title, card);
                         log.debug("Добавлен уникальный вишлист: {}", title);
                     }
-//                    else {
-//                        log.debug("Пропущен дубликат вишлиста: {}", title);
-//                    }
                 }
             }
 
@@ -134,7 +127,7 @@ public class MyWishlistsPage {
     }
 
     // получает индекс последней карточки
-    public int getLastIndex() {
+    private int getLastIndex() {
         return getWishlistCount() - 1;
     }
 

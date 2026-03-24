@@ -1,4 +1,4 @@
-package tests.WLDetalPageTests;
+package tests.wlDetalPageTests;
 
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,10 +13,9 @@ import utils.WishlistHelper;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class АddGiftButtonOpensModalTest extends AbstractBaseTest {
+public class АddGiftOpensModalTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;
-    private MyWishListPage wishListPage;
     private WishlistHelper wishlistHelper;
 
     @Override
@@ -41,7 +40,7 @@ public class АddGiftButtonOpensModalTest extends AbstractBaseTest {
         wishlistHelper.ensureWishlistExists();
 
         wishlistsPage.clickViewButtonOnLastWishlist();
-        wishListPage = new MyWishListPage(driver);
+        MyWishListPage wishListPage = new MyWishListPage(driver);
 
         // проверяем, что страница вишлиста загрузилась
         assertTrue(wishListPage.isWishlistPageDisplayed(), "Страница вишлиста не загрузилась");

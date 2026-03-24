@@ -28,11 +28,6 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
     protected LoginPage loginPage;
     protected static final Logger log = LogManager.getLogger(AbstractBaseTest.class);
 
-//    // для отладки
-//    private final String URL = "https://wishlist.otus.kartushin.su/wishlists";
-//    private static final String LOGIN = System.getProperty("wishlist.login", "ИмяЛюбимоеМое2");
-//    private static final String PASSWORD = System.getProperty("wishlist.password", "qwerty123");
-
     private final String URL = EnvConfig.getUrl();
     private static final String LOGIN = EnvConfig.getLogin();
     private static final String PASSWORD = EnvConfig.getPassword();

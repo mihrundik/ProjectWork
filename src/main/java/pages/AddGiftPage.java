@@ -66,14 +66,6 @@ public class AddGiftPage extends AbstractBaseMethod {
         return giftUrlImage;
     }
 
-    public WebElement getSaveButton() {
-        return saveButton;
-    }
-
-    public WebElement getCancelButton() {
-        return cancelButton;
-    }
-
 
     // локатор для ожиданий (для видимость/невидимость)
     private final By cancelButtonLocator = By.cssSelector("button.cancel, a.cancel");
@@ -144,6 +136,5 @@ public class AddGiftPage extends AbstractBaseMethod {
         saveButton.click();
         log.info("Нажата кнопка 'Добавить' в модальном окне");
     }
-
 
 }

@@ -1,4 +1,4 @@
-package tests.WLDetalPageTests;
+package tests.wlDetalPageTests;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

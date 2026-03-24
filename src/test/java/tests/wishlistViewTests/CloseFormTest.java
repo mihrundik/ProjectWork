@@ -1,18 +1,16 @@
-package tests.WishlistViewTests;
+package tests.wishlistViewTests;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
-import utils.WaitUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class CreateNewWishlistTest extends AbstractBaseTest {
+public class CloseFormTest extends AbstractBaseTest {
 
     private MyWishlistsPage myWishlistsPage;
 
@@ -27,11 +25,12 @@ public class CreateNewWishlistTest extends AbstractBaseTest {
         myWishlistsPage = page.myWishlistsPage;
     }
 
+
     @Test
-    @DisplayName("Тест: Успешное создание нового вишлиста")
-    void testCreateNewWishlist() {
+    @DisplayName("Тест: Закрытие формы через крестик")
+    void testCloseForm() {
         String testListName = "Тестовый список " + System.currentTimeMillis();
-        String testListDescription = "Описание тестового списка для создания";
+        String testListDescription = "Описание тестового списка для закрытия";
 
         int initialCount = myWishlistsPage.getWishlistCount();
         log.info("Начальное количество списков: {}", initialCount);
@@ -40,18 +39,14 @@ public class CreateNewWishlistTest extends AbstractBaseTest {
         myWishlistsPage.waitForCreateFormToAppear();
 
         myWishlistsPage.fillCreateForm(testListName, testListDescription);
-        myWishlistsPage.clickSubmitButton();
+        myWishlistsPage.clickCloseButton();
 
         myWishlistsPage.waitForCreateFormToDisappear();
 
-        // задержка для обновления списка
-        By newWishlistLocator = By.xpath(String.format("//div[contains(text(), '%s')]", testListName));
-        WaitUtils.waitForVisibility(driver, newWishlistLocator);
-
         int newCount = myWishlistsPage.getWishlistCount();
-        log.info("Количество списков после создания: {}", newCount);
+        log.info("Количество списков после закрытия: {}", newCount);
 
-        assertEquals(initialCount + 1, newCount,
-                "Количество списков должно увеличиться на 1");
+        assertEquals(initialCount, newCount,
+                "Количество списков не должно измениться после закрытия");
     }
 }

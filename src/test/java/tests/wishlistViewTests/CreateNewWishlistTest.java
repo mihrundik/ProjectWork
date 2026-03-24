@@ -1,16 +1,18 @@
-package tests.WishlistViewTests;
+package tests.wishlistViewTests;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
+import utils.WaitUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class CloseFormTest extends AbstractBaseTest {
+public class CreateNewWishlistTest extends AbstractBaseTest {
 
     private MyWishlistsPage myWishlistsPage;
 
@@ -25,12 +27,11 @@ public class CloseFormTest extends AbstractBaseTest {
         myWishlistsPage = page.myWishlistsPage;
     }
 
-
     @Test
-    @DisplayName("Тест: Закрытие формы через крестик")
-    void testCloseForm() {
+    @DisplayName("Тест: Успешное создание нового вишлиста")
+    void testCreateNewWishlist() {
         String testListName = "Тестовый список " + System.currentTimeMillis();
-        String testListDescription = "Описание тестового списка для закрытия";
+        String testListDescription = "Описание тестового списка для создания";
 
         int initialCount = myWishlistsPage.getWishlistCount();
         log.info("Начальное количество списков: {}", initialCount);
@@ -39,14 +40,18 @@ public class CloseFormTest extends AbstractBaseTest {
         myWishlistsPage.waitForCreateFormToAppear();
 
         myWishlistsPage.fillCreateForm(testListName, testListDescription);
-        myWishlistsPage.clickCloseButton();
+        myWishlistsPage.clickSubmitButton();
 
         myWishlistsPage.waitForCreateFormToDisappear();
 
-        int newCount = myWishlistsPage.getWishlistCount();
-        log.info("Количество списков после закрытия: {}", newCount);
+        // задержка для обновления списка
+        By newWishlistLocator = By.xpath(String.format("//div[contains(text(), '%s')]", testListName));
+        WaitUtils.waitForVisibility(driver, newWishlistLocator);
 
-        assertEquals(initialCount, newCount,
-                "Количество списков не должно измениться после закрытия");
+        int newCount = myWishlistsPage.getWishlistCount();
+        log.info("Количество списков после создания: {}", newCount);
+
+        assertEquals(initialCount + 1, newCount,
+                "Количество списков должно увеличиться на 1");
     }
 }

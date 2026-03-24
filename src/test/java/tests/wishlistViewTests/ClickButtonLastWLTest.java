@@ -1,4 +1,4 @@
-package tests.WishlistViewTests;
+package tests.wishlistViewTests;
 
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.Capabilities;
@@ -7,7 +7,7 @@ import tests.AbstractBaseTest;
 import utils.WishlistHelper;
 
 
-public class ClickViewButtonOnLastWishlistTest extends AbstractBaseTest {
+public class ClickButtonLastWLTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;
     private WishlistHelper wishlistHelper;

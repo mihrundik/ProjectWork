@@ -12,8 +12,7 @@ import java.time.Duration;
 
 public class LoginPage {
 
-    private WebDriver driver;
-    private WebDriverWait wait;
+    private final WebDriverWait wait;
 
     @FindBy(xpath = "//*[@id=\"root\"]/div/form/div[1]/input")
     private WebElement formControlName;
@@ -25,7 +24,6 @@ public class LoginPage {
     private WebElement buttonEnter;
 
     public LoginPage(WebDriver driver) {
-        this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         PageFactory.initElements(driver, this);
     }
@@ -37,24 +35,4 @@ public class LoginPage {
         buttonEnter.click();
     }
 
-    // проверка что мы находимся на странице авторизации
-    public boolean isLoginPageDisplayed() {
-        try {
-            return wait.until(ExpectedConditions.visibilityOf(buttonEnter)).isDisplayed();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public WebElement getFormControlName() {
-        return formControlName;
-    }
-
-    public WebElement getFormControlPass() {
-        return formControlPass;
-    }
-
-    public WebElement getButtonEnter() {
-        return buttonEnter;
-    }
 }

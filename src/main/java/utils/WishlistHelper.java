@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pages.MyWishlistsPage;
 
+
 public class WishlistHelper {
 
     private static final Logger log = LoggerFactory.getLogger(WishlistHelper.class);
@@ -15,12 +16,18 @@ public class WishlistHelper {
         this.wishlistsPage = new MyWishlistsPage(driver);
     }
 
-    // наличие хотя бы одного вишлиста на странице
+    /**
+     * Гарантирует наличие хотя бы одного вишлиста на странице.
+     * Если вишлисты отсутствуют, создает новый с автоматически сгенерированным названием.
+     */
     public String ensureWishlistExists() {
         return ensureWishlistExists(null, null);
     }
 
-    // наличие хотя бы одного вишлиста на странице с указанными параметрами
+    /**
+     * Гарантирует наличие хотя бы одного вишлиста на странице с указанными параметрами.
+     * Если вишлисты отсутствуют, создает новый с переданными названием и описанием.
+     */
     public String ensureWishlistExists(String wishlistName, String wishlistDescription) {
         wishlistsPage.open();
 
@@ -33,12 +40,9 @@ public class WishlistHelper {
         return createWishlist(wishlistName, wishlistDescription);
     }
 
-    // создает новый вишлист с автоматически сгенерированным названием
-    public String createWishlist() {
-        return createWishlist(null, null);
-    }
-
-    // создает новый вишлист с указанными параметрами
+    /**
+     * Создает новый вишлист с указанными параметрами.
+     */
     public String createWishlist(String wishlistName, String wishlistDescription) {
         String name = wishlistName != null ? wishlistName : generateWishlistName();
         String description = wishlistDescription != null ? wishlistDescription : generateWishlistDescription();
@@ -55,16 +59,23 @@ public class WishlistHelper {
         return name;
     }
 
-    // генерирует уникальное название для вишлиста
+    /**
+     * Генерирует уникальное название для вишлиста.
+     */
     private String generateWishlistName() {
         return "Автотест-вишлист " + System.currentTimeMillis();
     }
 
-    // генерирует описание для вишлиста по умолчанию
+    /**
+     * Генерирует описание для вишлиста по умолчанию.
+     */
     private String generateWishlistDescription() {
         return "Этот вишлист создан для автоматического теста";
     }
 
+    /**
+     * Возвращает объект страницы вишлистов для дальнейшей работы.
+     */
     public MyWishlistsPage getWishlistsPage() {
         return wishlistsPage;
     }

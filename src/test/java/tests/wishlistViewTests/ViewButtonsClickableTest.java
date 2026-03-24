@@ -1,4 +1,4 @@
-package tests.WishlistViewTests;
+package tests.wishlistViewTests;
 
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class ViewButtonsAreClickableTest extends AbstractBaseTest {
+public class ViewButtonsClickableTest extends AbstractBaseTest {
 
     private MyWishlistsPage myWishlistsPage;
 

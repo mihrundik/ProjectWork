@@ -1,4 +1,4 @@
-package tests.GiftPageTests;
+package tests.giftPageTests;
 
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;

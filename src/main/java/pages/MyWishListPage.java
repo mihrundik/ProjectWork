@@ -32,8 +32,6 @@ public class MyWishListPage extends AbstractBaseMethod {
     @FindBy(xpath = "//*[@id='root']/div/button[2]")
     private WebElement deleteWishlistButton;
 
-
-    private final By giftsContainerLocator = By.cssSelector("#root > div > div.g-4.row");
     private final By giftCardLocator = By.cssSelector("#root > div > div.g-4.row > div.col > div.card");
 
 
@@ -91,12 +89,11 @@ public class MyWishListPage extends AbstractBaseMethod {
     }
 
     // добавить
-    public MyWishListPage clickAddGiftButton() {
+    public void clickAddGiftButton() {
         try {
             WebElement button = wait.until(ExpectedConditions.elementToBeClickable(addGiftButton));
             button.click();
             log.info("Клик по кнопке 'Добавить подарок' выполнен");
-            return this;
         } catch (Exception e) {
             log.error("Ошибка при клике по кнопке 'Добавить подарок': {}", e.getMessage());
             throw e;
@@ -128,15 +125,6 @@ public class MyWishListPage extends AbstractBaseMethod {
         }
     }
 
-    // проверить заголовок вишлиста
-    public boolean isWishlistTitleCorrect(String expectedTitle) {
-        String actualTitle = getWishlistTitle();
-        boolean isCorrect = actualTitle.equals(expectedTitle);
-        log.info("Проверка названия вишлиста: ожидалось '{}', фактически '{}' - {}",
-                expectedTitle, actualTitle, isCorrect ? "совпадает" : "не совпадает");
-        return isCorrect;
-    }
-
     // описание вишлиста
     public String getWishlistDescription() {
         try {
@@ -148,15 +136,6 @@ public class MyWishListPage extends AbstractBaseMethod {
             log.error("Ошибка при получении описания вишлиста: {}", e.getMessage());
             return "";
         }
-    }
-
-    // проверить описание вишлиста
-    public boolean isWishlistDescriptionCorrect(String expectedDescription) {
-        String actualDescription = getWishlistDescription();
-        boolean isCorrect = actualDescription.equals(expectedDescription);
-        log.info("Проверка описания вишлиста: ожидалось '{}', фактически '{}' - {}",
-                expectedDescription, actualDescription, isCorrect ? "совпадает" : "не совпадает");
-        return isCorrect;
     }
 
     // загрузилась ли страница?
@@ -171,9 +150,6 @@ public class MyWishListPage extends AbstractBaseMethod {
             log.error("Ошибка при проверке отображения страницы вишлиста: {}", e.getMessage());
             return false;
         }
-    }
-
-    private void waitForPageLoad() {
     }
 
 }

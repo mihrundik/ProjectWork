@@ -1,4 +1,4 @@
-package tests.WishlistViewTests;
+package tests.wishlistViewTests;
 
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -10,13 +10,14 @@ import utils.WaitUtils;
 import utils.WishlistHelper;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
 public class DeleteLastWishlistTest extends AbstractBaseTest {
 
-    private MyWishlistsPage wishlistsPage;
+    private final AtomicReference<MyWishlistsPage> wishlistsPage = new AtomicReference<MyWishlistsPage>();
     private WishlistHelper wishlistHelper;
 
     @Override
@@ -26,9 +27,9 @@ public class DeleteLastWishlistTest extends AbstractBaseTest {
 
     @BeforeEach
     public void setUp() {
-        wishlistsPage = new MyWishlistsPage(driver);
+        wishlistsPage.set(new MyWishlistsPage(driver));
         wishlistHelper = new WishlistHelper(driver);
-        wishlistsPage.open();
+        wishlistsPage.get().open();
     }
 
     @Test

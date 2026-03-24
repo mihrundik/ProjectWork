@@ -1,4 +1,4 @@
-package tests.WishlistViewTests;
+package tests.wishlistViewTests;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,7 +10,7 @@ import tests.AbstractBaseTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class CreateWishlistWithVeryLongDescription extends AbstractBaseTest {
+public class CreateWLLongName extends AbstractBaseTest {
 
     private MyWishlistsPage myWishlistsPage;
 
@@ -27,10 +27,10 @@ public class CreateWishlistWithVeryLongDescription extends AbstractBaseTest {
 
 
     @Test
-    @DisplayName("Тест: Попытка создания вишлиста с очень длинным описанием (512 символов) - форма не закрывается")
+    @DisplayName("Тест: Попытка создания вишлиста с очень длинным названием (512 символов) - форма не закрывается")
     void testCreateWishlistWithVeryLongDescription() {
-        String testListName = "Тестовый список " + System.currentTimeMillis();
-        String testListDescription = "B".repeat(512);
+        String testListName = "A".repeat(512);
+        String testListDescription = "Описание тестового списка для создания";
 
         log.info("Длина описания: {} символов", testListDescription.length());
 

@@ -1,4 +1,4 @@
-package tests.WLDetalPageTests;
+package tests.wlDetalPageTests;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class VerifyWishlistDeletionTest extends AbstractBaseTest {
 
     private MyWishlistsPage wishlistsPage;
-    private MyWishListPage wishListPage;
     private WishlistHelper wishlistHelper;
 
     @Override
@@ -49,7 +48,7 @@ public class VerifyWishlistDeletionTest extends AbstractBaseTest {
 
         // 3. переходим в последний список и открываем его
         wishlistsPage.clickViewButtonOnLastWishlist();
-        wishListPage = new MyWishListPage(driver);
+        MyWishListPage wishListPage = new MyWishListPage(driver);
 
         assertTrue(wishListPage.isWishlistPageDisplayed(), "Не удалось перейти на страницу вишлиста");
 
