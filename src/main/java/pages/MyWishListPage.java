@@ -20,7 +20,7 @@ public class MyWishListPage extends AbstractBaseMethod {
 
     public Logger log = LogManager.getLogger(MyWishListPage.class);
 
-    @FindBy(xpath = "//*[@id='root']/div/h2")
+    @FindBy(css = "h2")
     private WebElement wishlistTitle;
 
     @FindBy(xpath = "//*[@id='root']/div/p")

@@ -25,28 +25,29 @@ public class MyWishlistsPage {
 
     public static final int DEFAULT_TIMEOUT_SECONDS = 10;
 
-    @FindBy(xpath = "//*[@id=\"root\"]/div/div[1]/h2")
+    @FindBy(css = "h2")
     private WebElement pageTitle;
 
-    @FindBy(xpath = "//*[@id=\"root\"]/div/div[1]/button")
+    @FindBy(css = "button.btn.btn-primary")
     private WebElement addNewListButton;
 
-    @FindBy(xpath = "//*[@id=\"root\"]/div/div[2]")
+    @FindBy(css = "div.g-4.row")
     private WebElement wishlistContainer;
 
-    @FindBy(xpath = "/html/body/div[3]/div/div/div[2]/form/div[1]/input")
+
+    @FindBy(css = "input.form-control[type='text'][required]")
     private WebElement nameNewWL;
 
-    @FindBy(xpath = "/html/body/div[3]/div/div/div[2]/form/div[2]/textarea")
+    @FindBy(css = "textarea.form-control")
     private WebElement descriptionNewWL;
 
-    @FindBy(xpath = "/html/body/div[3]/div/div/div[1]/button")
+    @FindBy(css = "button.btn-close")
     private WebElement closeButton;
 
-    @FindBy(xpath = "/html/body/div[3]/div/div/div[2]/form/div[3]/button[1]")
+    @FindBy(xpath = "//button[contains(text(), 'Отмена')]")
     private WebElement cancelButton;
 
-    @FindBy(xpath = "/html/body/div[3]/div/div/div[2]/form/div[3]/button[2]")
+    @FindBy(xpath = "//button[@type='submit' and contains(text(), 'Создать')]")
     private WebElement submitButton;
 
 
@@ -222,11 +223,8 @@ public class MyWishlistsPage {
     // поиск поля ввода названия вишниста
     public WebElement getNameNewWL() {
         try {
-            // log.info("Поиск поля названия по XPath: /html/body/div[3]/div/div/div[2]/form/div[1]/input");
-
             // сначала проверим, есть ли вообще модальное окно
             List<WebElement> modals = driver.findElements(By.xpath("/html/body/div[3]"));
-            // log.info("Найдено модальных окон: {}", modals.size());
 
             if (modals.isEmpty()) {
                 log.error("Модальное окно не найдено!");
@@ -235,9 +233,8 @@ public class MyWishlistsPage {
 
             // теперь ищем поле ввода
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("/html/body/div[3]/div/div/div[2]/form/div[1]/input")
+                    By.cssSelector("input.form-control[type='text']")
             ));
-            // log.info("Поле названия найдено, видимо: {}", element.isDisplayed());
             return element;
         } catch (TimeoutException e) {
             log.error("Таймаут при поиске поля названия: {}", e.getMessage());
@@ -252,12 +249,9 @@ public class MyWishlistsPage {
     // поиск поля ввода описания вишниста
     public WebElement getDescriptionNewWL() {
         try {
-            // log.info("Поиск поля описания по XPath: /html/body/div[3]/div/div/div[2]/form/div[2]/textarea");
-
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("/html/body/div[3]/div/div/div[2]/form/div[2]/textarea")
+                    By.cssSelector("textarea.form-control")
             ));
-            // log.info("Поле описания найдено, видимо: {}", element.isDisplayed());
             return element;
         } catch (Exception e) {
             log.error("Ошибка при поиске поля описания: {}", e.getMessage());

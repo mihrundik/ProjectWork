@@ -9,16 +9,16 @@ public class HeaderElPage {
 
     private WebDriverWait wait;
 
-    @FindBy(xpath = "//*[@id=\"root\"]/nav/div/a")
+    @FindBy(css = ".navbar-brand")
     private WebElement navBarWL;
 
-    @FindBy(xpath = "//*[@id=\"basic-navbar-nav\"]/div/a[1]")
+    @FindBy(css = "a[href=\"/wishlists\"]")
     private WebElement navBarMyLists;
 
-    @FindBy(xpath = "//*[@id=\"basic-navbar-nav\"]/div/a[2]")
+    @FindBy(css = "a[href=\"/users\"]")
     private WebElement navBarUsers;
 
-    @FindBy(xpath = "//*[@id=\"basic-navbar-nav\"]/div/a[3]")
+    @FindBy(css = "a[role=\"button\"]")
     private WebElement navBarLink;
 
 

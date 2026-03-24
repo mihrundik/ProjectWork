@@ -14,13 +14,13 @@ public class LoginPage {
 
     private final WebDriverWait wait;
 
-    @FindBy(xpath = "//*[@id=\"root\"]/div/form/div[1]/input")
+    @FindBy(css = "input[type=\"text\"].form-control")
     private WebElement formControlName;
 
-    @FindBy(xpath = "//*[@id=\"root\"]/div/form/div[2]/input")
+    @FindBy(css = "input[type=\"password\"].form-control")
     private WebElement formControlPass;
 
-    @FindBy(xpath = "//*[@id=\"root\"]/div/form/button")
+    @FindBy(css = "button.btn.btn-primary[type=\"submit\"]")
     private WebElement buttonEnter;
 
     public LoginPage(WebDriver driver) {
