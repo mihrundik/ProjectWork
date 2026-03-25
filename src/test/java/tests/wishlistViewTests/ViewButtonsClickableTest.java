@@ -1,20 +1,16 @@
 package tests.wishlistViewTests;
 
 import org.junit.jupiter.api.*;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.WebElement;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import utils.WishlistHelper;
 
 
 public class ViewButtonsClickableTest extends AbstractBaseTest {
 
     private MyWishlistsPage myWishlistsPage;
+    private WishlistHelper wishlistHelper;
 
     @Override
     protected Capabilities getOptions(String browserName) {
@@ -23,8 +19,12 @@ public class ViewButtonsClickableTest extends AbstractBaseTest {
 
     @BeforeEach
     void initWishlistPage() {
-        // инициализация определенной страницы
-        myWishlistsPage = page.myWishlistsPage;
+        // Инициализируем объекты страниц и хелперы
+        myWishlistsPage = new MyWishlistsPage(driver);
+        wishlistHelper = new WishlistHelper(driver);
+
+        // Открываем страницу "Мои списки"
+        myWishlistsPage.open();
     }
 
     /**
@@ -38,40 +38,14 @@ public class ViewButtonsClickableTest extends AbstractBaseTest {
     void testViewButtonsAreClickable() {
 
         // Проверяем наличие вишлистов, при отсутствии создаем новый
-        if (!myWishlistsPage.hasWishlists()) {
-            log.info("Списки желаний отсутствуют. Создаём новый...");
-
-            myWishlistsPage.clickAddNewList();
-            myWishlistsPage.waitForCreateFormToAppear();
-
-            String tempWishlistName = "Автотест-вишлист " + System.currentTimeMillis();
-            String tempWishlistDesc = "Этот вишлист создан для автоматического теста";
-
-            myWishlistsPage.fillCreateForm(tempWishlistName, tempWishlistDesc);
-            myWishlistsPage.clickSubmitButton();
-            myWishlistsPage.waitForCreateFormToDisappear();
-
-            log.info("Создан временный вишлист: {}", tempWishlistName);
-        }
+        wishlistHelper.ensureWishlistExists();
 
         // Проверяем наличие списков, иначе пропускаем тест
         int wishlistCount = myWishlistsPage.getWishlistCount();
         Assumptions.assumeTrue(wishlistCount > 0, "Тест пропущен: нет списков желаний");
 
-        // Получаем все карточки вишлистов
-        List<WebElement> wishlistCards = myWishlistsPage.getAllWishlistCards();
-
         // Проверяем кликабельность кнопки "Просмотр" для каждого вишлиста
-        for (int i = 0; i < wishlistCards.size(); i++) {
-            WebElement card = wishlistCards.get(i);
-            String title = card.findElement(By.xpath(".//div[contains(@class, 'card-title')]")).getText();
-            WebElement viewButton = card.findElement(By.xpath(".//button[contains(text(), 'Просмотр')]"));
-
-            assertTrue(viewButton.isEnabled(),
-                    String.format("Кнопка 'Просмотр' для вишлиста '%s' должна быть активна", title));
-
-            log.info("Кнопка для вишлиста '{}' активна", title);
-        }
+        myWishlistsPage.verifyAllViewButtonsClickable();
     }
 
 }

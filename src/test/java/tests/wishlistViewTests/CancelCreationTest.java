@@ -7,8 +7,6 @@ import org.openqa.selenium.Capabilities;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 
 public class CancelCreationTest extends AbstractBaseTest {
 
@@ -52,11 +50,9 @@ public class CancelCreationTest extends AbstractBaseTest {
 
         myWishlistsPage.waitForCreateFormToDisappear();
 
-        int newCount = myWishlistsPage.getWishlistCount();
-        log.info("Количество списков после отмены: {}", newCount);
-
-        assertEquals(initialCount, newCount,
-                "Количество списков не должно измениться после отмены");
+        // Проверяем, что количество вишлистов не изменилось
+        myWishlistsPage.verifyWishlistCountChanged(initialCount, "после отмены");
+        myWishlistsPage.verifyCreateFormNotVisible();
     }
 
 }

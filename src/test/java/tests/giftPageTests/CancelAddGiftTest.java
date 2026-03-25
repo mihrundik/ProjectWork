@@ -8,8 +8,6 @@ import pages.AddGiftPage;
 import tests.AbstractBaseTest;
 import utils.WishlistHelper;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 
 public class CancelAddGiftTest extends AbstractBaseTest {
 
@@ -50,7 +48,7 @@ public class CancelAddGiftTest extends AbstractBaseTest {
         MyWishListPage wishListPage = new MyWishListPage(driver);
 
         // Проверяем, что страница вишлиста загрузилась
-        assertTrue(wishListPage.isWishlistPageDisplayed(), "Страница вишлиста не загрузилась");
+        wishListPage.verifyWishlistPageLoaded();
 
         // Нажимаем кнопку "Добавить подарок"
         wishListPage.clickAddGiftButton();
@@ -59,19 +57,17 @@ public class CancelAddGiftTest extends AbstractBaseTest {
         AddGiftPage addGiftPage = new AddGiftPage(driver);
 
         // Ожидаем появления модального окна
-        assertTrue(addGiftPage.waitForModalToAppear(), "Модальное окно добавления подарка не появилось");
-
-        // Проверяем, что модальное окно отображается
-        assertTrue(addGiftPage.isModalDisplayed(), "Модальное окно не отображено (isModalDisplayed == false)");
+        addGiftPage.waitForModalToAppear();
+        addGiftPage.verifyModalDisplayed();
 
         // Нажимаем кнопку отмены (крестик)
         addGiftPage.clickCancelButton();
 
         // Ожидаем закрытия модального окна
-        assertTrue(addGiftPage.waitForModalToDisappear(), "Модальное окно не закрылось после нажатия Cancel");
+        addGiftPage.verifyModalClosed();
 
         // Проверяем, что страница вишлиста снова отображается
-        assertTrue(wishListPage.isWishlistPageDisplayed(), "После закрытия модального окна страница вишлиста не отображается");
+        wishListPage.verifyWishlistPageDisplayedAfterModalClosed();
     }
 
 }

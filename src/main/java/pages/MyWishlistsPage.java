@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class MyWishlistsPage {
 
     public Logger log = LogManager.getLogger(MyWishlistsPage.class);
@@ -216,8 +219,22 @@ public class MyWishlistsPage {
      * Ожидает закрытия формы создания вишлиста.
      */
     public void waitForCreateFormToDisappear() {
-        wait.until(ExpectedConditions.invisibilityOf(nameNewWL));
-        log.info("Форма создания вишлиста закрылась");
+        try {
+            // Ждем, пока поле названия станет невидимым
+            wait.until(ExpectedConditions.invisibilityOf(nameNewWL));
+            log.info("Форма создания вишлиста закрылась");
+        } catch (TimeoutException e) {
+            // Проверяем альтернативные локаторы
+            try {
+                wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                        By.xpath("//form[.//input[@placeholder='Введите название']]")));
+                log.info("Форма создания вишлиста закрылась (альтернативный локатор)");
+            } catch (TimeoutException e2) {
+                // Если форма все еще видима, логируем ошибку
+                log.warn("Форма создания вишлиста не закрылась за {} секунд", DEFAULT_TIMEOUT_SECONDS);
+                throw e2;
+            }
+        }
     }
 
     /**
@@ -239,8 +256,21 @@ public class MyWishlistsPage {
      * Нажимает кнопку "Отмена" в форме создания вишлиста.
      */
     public void clickCancelButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(cancelButton)).click();
-        log.info("Клик по кнопке 'Отмена'");
+        try {
+            WebElement button = wait.until(ExpectedConditions.elementToBeClickable(cancelButton));
+            button.click();
+            log.info("Клик по кнопке 'Отмена'");
+        } catch (Exception e) {
+            log.error("Не удалось нажать кнопку 'Отмена': {}", e.getMessage());
+            // Пробуем альтернативную кнопку закрытия
+            try {
+                WebElement closeBtn = wait.until(ExpectedConditions.elementToBeClickable(closeButton));
+                closeBtn.click();
+                log.info("Клик по кнопке закрытия (крестик) как альтернатива");
+            } catch (Exception e2) {
+                throw new RuntimeException("Не удалось закрыть форму создания", e2);
+            }
+        }
     }
 
     /**
@@ -312,18 +342,6 @@ public class MyWishlistsPage {
     }
 
     /**
-     * Проверяет, отображается ли форма создания вишлиста.
-     */
-    public boolean isCreateFormVisible() {
-        try {
-            return driver.findElement(By.cssSelector("form.create-wishlist-form")).isDisplayed() ||
-                    driver.findElement(By.xpath("//form[.//input[@placeholder='Введите название']]")).isDisplayed();
-        } catch (Exception e) {
-            return true;
-        }
-    }
-
-    /**
      * Закрывает форму создания вишлиста при зависании.
      */
     public void closeCreateForm() {
@@ -342,4 +360,156 @@ public class MyWishlistsPage {
         // Ждем, пока форма действительно закроется
         waitForCreateFormToDisappear();
     }
+
+    /**
+     * Проверяет, что вишлисты существуют
+     */
+    public void verifyWishlistsExist() {
+        assertTrue(hasWishlists(), "Должен быть хотя бы один список желаний");
+    }
+
+    /**
+     * Проверяет, что кнопка просмотра активна для всех вишлистов
+     */
+    public void verifyAllViewButtonsClickable() {
+        List<WebElement> wishlistCards = getAllWishlistCards();
+        for (WebElement card : wishlistCards) {
+            String title = card.findElement(By.xpath(".//div[contains(@class, 'card-title')]")).getText();
+            WebElement viewButton = card.findElement(By.xpath(".//button[contains(text(), 'Просмотр')]"));
+
+            assertTrue(viewButton.isEnabled(),
+                    String.format("Кнопка 'Просмотр' для вишлиста '%s' должна быть активна", title));
+        }
+    }
+
+    /**
+     * Проверяет, что вишлист был удален
+     */
+    public void verifyWishlistDeleted(int initialCount) {
+        waitForPageToLoad();
+        int newCount = getWishlistCount();
+        assertEquals(initialCount - 1, newCount,
+                String.format("Количество вишлистов должно уменьшиться на 1. Было: %d, стало: %d", initialCount, newCount));
+    }
+
+    /**
+     * Проверяет изменение количества вишлистов
+     */
+    public void verifyWishlistCountChanged(int expectedCount, String operation) {
+        int actualCount = getWishlistCount();
+        assertEquals(expectedCount, actualCount,
+                String.format("Количество списков %s: ожидалось %d, фактически %d",
+                        operation, expectedCount, actualCount));
+        log.info("Количество списков {}: {} (ожидалось {})", operation, actualCount, expectedCount);
+    }
+
+    /**
+     * Проверяет, что поля формы создания отображаются
+     */
+    public void verifyCreateFormFieldsDisplayed() {
+        initModalElements();
+        WebElement nameField = getNameNewWL();
+        WebElement descField = getDescriptionNewWL();
+        assertTrue(nameField != null && nameField.isDisplayed(), "Поле названия должно отображаться");
+        assertTrue(descField != null && descField.isDisplayed(), "Поле описания должно отображаться");
+    }
+
+    /**
+     * Проверяет, что количество кнопок "Просмотр" равно количеству вишлистов
+     */
+    public void verifyNumberOfViewButtonsEqualsWishlistCount() {
+        int wishlistCount = getWishlistCount();
+        List<WebElement> viewButtons = driver.findElements(By.xpath("//button[contains(text(), 'Просмотр')]"));
+        int actualViewButtonsCount = viewButtons.size();
+
+        assertEquals(wishlistCount, actualViewButtonsCount,
+                "Количество вишлистов должно равняться количеству кнопок 'Просмотр'");
+    }
+
+    /**
+     * Проверяет данные нового вишлиста
+     */
+    public void verifyNewWishlistData(String expectedTitle, String expectedDescription, String expectedGiftCount) {
+        String actualTitle = getLastWishlistTitle();
+        String actualDescription = getLastWishlistDescription();
+        String actualGiftCount = getLastWishlistGiftCountText();
+
+        assertTrue(actualTitle != null, "Название не должно быть пустым");
+        assertTrue(!actualTitle.isEmpty(), "Название не должно быть пустой строкой");
+        assertEquals(expectedTitle, actualTitle, "Название не соответствует созданному");
+        assertEquals(expectedDescription, actualDescription, "Описание не соответствует созданному");
+
+        assertTrue(actualGiftCount.contains(expectedGiftCount),
+                "В новом списке должно быть " + expectedGiftCount + " подарков, получено: " + actualGiftCount);
+    }
+
+    /**
+     * Проверяет, что форма создания вишлиста не видима
+     */
+    public void verifyCreateFormNotVisible() {
+        // Небольшая задержка для закрытия анимации
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        boolean isVisible = isCreateFormVisible();
+        assertTrue(!isVisible, "Форма создания не должна быть видима. Текущее состояние: " + isVisible);
+        log.info("Форма создания вишлиста не видима");
+    }
+
+    /**
+     * Проверяет, что клик по кнопке "Просмотр" последнего вишлиста выполнен успешно
+     */
+    public void verifyViewButtonClickable() {
+        clickViewButtonOnLastWishlist();
+        // Если дошли до этого места без исключений - клик выполнен успешно
+        log.info("Клик по кнопке 'Просмотр' успешно выполнен");
+    }
+
+    /**
+     * Проверяет, что форма создания вишлиста видима
+     */
+    public void verifyCreateFormVisible() {
+        // Небольшая задержка для анимации
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        boolean isVisible = isCreateFormVisible();
+        assertTrue(isVisible, "Форма создания должна быть видима");
+        log.info("Форма создания вишлиста видима");
+    }
+
+    /**
+     * Проверяет, отображается ли форма создания вишлиста.
+     */
+    public boolean isCreateFormVisible() {
+        try {
+            // Пробуем найти форму по разным локаторам
+            List<WebElement> forms = driver.findElements(By.cssSelector("form.create-wishlist-form"));
+            if (!forms.isEmpty() && forms.get(0).isDisplayed()) {
+                return true;
+            }
+
+            forms = driver.findElements(By.xpath("//form[.//input[@placeholder='Введите название']]"));
+            if (!forms.isEmpty() && forms.get(0).isDisplayed()) {
+                return true;
+            }
+
+            // Проверяем видимость поля названия как индикатор открытой формы
+            try {
+                return nameNewWL.isDisplayed();
+            } catch (Exception e) {
+                return false;
+            }
+        } catch (Exception e) {
+            log.debug("Форма создания не найдена или не видима: {}", e.getMessage());
+            return false;
+        }
+    }
+
 }

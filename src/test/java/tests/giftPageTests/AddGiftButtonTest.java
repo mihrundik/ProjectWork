@@ -9,8 +9,6 @@ import pages.AddGiftPage;
 import tests.AbstractBaseTest;
 import utils.WishlistHelper;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 
 public class AddGiftButtonTest extends AbstractBaseTest {
 
@@ -41,7 +39,6 @@ public class AddGiftButtonTest extends AbstractBaseTest {
     @Test
     @DisplayName("Тест: Проверка полей в окне создания нового подарка")
     void testToAddGiftPage() {
-
         // Обеспечиваем наличие вишлиста
         wishlistHelper.ensureWishlistExists();
 
@@ -49,8 +46,8 @@ public class AddGiftButtonTest extends AbstractBaseTest {
         wishlistsPage.clickViewButtonOnLastWishlist();
         MyWishListPage wishListPage = new MyWishListPage(driver);
 
-        // Проверяем, что страница вишлиста загрузилась
-        assertTrue(wishListPage.isWishlistPageDisplayed(), "Страница вишлиста не загрузилась");
+        // Проверяем загрузку страницы вишлиста
+        wishListPage.verifyWishlistPageLoaded();
 
         // Нажимаем кнопку "Добавить подарок"
         wishListPage.clickAddGiftButton();
@@ -58,11 +55,8 @@ public class AddGiftButtonTest extends AbstractBaseTest {
         // Инициализируем объект страницы модального окна
         AddGiftPage addGiftPage = new AddGiftPage(driver);
 
-        // Ожидаем появления модального окна
-        assertTrue(addGiftPage.waitForModalToAppear(), "Модальное окно добавления подарка не появилось");
-
-        // Проверяем, что модальное окно отображается
-        assertTrue(addGiftPage.isModalDisplayed(), "Модальное окно не отображено (isModalDisplayed == false)");
+        // Проверяем появление модального окна
+        addGiftPage.verifyModalDisplayed();
 
         // Подготавливаем тестовые данные
         String testName = "Test Gift " + System.currentTimeMillis();
@@ -96,24 +90,14 @@ public class AddGiftButtonTest extends AbstractBaseTest {
         addGiftPage.giftUrlImage().clear();
         addGiftPage.giftUrlImage().sendKeys(testImageUrl);
 
-        // Проверяем, что поля содержат введённые значения
-        assertEquals(testName, addGiftPage.getGiftNameField().getAttribute("value"),
-                "Поле Название подарка не содержит ожидаемого значения");
-        assertEquals(testDescription, addGiftPage.getGiftDescriptionField().getAttribute("value"),
-                "Поле Описание подарка не содержит ожидаемого значения");
-        assertEquals(testProductUrl, addGiftPage.giftUrlProdact().getAttribute("value"),
-                "Поле URL продукта не содержит ожидаемого значения");
-        assertEquals(testPrice, addGiftPage.giftPriceProdact().getAttribute("value"),
-                "Поле Цена не содержит ожидаемого значения");
-        assertEquals(testImageUrl, addGiftPage.giftUrlImage().getAttribute("value"),
-                "Поле URL картинки не содержит ожидаемого значения");
+        // Проверяем корректность заполнения всех полей
+        addGiftPage.verifyGiftFormData(testName, testDescription, testProductUrl, testPrice, testImageUrl);
 
         // Закрываем модальное окно крестиком
         addGiftPage.clickCancelButton();
-        assertTrue(addGiftPage.waitForModalToDisappear(), "Модальное окно не закрылось после нажатия крестика");
+        addGiftPage.verifyModalClosed();
 
         // Убеждаемся, что страница вишлиста снова видима
-        assertTrue(wishListPage.isWishlistPageDisplayed(), "После закрытия модалки страница вишлиста не отображается");
+        wishListPage.verifyWishlistPageDisplayedAfterModalClosed();
     }
-
 }

@@ -7,8 +7,6 @@ import org.openqa.selenium.Capabilities;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 
 public class CreateWLLongName extends AbstractBaseTest {
 
@@ -54,18 +52,10 @@ public class CreateWLLongName extends AbstractBaseTest {
         myWishlistsPage.clickSubmitButton();
 
         // Проверяем, что форма НЕ закрылась
-        boolean formStillVisible = myWishlistsPage.isCreateFormVisible();
-        log.info("Форма все еще видна: {}", formStillVisible);
-
-        assertTrue(formStillVisible,
-                "При очень длинном названии форма должна оставаться открытой");
+        myWishlistsPage.verifyCreateFormVisible();
 
         // Проверяем, что количество списков не изменилось
-        int currentCount = myWishlistsPage.getWishlistCount();
-        log.info("Количество списков после попытки создания: {}", currentCount);
-
-        assertEquals(initialCount, currentCount,
-                "Количество списков не должно измениться при очень длинном названии");
+        myWishlistsPage.verifyWishlistCountChanged(initialCount, "после попытки создания");
 
         // Закрываем форму, чтобы не влиять на другие тесты
         myWishlistsPage.closeCreateForm();

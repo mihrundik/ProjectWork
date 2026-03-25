@@ -7,8 +7,6 @@ import org.openqa.selenium.Capabilities;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 public class OpenCreateFormTest extends AbstractBaseTest {
 
@@ -44,14 +42,16 @@ public class OpenCreateFormTest extends AbstractBaseTest {
         myWishlistsPage.initModalElements();
 
         // Проверяем отображение полей формы
-        assertTrue(myWishlistsPage.getNameNewWL().isDisplayed(),
-                "Поле названия должно отображаться");
-        assertTrue(myWishlistsPage.getDescriptionNewWL().isDisplayed(),
-                "Поле описания должно отображаться");
+        myWishlistsPage.verifyCreateFormFieldsDisplayed();
 
         // Закрываем форму, чтобы не влиять на другие тесты
         myWishlistsPage.clickCloseButton();
+
+        // Ждем закрытия формы
         myWishlistsPage.waitForCreateFormToDisappear();
+
+        // Проверяем, что форма закрылась
+        myWishlistsPage.verifyCreateFormNotVisible();
 
         log.info("Форма создания успешно открылась и закрылась");
     }

@@ -9,7 +9,6 @@ import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
 import utils.WishlistHelper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -59,7 +58,10 @@ public class VerifyWishlistDeletionTest extends AbstractBaseTest {
         MyWishListPage wishListPage = new MyWishListPage(driver);
 
         // Проверяем успешный переход на страницу вишлиста
-        assertTrue(wishListPage.isWishlistPageDisplayed(), "Не удалось перейти на страницу вишлиста");
+        wishListPage.verifyWishlistPageLoaded();
+
+        // Проверяем, что кнопка "Удалить список" кликабельна
+        wishListPage.verifyDeleteWishlistButtonClickable();
 
         // Нажимаем кнопку "Удалить список"
         wishListPage.clickDeleteWishlistButton();
@@ -67,19 +69,12 @@ public class VerifyWishlistDeletionTest extends AbstractBaseTest {
         // Возвращаемся на страницу со списком вишлистов
         driver.navigate().back();
 
-        // Ожидаем загрузки страницы
+        // Ожидаем загрузки страницы и проверяем, что количество списков уменьшилось
         wishlistsPage.waitForPageToLoad();
 
-        // Переинициализируем элементы страницы, так как старый объект может содержать устаревшие данные
+        // Переинициализируем страницу и проверяем результат
         wishlistsPage = new MyWishlistsPage(driver);
-
-        // Получаем новое количество списков после удаления
-        int newCount = wishlistsPage.getWishlistCount();
-        log.info("Новое количество вишлистов после удаления: {}", newCount);
-
-        // Проверяем, что количество элементов уменьшилось ровно на 1
-        assertEquals(initialCount - 1, newCount,
-                String.format("Количество списков не изменилось. Ожидалось: %d, Фактически: %d", initialCount - 1, newCount));
+        wishlistsPage.verifyWishlistDeleted(initialCount);
     }
 
 }

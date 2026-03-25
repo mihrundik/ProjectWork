@@ -8,8 +8,6 @@ import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
 import utils.WishlistHelper;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 public class WishlistsExistTest extends AbstractBaseTest {
 
@@ -41,8 +39,7 @@ public class WishlistsExistTest extends AbstractBaseTest {
         wishlistHelper.ensureWishlistExists();
 
         // Проверяем наличие вишлистов на странице
-        assertTrue(wishlistsPage.hasWishlists(),
-                "Должен быть хотя бы один список желаний");
+        wishlistsPage.verifyWishlistsExist();
 
         log.info("Тест пройден успешно.");
     }

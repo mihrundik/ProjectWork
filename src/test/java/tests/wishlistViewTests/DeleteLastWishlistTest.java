@@ -10,14 +10,11 @@ import utils.WaitUtils;
 import utils.WishlistHelper;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 
 public class DeleteLastWishlistTest extends AbstractBaseTest {
 
-    private final AtomicReference<MyWishlistsPage> wishlistsPage = new AtomicReference<MyWishlistsPage>();
+    private MyWishlistsPage wishlistsPage;
     private WishlistHelper wishlistHelper;
 
     @Override
@@ -27,9 +24,9 @@ public class DeleteLastWishlistTest extends AbstractBaseTest {
 
     @BeforeEach
     public void setUp() {
-        wishlistsPage.set(new MyWishlistsPage(driver));
+        wishlistsPage = new MyWishlistsPage(driver);
         wishlistHelper = new WishlistHelper(driver);
-        wishlistsPage.get().open();
+        wishlistsPage.open();
     }
 
 
@@ -77,8 +74,8 @@ public class DeleteLastWishlistTest extends AbstractBaseTest {
         int newCount = driver.findElements(By.xpath("//button[contains(text(), 'Просмотр')]")).size();
         log.info("Количество вишлистов после удаления: {}", newCount);
 
-        assertEquals(initialCount - 1, newCount,
-                "Количество вишлистов должно уменьшиться на 1");
+        // Проверяем, что количество вишлистов уменьшилось на 1 (проверка вынесена в Page Object)
+        wishlistsPage.verifyWishlistDeleted(initialCount);
     }
 
 }

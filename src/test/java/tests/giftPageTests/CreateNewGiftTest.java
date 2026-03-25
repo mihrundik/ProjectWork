@@ -10,8 +10,6 @@ import tests.AbstractBaseTest;
 import utils.WaitUtils;
 import utils.WishlistHelper;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 
 public class CreateNewGiftTest extends AbstractBaseTest {
 
@@ -44,7 +42,6 @@ public class CreateNewGiftTest extends AbstractBaseTest {
     @Test
     @DisplayName("Создание нового подарка в вишлисте")
     void createNewGiftTest() {
-
         // Обеспечиваем наличие вишлиста
         wishlistHelper.ensureWishlistExists();
 
@@ -56,7 +53,7 @@ public class CreateNewGiftTest extends AbstractBaseTest {
         WaitUtils.waitForVisibility(driver, By.xpath("//*[@id='root']/div/h2"));
 
         // Проверяем, что страница вишлиста загрузилась
-        assertTrue(wishListPage.isWishlistPageDisplayed(), "Страница вишлиста не загрузилась");
+        wishListPage.verifyWishlistPageLoaded();
 
         // Получаем начальное количество подарков
         int initialGiftCount = wishListPage.getGiftItemsCount();
@@ -66,13 +63,11 @@ public class CreateNewGiftTest extends AbstractBaseTest {
         wishListPage.clickAddGiftButton();
 
         // Инициализируем страницу добавления подарка
-        var addGiftPage = new AddGiftPage(driver);
+        AddGiftPage addGiftPage = new AddGiftPage(driver);
 
         // Ожидаем появления модального окна
         WaitUtils.waitForVisibility(driver, By.xpath("/html/body/div[3]"));
-
-        // Проверяем, что модальное окно отображается
-        assertTrue(addGiftPage.isModalDisplayed(), "Модальное окно не отображено");
+        addGiftPage.verifyModalDisplayed();
 
         // Подготавливаем тестовые данные
         String testName = "Test Gift " + System.currentTimeMillis();
@@ -105,21 +100,14 @@ public class CreateNewGiftTest extends AbstractBaseTest {
 
         // Переинициализируем страницу вишлиста после добавления подарка
         wishListPage = new MyWishListPage(driver);
-        int newGiftCount = wishListPage.getGiftItemsCount();
 
         // Ожидаем загрузки обновлённой страницы вишлиста
         WaitUtils.waitForVisibility(driver, By.xpath("//*[@id='root']/div/h2"));
 
         // Проверяем, что страница вишлиста снова видна
-        assertTrue(wishListPage.isWishlistPageDisplayed(), "Страница вишлиста не отображается после добавления подарка");
+        wishListPage.verifyWishlistPageLoaded();
 
         // Проверяем изменение количества подарков
-        newGiftCount = wishListPage.getGiftItemsCount();
-        log.info("Новое количество подарков: {}", newGiftCount);
-
-        // Проверяем, что количество подарков увеличилось на 1
-        assertEquals(initialGiftCount + 1, newGiftCount,
-                "Количество подарков не изменилось после добавления");
+        wishListPage.verifyGiftCountIncreased(initialGiftCount);
     }
-
 }

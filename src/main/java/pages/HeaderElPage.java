@@ -5,7 +5,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
- * Класс, представляющий элементы навигационной панели (header) страницы.
+ * Класс элементов навигационной панели страницы.
  */
 public class HeaderElPage {
 

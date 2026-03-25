@@ -10,8 +10,6 @@ import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
 import utils.WishlistHelper;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 public class АddGiftOpensModalTest extends AbstractBaseTest {
 
@@ -50,14 +48,16 @@ public class АddGiftOpensModalTest extends AbstractBaseTest {
         MyWishListPage wishListPage = new MyWishListPage(driver);
 
         // Проверяем, что страница вишлиста загрузилась
-        assertTrue(wishListPage.isWishlistPageDisplayed(), "Страница вишлиста не загрузилась");
+        wishListPage.verifyWishlistPageLoaded();
+
+        // Проверяем, что кнопка кликабельна перед нажатием
+        wishListPage.verifyAddGiftButtonClickable();
 
         // Нажимаем кнопку "Добавить подарок"
         wishListPage.clickAddGiftButton();
 
         // Проверяем, что открылось модальное окно с правильным заголовком
-        assertTrue(wishListPage.isAddGiftModalDisplayedWithTitle("Добавить подарок"),
-                "Модальное окно 'Добавить подарок' не появилось или заголовок не совпадает");
+        wishListPage.verifyAddGiftModalOpened();
     }
 
 }

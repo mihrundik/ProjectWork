@@ -7,8 +7,6 @@ import org.openqa.selenium.Capabilities;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 
 public class CloseFormTest extends AbstractBaseTest {
 
@@ -39,7 +37,7 @@ public class CloseFormTest extends AbstractBaseTest {
     @DisplayName("Тест: Закрытие формы через крестик")
     void testCloseForm() {
         String testListName = "Тестовый список " + System.currentTimeMillis();
-        String testListDescription = "Описание тестового списка для закрытия";
+        String testListDescription = "Описание тестового списка для отмены";
 
         int initialCount = myWishlistsPage.getWishlistCount();
         log.info("Начальное количество списков: {}", initialCount);
@@ -52,11 +50,9 @@ public class CloseFormTest extends AbstractBaseTest {
 
         myWishlistsPage.waitForCreateFormToDisappear();
 
-        int newCount = myWishlistsPage.getWishlistCount();
-        log.info("Количество списков после закрытия: {}", newCount);
-
-        assertEquals(initialCount, newCount,
-                "Количество списков не должно измениться после закрытия");
+        // Проверяем, что количество вишлистов не изменилось
+        myWishlistsPage.verifyWishlistCountChanged(initialCount, "после отмены");
+        myWishlistsPage.verifyCreateFormNotVisible();
     }
 
 }

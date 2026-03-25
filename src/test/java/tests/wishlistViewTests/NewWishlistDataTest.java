@@ -7,9 +7,6 @@ import org.openqa.selenium.Capabilities;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 public class NewWishlistDataTest extends AbstractBaseTest {
 
@@ -62,15 +59,8 @@ public class NewWishlistDataTest extends AbstractBaseTest {
         log.info("Созданный вишлист - Название: {}, Описание: {}, Подарки: {}",
                 lastTitle, lastDescription, lastGiftCount);
 
-        // Проверяем данные нового списка
-        assertNotNull(lastTitle, "Название не должно быть пустым");
-        assertFalse(lastTitle.isEmpty(), "Название не должно быть пустой строкой");
-        assertEquals(tempWishlistName, lastTitle, "Название не соответствует созданному");
-        assertEquals(tempWishlistDesc, lastDescription, "Описание не соответствует созданному");
-
         // Проверяем количество подарков (должно быть 0)
-        assertTrue(lastGiftCount.contains("0"),
-                "В новом списке должно быть 0 подарков, получено: " + lastGiftCount);
+        wishlistsPage.verifyNewWishlistData(tempWishlistName, tempWishlistDesc, "0");
     }
 
 }

@@ -38,14 +38,13 @@ public class ClickButtonLastWLTest extends AbstractBaseTest {
         // Обеспечиваем наличие вишлиста
         wishlistHelper.ensureWishlistExists();
 
-        // Проверяем наличие списков, иначе пропускаем тест
+        // Проверяем наличие списков
         Assumptions.assumeTrue(wishlistsPage.hasWishlists(),
                 "Тест пропущен: нет списков желаний");
 
-        // Выполняем клик по кнопке "Просмотр"
-        wishlistsPage.clickViewButtonOnLastWishlist();
+        // Выполняем клик по кнопке "Просмотр" и проверяем успешность
+        wishlistsPage.verifyViewButtonClickable();
 
-        // Если дошли до этого места без исключений - клик выполнен успешно
         log.info("Клик по кнопке 'Просмотр' успешно выполнен");
     }
 

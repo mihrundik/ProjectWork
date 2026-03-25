@@ -9,8 +9,6 @@ import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
 import utils.WaitUtils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 
 public class CreateNewWishlistTest extends AbstractBaseTest {
 
@@ -57,11 +55,8 @@ public class CreateNewWishlistTest extends AbstractBaseTest {
         By newWishlistLocator = By.xpath(String.format("//div[contains(text(), '%s')]", testListName));
         WaitUtils.waitForVisibility(driver, newWishlistLocator);
 
-        int newCount = myWishlistsPage.getWishlistCount();
-        log.info("Количество списков после создания: {}", newCount);
-
-        assertEquals(initialCount + 1, newCount,
-                "Количество списков должно увеличиться на 1");
+        // Проверяем, что количество вишлистов увеличилось на 1
+        myWishlistsPage.verifyWishlistCountChanged(initialCount + 1, "после создания");
     }
 
 }

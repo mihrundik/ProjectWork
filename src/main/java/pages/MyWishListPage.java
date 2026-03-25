@@ -13,6 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static pages.MyWishlistsPage.DEFAULT_TIMEOUT_SECONDS;
 
 public class MyWishListPage extends AbstractBaseMethod {
@@ -77,22 +78,6 @@ public class MyWishListPage extends AbstractBaseMethod {
         } catch (Exception e) {
             log.error("Модальное окно добавления подарка не появилось или произошла ошибка при чтении заголовка: {}", e.getMessage());
             return false;
-        }
-    }
-
-    /**
-     * Проверяет, что появилось ожидаемое сообщение об ошибке.
-     */
-    public boolean isErrorMessageDisplayed(String expectedText) {
-        try {
-            By rootXpath = By.xpath("//*[@id='root']/div");
-            boolean present = wait.until(ExpectedConditions.textToBePresentInElementLocated(rootXpath, expectedText));
-            String actual = driver.findElement(rootXpath).getText();
-            log.info("Проверка сообщения об ошибке: ожидалось '{}', фактически '{}'", expectedText, actual);
-            return present && actual != null && actual.contains(expectedText);
-        } catch (Exception e) {
-            log.error("Сообщение об ошибке не появилось: {}", e.getMessage());
-            return true;
         }
     }
 
@@ -169,4 +154,72 @@ public class MyWishListPage extends AbstractBaseMethod {
             return false;
         }
     }
+
+    /**
+     * Проверяет, что страница вишлиста загружена
+     */
+    public void verifyWishlistPageLoaded() {
+        assertTrue(isWishlistPageDisplayed(), "Страница вишлиста не загрузилась");
+    }
+
+    /**
+     * Проверяет, что страница вишлиста отображается после закрытия модального окна
+     */
+    public void verifyWishlistPageDisplayedAfterModalClosed() {
+        assertTrue(isWishlistPageDisplayed(), "После закрытия модального окна страница вишлиста не отображается");
+    }
+
+    /**
+     * Проверяет, что количество подарков увеличилось на 1
+     */
+    public void verifyGiftCountIncreased(int initialCount) {
+        int newCount = getGiftItemsCount();
+        assertEquals(initialCount + 1, newCount,
+                "Количество подарков должно увеличиться на 1. Было: " + initialCount + ", стало: " + newCount);
+    }
+
+    /**
+     * Проверяет, что модальное окно добавления подарка открыто с правильным заголовком
+     */
+    public void verifyAddGiftModalOpened() {
+        assertTrue(isAddGiftModalDisplayedWithTitle("Добавить подарок"),
+                "Модальное окно 'Добавить подарок' не появилось или заголовок не совпадает");
+    }
+
+    /**
+     * Проверяет соответствие названия и описания вишлиста
+     */
+    public void verifyWishlistData(String expectedTitle, String expectedDescription) {
+        String actualTitle = getWishlistTitle();
+        String actualDescription = getWishlistDescription();
+
+        assertEquals(expectedTitle, actualTitle,
+                String.format("Название списка не совпадает. Ожидалось: '%s', Фактически: '%s'",
+                        expectedTitle, actualTitle));
+
+        assertEquals(expectedDescription, actualDescription,
+                String.format("Описание списка не совпадает. Ожидалось: '%s', Фактически: '%s'",
+                        expectedDescription, actualDescription));
+
+        log.info("Проверка данных вишлиста успешно выполнена");
+    }
+
+    /**
+     * Проверяет, что кнопка "Добавить подарок" кликабельна
+     */
+    public void verifyAddGiftButtonClickable() {
+        wait.until(ExpectedConditions.elementToBeClickable(addGiftButton));
+        // Если дошли до этой строки, значит элемент кликабельный
+        log.info("Кнопка 'Добавить подарок' кликабельна");
+    }
+
+    /**
+     * Проверяет, что кнопка "Удалить список" кликабельна
+     */
+    public void verifyDeleteWishlistButtonClickable() {
+        wait.until(ExpectedConditions.elementToBeClickable(deleteWishlistButton));
+        // Если дошли до этой строки, значит элемент кликабельный
+        log.info("Кнопка 'Удалить список' кликабельна");
+    }
+
 }

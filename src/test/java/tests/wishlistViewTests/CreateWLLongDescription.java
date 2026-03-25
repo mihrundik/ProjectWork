@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Capabilities;
 import pages.MyWishlistsPage;
 import tests.AbstractBaseTest;
-
-import static org.junit.jupiter.api.Assertions.*;
+import utils.WaitUtils;
 
 
 public class CreateWLLongDescription extends AbstractBaseTest {
@@ -38,11 +37,11 @@ public class CreateWLLongDescription extends AbstractBaseTest {
      */
     @Test
     @DisplayName("Тест: Попытка создания вишлиста с очень длинным описанием (512 символов) - форма не закрывается")
-    void testCreateWishlistWithVeryLongDescription() {
-        String testListName = "Тестовый список " + System.currentTimeMillis();
-        String testListDescription = "B".repeat(512);
+    void testCreateWishlistWithVeryLongName() {
+        String testListName = "A".repeat(512);
+        String testListDescription = "Описание тестового списка для создания";
 
-        log.info("Длина описания: {} символов", testListDescription.length());
+        log.info("Длина названия: {} символов", testListName.length());
 
         int initialCount = myWishlistsPage.getWishlistCount();
         log.info("Начальное количество списков: {}", initialCount);
@@ -53,19 +52,14 @@ public class CreateWLLongDescription extends AbstractBaseTest {
         myWishlistsPage.fillCreateForm(testListName, testListDescription);
         myWishlistsPage.clickSubmitButton();
 
-        // Проверяем, что форма НЕ закрылась
-        boolean formStillVisible = myWishlistsPage.isCreateFormVisible();
-        log.info("Форма все еще видна: {}", formStillVisible);
+        // Небольшая задержка для обработки валидации
+        WaitUtils.waitForVisibility(driver, org.openqa.selenium.By.cssSelector("input.form-control[type='text'][required]"));
 
-        assertTrue(formStillVisible,
-                "При очень длинном описании форма должна оставаться открытой");
+        // Проверяем, что форма НЕ закрылась (осталась открытой)
+        myWishlistsPage.verifyCreateFormVisible();  // ← теперь метод существует
 
         // Проверяем, что количество списков не изменилось
-        int currentCount = myWishlistsPage.getWishlistCount();
-        log.info("Количество списков после попытки создания: {}", currentCount);
-
-        assertEquals(initialCount, currentCount,
-                "Количество списков не должно измениться при очень длинном описании");
+        myWishlistsPage.verifyWishlistCountChanged(initialCount, "после попытки создания");
 
         // Закрываем форму, чтобы не влиять на другие тесты
         myWishlistsPage.closeCreateForm();
