@@ -49,10 +49,10 @@ public class DeleteErrorMessageTest extends AbstractBaseTest {
         MyWishListPage wishListPage = new MyWishListPage(driver);
 
         // Проверяем, что страница вишлиста загрузилась
-        wishListPage.verifyWishlistPageLoaded();
+        wishListPage.assertions().verifyWishlistPageLoaded();
 
         // Проверяем, что кнопка "Удалить список" кликабельна
-        wishListPage.verifyDeleteWishlistButtonClickable();
+        wishListPage.assertions().verifyDeleteWishlistButtonClickable();
 
         // Нажимаем кнопку "Удалить список" дважды для имитации ошибки
         wishListPage.clickDeleteWishlistButton();

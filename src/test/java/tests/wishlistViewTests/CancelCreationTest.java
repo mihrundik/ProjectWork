@@ -51,8 +51,8 @@ public class CancelCreationTest extends AbstractBaseTest {
         myWishlistsPage.waitForCreateFormToDisappear();
 
         // Проверяем, что количество вишлистов не изменилось
-        myWishlistsPage.verifyWishlistCountChanged(initialCount, "после отмены");
-        myWishlistsPage.verifyCreateFormNotVisible();
+        myWishlistsPage.assertions().verifyWishlistCountChanged(initialCount, "после отмены");
+        myWishlistsPage.assertions().verifyCreateFormNotVisible();
     }
 
 }

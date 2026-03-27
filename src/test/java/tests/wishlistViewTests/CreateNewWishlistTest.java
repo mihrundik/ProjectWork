@@ -56,7 +56,7 @@ public class CreateNewWishlistTest extends AbstractBaseTest {
         WaitUtils.waitForVisibility(driver, newWishlistLocator);
 
         // Проверяем, что количество вишлистов увеличилось на 1
-        myWishlistsPage.verifyWishlistCountChanged(initialCount + 1, "после создания");
+        myWishlistsPage.assertions().verifyWishlistCountChanged(initialCount + 1, "после создания");
     }
 
 }

@@ -43,7 +43,7 @@ public class ClickButtonLastWLTest extends AbstractBaseTest {
                 "Тест пропущен: нет списков желаний");
 
         // Выполняем клик по кнопке "Просмотр" и проверяем успешность
-        wishlistsPage.verifyViewButtonClickable();
+        wishlistsPage.assertions().verifyViewButtonClickable();
 
         log.info("Клик по кнопке 'Просмотр' успешно выполнен");
     }

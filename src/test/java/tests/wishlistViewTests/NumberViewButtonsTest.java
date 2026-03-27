@@ -40,7 +40,7 @@ public class NumberViewButtonsTest extends AbstractBaseTest {
         }
 
         // Проверяем, что количество вишлистов равно количеству кнопок "Просмотр"
-        myWishlistsPage.verifyNumberOfViewButtonsEqualsWishlistCount();
+        myWishlistsPage.assertions().verifyNumberOfViewButtonsEqualsWishlistCount();
     }
 
 }

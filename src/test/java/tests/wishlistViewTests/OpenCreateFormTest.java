@@ -42,7 +42,7 @@ public class OpenCreateFormTest extends AbstractBaseTest {
         myWishlistsPage.initModalElements();
 
         // Проверяем отображение полей формы
-        myWishlistsPage.verifyCreateFormFieldsDisplayed();
+        myWishlistsPage.assertions().verifyCreateFormFieldsDisplayed();
 
         // Закрываем форму, чтобы не влиять на другие тесты
         myWishlistsPage.clickCloseButton();
@@ -51,7 +51,7 @@ public class OpenCreateFormTest extends AbstractBaseTest {
         myWishlistsPage.waitForCreateFormToDisappear();
 
         // Проверяем, что форма закрылась
-        myWishlistsPage.verifyCreateFormNotVisible();
+        myWishlistsPage.assertions().verifyCreateFormNotVisible();
 
         log.info("Форма создания успешно открылась и закрылась");
     }

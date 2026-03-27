@@ -45,7 +45,7 @@ public class ViewButtonsClickableTest extends AbstractBaseTest {
         Assumptions.assumeTrue(wishlistCount > 0, "Тест пропущен: нет списков желаний");
 
         // Проверяем кликабельность кнопки "Просмотр" для каждого вишлиста
-        myWishlistsPage.verifyAllViewButtonsClickable();
+        myWishlistsPage.assertions().verifyAllViewButtonsClickable();
     }
 
 }

@@ -52,10 +52,10 @@ public class CreateWLLongName extends AbstractBaseTest {
         myWishlistsPage.clickSubmitButton();
 
         // Проверяем, что форма НЕ закрылась
-        myWishlistsPage.verifyCreateFormVisible();
+        myWishlistsPage.assertions().verifyCreateFormVisible();
 
         // Проверяем, что количество списков не изменилось
-        myWishlistsPage.verifyWishlistCountChanged(initialCount, "после попытки создания");
+        myWishlistsPage.assertions().verifyWishlistCountChanged(initialCount, "после попытки создания");
 
         // Закрываем форму, чтобы не влиять на другие тесты
         myWishlistsPage.closeCreateForm();

@@ -47,7 +47,7 @@ public class AddGiftButtonTest extends AbstractBaseTest {
         MyWishListPage wishListPage = new MyWishListPage(driver);
 
         // Проверяем загрузку страницы вишлиста
-        wishListPage.verifyWishlistPageLoaded();
+        wishListPage.assertions().verifyWishlistPageLoaded();
 
         // Нажимаем кнопку "Добавить подарок"
         wishListPage.clickAddGiftButton();
@@ -56,7 +56,7 @@ public class AddGiftButtonTest extends AbstractBaseTest {
         AddGiftPage addGiftPage = new AddGiftPage(driver);
 
         // Проверяем появление модального окна
-        addGiftPage.verifyModalDisplayed();
+        addGiftPage.assertions().verifyModalDisplayed();
 
         // Подготавливаем тестовые данные
         String testName = "Test Gift " + System.currentTimeMillis();
@@ -91,13 +91,13 @@ public class AddGiftButtonTest extends AbstractBaseTest {
         addGiftPage.giftUrlImage().sendKeys(testImageUrl);
 
         // Проверяем корректность заполнения всех полей
-        addGiftPage.verifyGiftFormData(testName, testDescription, testProductUrl, testPrice, testImageUrl);
+        addGiftPage.assertions().verifyGiftFormData(testName, testDescription, testProductUrl, testPrice, testImageUrl);
 
         // Закрываем модальное окно крестиком
         addGiftPage.clickCancelButton();
-        addGiftPage.verifyModalClosed();
+        addGiftPage.assertions().verifyModalClosed();
 
         // Убеждаемся, что страница вишлиста снова видима
-        wishListPage.verifyWishlistPageDisplayedAfterModalClosed();
+        wishListPage.assertions().verifyWishlistPageDisplayedAfterModalClosed();
     }
 }

@@ -15,7 +15,7 @@ public abstract class AbstractWebDriver {
 
     protected WebDriver driver;
     protected Actions actions;
-    protected WebDriverWait wait;
+    public WebDriverWait wait;
 
     /**
      * Конструктор инициализации компонентов не производится, так как WebDriver еще не установлен.
@@ -47,10 +47,4 @@ public abstract class AbstractWebDriver {
         return this.driver;
     }
 
-    /**
-     * Проверяет, инициализирован ли WebDriver.
-     */
-    public boolean isDriverInitialized() {
-        return driver != null;
-    }
 }

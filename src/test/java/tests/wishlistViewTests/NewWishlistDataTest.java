@@ -60,7 +60,7 @@ public class NewWishlistDataTest extends AbstractBaseTest {
                 lastTitle, lastDescription, lastGiftCount);
 
         // Проверяем количество подарков (должно быть 0)
-        wishlistsPage.verifyNewWishlistData(tempWishlistName, tempWishlistDesc, "0");
+        wishlistsPage.assertions().verifyNewWishlistData(tempWishlistName, tempWishlistDesc, "0");
     }
 
 }

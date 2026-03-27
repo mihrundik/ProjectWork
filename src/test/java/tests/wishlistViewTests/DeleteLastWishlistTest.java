@@ -75,7 +75,7 @@ public class DeleteLastWishlistTest extends AbstractBaseTest {
         log.info("Количество вишлистов после удаления: {}", newCount);
 
         // Проверяем, что количество вишлистов уменьшилось на 1 (проверка вынесена в Page Object)
-        wishlistsPage.verifyWishlistDeleted(initialCount);
+        wishlistsPage.assertions().verifyWishlistDeleted(initialCount);
     }
 
 }

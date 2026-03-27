@@ -48,7 +48,7 @@ public class CancelAddGiftTest extends AbstractBaseTest {
         MyWishListPage wishListPage = new MyWishListPage(driver);
 
         // Проверяем, что страница вишлиста загрузилась
-        wishListPage.verifyWishlistPageLoaded();
+        wishListPage.assertions().verifyWishlistPageLoaded();
 
         // Нажимаем кнопку "Добавить подарок"
         wishListPage.clickAddGiftButton();
@@ -58,16 +58,16 @@ public class CancelAddGiftTest extends AbstractBaseTest {
 
         // Ожидаем появления модального окна
         addGiftPage.waitForModalToAppear();
-        addGiftPage.verifyModalDisplayed();
+        addGiftPage.assertions().verifyModalDisplayed();
 
         // Нажимаем кнопку отмены (крестик)
         addGiftPage.clickCancelButton();
 
         // Ожидаем закрытия модального окна
-        addGiftPage.verifyModalClosed();
+        addGiftPage.assertions().verifyModalClosed();
 
         // Проверяем, что страница вишлиста снова отображается
-        wishListPage.verifyWishlistPageDisplayedAfterModalClosed();
+        wishListPage.assertions().verifyWishlistPageDisplayedAfterModalClosed();
     }
 
 }

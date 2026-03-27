@@ -39,7 +39,7 @@ public class WishlistsExistTest extends AbstractBaseTest {
         wishlistHelper.ensureWishlistExists();
 
         // Проверяем наличие вишлистов на странице
-        wishlistsPage.verifyWishlistsExist();
+        wishlistsPage.assertions().verifyWishlistsExist();
 
         log.info("Тест пройден успешно.");
     }

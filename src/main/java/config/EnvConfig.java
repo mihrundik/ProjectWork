@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 public class EnvConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(EnvConfig.class);
+    public static final Logger log = LoggerFactory.getLogger(EnvConfig.class);
 
     private EnvConfig() {
 

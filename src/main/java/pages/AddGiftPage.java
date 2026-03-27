@@ -7,11 +7,10 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import pages.assertions.AddGiftPageAssertions;
 
 import java.time.Duration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static pages.MyWishlistsPage.DEFAULT_TIMEOUT_SECONDS;
 
 public class AddGiftPage extends AbstractBaseMethod {
@@ -46,6 +45,8 @@ public class AddGiftPage extends AbstractBaseMethod {
     // Локатор корневого контейнера модального окна
     public final By modalRootLocator = By.xpath("/html/body/div[3]");
 
+    private AddGiftPageAssertions assertions;
+
     /**
      * Конструктор страницы добавления подарка.
      */
@@ -53,6 +54,11 @@ public class AddGiftPage extends AbstractBaseMethod {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
         PageFactory.initElements(driver, this);
+        this.assertions = new AddGiftPageAssertions(this);
+    }
+
+    public AddGiftPageAssertions assertions() {
+        return assertions;
     }
 
     /**
@@ -164,39 +170,5 @@ public class AddGiftPage extends AbstractBaseMethod {
         WebElement saveButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[type='submit']")));
         saveButton.click();
         log.info("Нажата кнопка 'Добавить' в модальном окне");
-    }
-
-    /**
-     * Проверяет, что все поля формы содержат ожидаемые значения
-     */
-    public void verifyGiftFormData(String expectedName,
-                                   String expectedDescription,
-                                   String expectedProductUrl,
-                                   String expectedPrice,
-                                   String expectedImageUrl) {
-        assertEquals(expectedName, getGiftNameField().getAttribute("value"),
-                "Поле Название подарка не содержит ожидаемого значения");
-        assertEquals(expectedDescription, getGiftDescriptionField().getAttribute("value"),
-                "Поле Описание подарка не содержит ожидаемого значения");
-        assertEquals(expectedProductUrl, giftUrlProdact().getAttribute("value"),
-                "Поле URL продукта не содержит ожидаемого значения");
-        assertEquals(expectedPrice, giftPriceProdact().getAttribute("value"),
-                "Поле Цена не содержит ожидаемого значения");
-        assertEquals(expectedImageUrl, giftUrlImage().getAttribute("value"),
-                "Поле URL картинки не содержит ожидаемого значения");
-    }
-
-    /**
-     * Проверяет, что модальное окно отображается
-     */
-    public void verifyModalDisplayed() {
-        assertTrue(isModalDisplayed(), "Модальное окно не отображено");
-    }
-
-    /**
-     * Проверяет, что модальное окно закрылось
-     */
-    public void verifyModalClosed() {
-        assertTrue(waitForModalToDisappear(), "Модальное окно не закрылось");
     }
 }

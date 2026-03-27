@@ -53,7 +53,7 @@ public class CreateNewGiftTest extends AbstractBaseTest {
         WaitUtils.waitForVisibility(driver, By.xpath("//*[@id='root']/div/h2"));
 
         // Проверяем, что страница вишлиста загрузилась
-        wishListPage.verifyWishlistPageLoaded();
+        wishListPage.assertions().verifyWishlistPageLoaded();
 
         // Получаем начальное количество подарков
         int initialGiftCount = wishListPage.getGiftItemsCount();
@@ -67,7 +67,7 @@ public class CreateNewGiftTest extends AbstractBaseTest {
 
         // Ожидаем появления модального окна
         WaitUtils.waitForVisibility(driver, By.xpath("/html/body/div[3]"));
-        addGiftPage.verifyModalDisplayed();
+        addGiftPage.assertions().verifyModalDisplayed();
 
         // Подготавливаем тестовые данные
         String testName = "Test Gift " + System.currentTimeMillis();
@@ -105,9 +105,9 @@ public class CreateNewGiftTest extends AbstractBaseTest {
         WaitUtils.waitForVisibility(driver, By.xpath("//*[@id='root']/div/h2"));
 
         // Проверяем, что страница вишлиста снова видна
-        wishListPage.verifyWishlistPageLoaded();
+        wishListPage.assertions().verifyWishlistPageLoaded();
 
         // Проверяем изменение количества подарков
-        wishListPage.verifyGiftCountIncreased(initialGiftCount);
+        wishListPage.assertions().verifyGiftCountIncreased(initialGiftCount);
     }
 }

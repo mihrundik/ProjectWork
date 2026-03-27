@@ -48,16 +48,16 @@ public class АddGiftOpensModalTest extends AbstractBaseTest {
         MyWishListPage wishListPage = new MyWishListPage(driver);
 
         // Проверяем, что страница вишлиста загрузилась
-        wishListPage.verifyWishlistPageLoaded();
+        wishListPage.assertions().verifyWishlistPageLoaded();
 
         // Проверяем, что кнопка кликабельна перед нажатием
-        wishListPage.verifyAddGiftButtonClickable();
+        wishListPage.assertions().verifyAddGiftButtonClickable();
 
         // Нажимаем кнопку "Добавить подарок"
         wishListPage.clickAddGiftButton();
 
         // Проверяем, что открылось модальное окно с правильным заголовком
-        wishListPage.verifyAddGiftModalOpened();
+        wishListPage.assertions().verifyAddGiftModalOpened();
     }
 
 }

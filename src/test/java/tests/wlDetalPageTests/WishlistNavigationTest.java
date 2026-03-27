@@ -56,10 +56,10 @@ public class WishlistNavigationTest extends AbstractBaseTest {
         MyWishListPage wishListPage = new MyWishListPage(driver);
 
         // Проверяем загрузку страницы вишлиста
-        wishListPage.verifyWishlistPageLoaded();
+        wishListPage.assertions().verifyWishlistPageLoaded();
 
         // Проверяем соответствие названия и описания
-        wishListPage.verifyWishlistData(expectedTitle, expectedDescription);
+        wishListPage.assertions().verifyWishlistData(expectedTitle, expectedDescription);
     }
 
 }

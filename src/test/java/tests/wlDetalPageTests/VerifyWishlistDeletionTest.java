@@ -58,10 +58,10 @@ public class VerifyWishlistDeletionTest extends AbstractBaseTest {
         MyWishListPage wishListPage = new MyWishListPage(driver);
 
         // Проверяем успешный переход на страницу вишлиста
-        wishListPage.verifyWishlistPageLoaded();
+        wishListPage.assertions().verifyWishlistPageLoaded();
 
         // Проверяем, что кнопка "Удалить список" кликабельна
-        wishListPage.verifyDeleteWishlistButtonClickable();
+        wishListPage.assertions().verifyDeleteWishlistButtonClickable();
 
         // Нажимаем кнопку "Удалить список"
         wishListPage.clickDeleteWishlistButton();
@@ -74,7 +74,7 @@ public class VerifyWishlistDeletionTest extends AbstractBaseTest {
 
         // Переинициализируем страницу и проверяем результат
         wishlistsPage = new MyWishlistsPage(driver);
-        wishlistsPage.verifyWishlistDeleted(initialCount);
+        wishlistsPage.assertions().verifyWishlistDeleted(initialCount);
     }
 
 }

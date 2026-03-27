@@ -56,10 +56,10 @@ public class CreateWLLongDescription extends AbstractBaseTest {
         WaitUtils.waitForVisibility(driver, org.openqa.selenium.By.cssSelector("input.form-control[type='text'][required]"));
 
         // Проверяем, что форма НЕ закрылась (осталась открытой)
-        myWishlistsPage.verifyCreateFormVisible();  // ← теперь метод существует
+        myWishlistsPage.assertions().verifyCreateFormVisible();  // ← теперь метод существует
 
         // Проверяем, что количество списков не изменилось
-        myWishlistsPage.verifyWishlistCountChanged(initialCount, "после попытки создания");
+        myWishlistsPage.assertions().verifyWishlistCountChanged(initialCount, "после попытки создания");
 
         // Закрываем форму, чтобы не влиять на другие тесты
         myWishlistsPage.closeCreateForm();
